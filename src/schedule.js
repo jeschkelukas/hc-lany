@@ -160,7 +160,7 @@ const kickoffCells = (r) => {
 };
 
 // Fixed slots (home goals | colon | away goals | outcome) keep every row aligned on the colon.
-const resultCell = (r, isNext) => {
+const resultCell = (r, isNext, detailUrl) => {
   if (!r.score) {
     const nextTag = isNext ? '<span class="pill next">další</span>' : "";
     return `<span class="score"><span class="wide">–</span></span><span class="tag">${nextTag}</span>`;
@@ -169,12 +169,14 @@ const resultCell = (r, isNext) => {
   const goals = `<span class="h">${r.score[0]}</span><span class="colon">:</span><span class="a">${r.score[1]}</span>`;
   const title = r.note ? ` title="${escapeHtml(r.note)}"` : "";
   // Club reports open in the club page itself (the widget sits in its iframe); GameStats in a new tab.
+  // A generated match detail opens inside the same iframe; without one, fall back to the club report.
+  if (detailUrl) return `<a class="score" href="${escapeHtml(detailUrl)}" title="Detail zápasu">${goals}</a>${tag}`;
   if (r.reportUrl) return `<a class="score" href="${escapeHtml(r.reportUrl)}" target="_top"${title || ' title="Článek o zápase"'}>${goals}</a>${tag}`;
   if (r.url) return `<a class="score" href="${escapeHtml(r.url)}" target="_blank" rel="noopener"${title}>${goals}</a>${tag}`;
   return `<span class="score"${title}>${goals}</span>${tag}`;
 };
 
-export const renderSchedule = ({ league, matches, reports, logos, updatedAt }) => {
+export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = () => null, updatedAt }) => {
   const rows = buildRounds(matches, reports);
   const next = rows
     .filter((r) => !r.bye && r.kickoff && !r.score)
@@ -191,14 +193,14 @@ export const renderSchedule = ({ league, matches, reports, logos, updatedAt }) =
         + `<td colspan="3" class="c"><span class="pill d bye">volno</span></td></tr>`;
     }
     return `${open}${kickoffCells(r)}<td class="team">${side(r.home)}</td>
-    <td class="res">${resultCell(r, r === next)}</td>
+    <td class="res">${resultCell(r, r === next, r.score ? detailUrlOf(r) : null)}</td>
     <td class="team">${side(r.away)}</td></tr>`;
   }).join("")}
   </tbody></table></div>`;
   return renderShell({
     title: `Rozpis utkání ${TEAM}`,
     body,
-    legend: `${league || "BNB Cup"} · přeložený termín je přeškrtnutý · výsledek vede na článek o zápase · V = výhra, R = remíza, P = prohra`,
+    legend: `${league || "BNB Cup"} · přeložený termín je přeškrtnutý · klik na výsledek otevře detail zápasu · V = výhra, R = remíza, P = prohra`,
     sourceUrl: SCHEDULE_SOURCE,
     updatedAt,
   });

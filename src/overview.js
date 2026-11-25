@@ -52,12 +52,15 @@ const nextMatchCard = (next, logos, now) => {
 </section>`;
 };
 
-const lastResultRow = (played) => {
+const lastResultRow = (played, detailUrlOf) => {
   const last = played.at(-1);
   if (!last) return "";
   const res = resultOf(last);
   const score = `${last.score[0]}:${last.score[1]}`;
-  const scoreHtml = last.reportUrl ? `<a href="${escapeHtml(last.reportUrl)}" target="_top" title="Článek o zápase">${score}</a>` : score;
+  const detail = detailUrlOf(last);
+  const scoreHtml = detail
+    ? `<a href="${escapeHtml(`${detail}?dark`)}" title="Detail zápasu">${score}</a>`
+    : last.reportUrl ? `<a href="${escapeHtml(last.reportUrl)}" target="_top" title="Článek o zápase">${score}</a>` : score;
   const form = played.slice(-FORM_MATCHES).map((r) => {
     const f = resultOf(r);
     return `<span class="pill ${f.cls}" title="${escapeHtml(`${r.home} ${r.score[0]}:${r.score[1]} ${r.away}`)}">${f.letter}</span>`;
@@ -93,7 +96,7 @@ const scorersCard = (rows, photos) => {
 </section>`;
 };
 
-export const renderOverview = ({ schedule, reports, standings, scoringRows, logos, photos, updatedAt }) => {
+export const renderOverview = ({ schedule, reports, standings, scoringRows, logos, photos, detailUrlOf = () => null, updatedAt }) => {
   const rounds = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff);
   const byKickoff = (a, b) => a.kickoff.localeCompare(b.kickoff);
   const played = rounds.filter((r) => r.score).sort(byKickoff);
@@ -168,7 +171,7 @@ export const renderOverview = ({ schedule, reports, standings, scoringRows, logo
   }
 </style></head><body>
 ${nextMatchCard(next, logos, updatedAt)}
-${lastResultRow(played)}
+${lastResultRow(played, detailUrlOf)}
 <div class="grid">
 ${standingsCard(standings, logos)}
 ${scorersCard(scoringRows, photos)}

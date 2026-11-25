@@ -2,7 +2,8 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "./src/scoring.js";
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
-import { SCHEDULE_SOURCE, SEASON_START, parseSchedule, renderSchedule } from "./src/schedule.js";
+import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseSchedule, renderSchedule } from "./src/schedule.js";
+import { fetchPlayerMatches, matchSlug, renderMatch, scorersByMatch } from "./src/matches.js";
 import { fetchReports } from "./src/reports.js";
 import { renderOverview } from "./src/overview.js";
 import { slug } from "./src/page.js";
@@ -72,8 +73,20 @@ const reports = await fetchReports(SEASON_START).catch((error) => {
   console.warn(`Club reports unavailable (${error.message}), publishing schedule without links`);
   return [];
 });
-write("rozpis", renderSchedule({ ...schedule, reports, logos, updatedAt }));
-write("prehled", renderOverview({ schedule, reports, standings, scoringRows, logos, photos, updatedAt }));
+// Match details: per-match points of every HC Lány scorer, read from their GameStats player pages.
+const scorers = scorersByMatch(await fetchPlayerMatches(scoring.players));
+const played = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff && r.score);
+for (const round of played) {
+  write(`zapas/${matchSlug(round)}`, renderMatch({
+    round, scorers: scorers.get(round.kickoff) ?? [], logos, photos, league: schedule.league, scheduleUrl: "../../rozpis/", updatedAt,
+  }));
+}
+const detailSlugs = new Set(played.map(matchSlug));
+// Links are relative to a widget folder one level deep (rozpis/, prehled/).
+const detailUrlOf = (r) => (detailSlugs.has(matchSlug(r)) ? `../zapas/${matchSlug(r)}/` : null);
+
+write("rozpis", renderSchedule({ ...schedule, reports, logos, detailUrlOf, updatedAt }));
+write("prehled", renderOverview({ schedule, reports, standings, scoringRows, logos, photos, detailUrlOf, updatedAt }));
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
 <ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li></ul>`);
-console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);
+console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, match details: ${played.length}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);
