@@ -1,4 +1,5 @@
 import { GAMESTATS, TEAM, cellsOf, decode, escapeHtml, renderShell, rowsOf, stripTags, teamBadge } from "./page.js";
+import { findReport } from "./reports.js";
 
 export const SCHEDULE_SOURCE = `${GAMESTATS}/schedule`;
 
@@ -26,6 +27,9 @@ const FIXTURES = [
   { round: 17, home: TEAM, away: "Delfins Zátiší", planned: "2027-03-19 20:15" },
   { round: 18, home: "Lokomotiva", away: TEAM, planned: "2027-03-26 21:50" },
 ];
+
+// First planned kick-off minus two weeks: older club articles belong to previous seasons.
+export const SEASON_START = Date.parse(`${FIXTURES.find((f) => f.planned).planned.slice(0, 10)}T00:00:00Z`) - 14 * 86_400_000;
 
 const WEEKDAYS = ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"];
 
@@ -86,7 +90,7 @@ export const parseSchedule = (html, team) => {
 
 // Joins the static draw with live GameStats data by home/away pair (unique within a season).
 // Matches GameStats has but the draw does not (e.g. a play-off) are appended without a round.
-export const buildRounds = (matches) => {
+export const buildRounds = (matches, reports = []) => {
   const pairKey = (m) => `${m.home}|${m.away}`;
   const live = new Map(matches.map((m) => [pairKey(m), m]));
   const rounds = FIXTURES.map((f) => {
@@ -98,7 +102,14 @@ export const buildRounds = (matches) => {
   const extra = [...live.values()]
     .sort((a, b) => (a.kickoff ?? "").localeCompare(b.kickoff ?? ""))
     .map((m) => ({ ...m, round: null, planned: m.kickoff }));
-  return [...rounds, ...extra];
+  const withReport = (r) => {
+    if (r.bye || !r.score) return r;
+    const ours = r.home === TEAM ? r.score[0] : r.score[1];
+    const theirs = r.home === TEAM ? r.score[1] : r.score[0];
+    const opponent = r.home === TEAM ? r.away : r.home;
+    return { ...r, reportUrl: findReport(reports, { opponent, ours, theirs, kickoff: r.kickoff }) };
+  };
+  return [...rounds, ...extra].map(withReport);
 };
 
 const outcome = (match) => {
@@ -123,11 +134,13 @@ const kickoffCell = (r) => {
 const resultCell = (r, isNext) => {
   if (!r.score) return isNext ? '<span class="next">další</span>' : "–";
   const text = `${r.score[0]}:${r.score[1]}`;
+  // Club reports open in the club page itself (the widget sits in its iframe); GameStats in a new tab.
+  if (r.reportUrl) return `<a href="${escapeHtml(r.reportUrl)}" target="_top" title="Článek o zápase">${text}</a>`;
   return r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${text}</a>` : text;
 };
 
-export const renderSchedule = ({ league, matches, logos, updatedAt }) => {
-  const rows = buildRounds(matches);
+export const renderSchedule = ({ league, matches, reports, logos, updatedAt }) => {
+  const rows = buildRounds(matches, reports);
   const next = rows
     .filter((r) => !r.bye && r.kickoff && !r.score)
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff))[0];
@@ -147,7 +160,7 @@ export const renderSchedule = ({ league, matches, logos, updatedAt }) => {
   return renderShell({
     title: `Rozpis utkání ${TEAM}`,
     body,
-    legend: `${league || "BNB Cup"} · přeložený termín je přeškrtnutý · V = výhra, R = remíza, P = prohra`,
+    legend: `${league || "BNB Cup"} · přeložený termín je přeškrtnutý · výsledek vede na článek o zápase · V = výhra, R = remíza, P = prohra`,
     sourceUrl: SCHEDULE_SOURCE,
     updatedAt,
   });

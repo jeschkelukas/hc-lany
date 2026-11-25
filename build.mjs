@@ -1,7 +1,8 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "./src/scoring.js";
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
-import { SCHEDULE_SOURCE, parseSchedule, renderSchedule } from "./src/schedule.js";
+import { SCHEDULE_SOURCE, SEASON_START, parseSchedule, renderSchedule } from "./src/schedule.js";
+import { fetchReports } from "./src/reports.js";
 import { slug } from "./src/page.js";
 
 // Each widget gets its own folder so its iframe URL stays stable when more widgets are added.
@@ -46,7 +47,12 @@ const logos = new Map((await Promise.all(standings.teams.map(saveLogo))).flat())
 
 write("bodovani", renderPage({ league: scoring.league, rows: buildTable(scoring, ROSTER), updatedAt }));
 write("tabulka", renderStandings({ ...standings, logos, updatedAt }));
-write("rozpis", renderSchedule({ ...schedule, logos, updatedAt }));
+// Club match reports are optional: if the club site is down, the schedule is published without links.
+const reports = await fetchReports(SEASON_START).catch((error) => {
+  console.warn(`Club reports unavailable (${error.message}), publishing schedule without links`);
+  return [];
+});
+write("rozpis", renderSchedule({ ...schedule, reports, logos, updatedAt }));
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
 <ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li></ul>`);
-console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, rozpis: ${schedule.matches.length} matches (${standings.league})`);
+console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);
