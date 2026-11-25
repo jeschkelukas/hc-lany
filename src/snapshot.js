@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 
 // The last good GameStats data is kept in the repository (the workflow commits it), so the git
 // history doubles as a backup of every state, and a fresh download that came back thinner than
@@ -16,8 +16,11 @@ export const loadSnapshot = () => {
   }
 };
 
-// Besides the current snapshot, keep one dated copy per day (the day's latest state) so old
-// standings, player stats and schedules are easy to browse without digging in git history.
+// Besides the current snapshot, keep one dated copy per day (the day's latest state) for the
+// last ARCHIVE_DAYS days, so recent standings, player stats and schedules are easy to browse.
+// Older days are deleted from the folder but stay in git history.
+const ARCHIVE_DAYS = 30;
+const DAY_MS = 86_400_000;
 const pragueDate = (date) =>
   new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Prague", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
 
@@ -26,6 +29,10 @@ export const saveSnapshot = (snapshot, date = new Date()) => {
   mkdirSync("data/archive", { recursive: true });
   writeFileSync(SNAPSHOT_PATH, json);
   writeFileSync(`data/archive/${pragueDate(date)}.json`, json);
+  const oldest = pragueDate(new Date(date.getTime() - (ARCHIVE_DAYS - 1) * DAY_MS));
+  for (const file of readdirSync("data/archive")) {
+    if (/^\d{4}-\d{2}-\d{2}\.json$/.test(file) && file.slice(0, 10) < oldest) rmSync(`data/archive/${file}`);
+  }
 };
 
 const sum = (items, pick) => items.reduce((total, item) => total + pick(item), 0);

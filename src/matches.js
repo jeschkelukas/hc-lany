@@ -125,7 +125,7 @@ export const renderMatch = ({ round, scorers, logos, photos, league, scheduleUrl
   h2 { font: 600 13px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--hl); margin: 14px 0 6px; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
   th { font-size: 11px; color: var(--dim); font-weight: normal; text-align: left; padding: 4px 6px; border-bottom: 2px solid var(--hl); }
-  td { padding: 3px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 2px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
   .n { text-align: right; width: 3em; }
   .pts { font: 700 15px/1 var(--display); color: var(--hl); }
   .player { display: flex; align-items: center; gap: 8px; }

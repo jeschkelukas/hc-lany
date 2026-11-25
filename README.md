@@ -73,8 +73,9 @@ rows, and every widget fits its recommended iframe height from 340 px wide up:
 
 - Every build saves the downloaded data (player stats, standings, schedule and per-match
   scorers) to `data/snapshot.json` plus a dated copy `data/archive/YYYY-MM-DD.json` (the
-  day's latest state). The workflow commits them whenever they change, so the git history
-  holds every state.
+  day's latest state). The archive folder keeps the last 30 days; older days are deleted
+  from it but stay in git history. The workflow commits the data whenever it changes, so
+  the git history holds every state.
 - Within one season, points, played matches and recorded scorers never go down. If a fresh
   download comes back thinner than the snapshot (a GameStats glitch, an empty page), the
   build keeps the archived data for that part and logs a warning. Per match, the list with
