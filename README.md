@@ -33,8 +33,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/`
   Tied players share a rank (dense ranking). Stat columns are sortable by click.
 - **League standings** – the league table with team logos (a coloured shield with the
   initial when a team has no logo) and the HC Lány row highlighted. Sortable by click.
-- **Homepage overview** – next match card with a countdown, last result with the
-  recent form (newest match on the left), mini standings and the top scorers, styled to match the dark-blue intro
+- **Homepage overview** – next match card with a countdown and both teams' recent form
+  across the whole league (newest match on the left), the last result, mini standings and the top scorers, styled to match the dark-blue intro
   box on the club homepage. Links lead to the full article pages.
 - **Match schedule** – all rounds including bye weeks (shown with their Monday–Sunday
   week), moved matches with the original date struck through, results with a

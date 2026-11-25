@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "./src/scoring.js";
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
-import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseSchedule, renderSchedule } from "./src/schedule.js";
+import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseLeagueMatches, parseSchedule, renderSchedule } from "./src/schedule.js";
 import { fetchPlayerMatches, matchSlug, playerMatchesFromArchive, renderMatch, scorersByMatch } from "./src/matches.js";
 import { fetchReports } from "./src/reports.js";
 import { extrasFor } from "./src/extras.js";
@@ -123,7 +123,7 @@ const buildStamp = updatedAt.getTime().toString(36);
 const detailUrlOf = (r) => (detailSlugs.has(matchSlug(r)) ? `../zapas/${matchSlug(r)}/?v=${buildStamp}` : null);
 
 write("rozpis", renderSchedule({ ...schedule, reports, logos, detailUrlOf, updatedAt }));
-write("prehled", renderOverview({ schedule, reports, standings, scoringRows, logos, photos, detailUrlOf, updatedAt }));
+write("prehled", renderOverview({ schedule, leagueMatches: parseLeagueMatches(scheduleHtml, TEAM), reports, standings, scoringRows, logos, photos, detailUrlOf, updatedAt }));
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
 <ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li></ul>`);
 console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, image downloads: ${imageDownloads}, player pages fetched: ${changed.length}, match details: ${played.length}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);

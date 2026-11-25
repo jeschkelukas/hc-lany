@@ -42,10 +42,26 @@ const logo = (name, logos, cls) => {
 
 const PHOTO_PLACEHOLDER = '<svg class="face" viewBox="0 0 24 32" aria-hidden="true"><rect width="24" height="32" rx="3" fill="#36556a"/><circle cx="12" cy="12" r="5" fill="#6f8ba0"/><path d="M3 32c0-6 4-10 9-10s9 4 9 10z" fill="#6f8ba0"/></svg>';
 
-const nextMatchCard = (next, logos, now) => {
+// A team's last results across the whole league, newest first (the way hockey tables show form).
+const formOf = (team, leagueMatches) => leagueMatches
+  .filter((m) => m.score && m.kickoff && (m.home === team || m.away === team))
+  .sort((a, b) => b.kickoff.localeCompare(a.kickoff))
+  .slice(0, FORM_MATCHES)
+  .map((m) => {
+    const diff = m.home === team ? m.score[0] - m.score[1] : m.score[1] - m.score[0];
+    const [cls, letter] = diff > 0 ? ["w", "V"] : diff < 0 ? ["l", "P"] : ["d", "R"];
+    const title = `${m.score[0]}:${m.score[1]} (${m.home} – ${m.away}) ${formatKickoff(m.kickoff).day.slice(3)}`;
+    return `<span class="pill ${cls}" title="${escapeHtml(title)}">${letter}</span>`;
+  })
+  .join("");
+
+const nextMatchCard = (next, logos, now, leagueMatches) => {
   if (!next) return `<section class="card next"><div class="label">Sezóna</div><p class="empty">Všechny zápasy sezóny jsou odehrané.</p></section>`;
   const when = formatKickoff(next.kickoff);
-  const side = (name) => `<div class="side${name === TEAM ? " us" : ""}">${logo(name, logos, "big")}<span>${escapeHtml(name)}</span></div>`;
+  const side = (name) => {
+    const form = formOf(name, leagueMatches);
+    return `<div class="side${name === TEAM ? " us" : ""}">${logo(name, logos, "big")}<span>${escapeHtml(name)}</span>${form ? `<div class="mform" title="Forma, nejnovější vlevo">${form}</div>` : ""}</div>`;
+  };
   return `<section class="card next">
   <div class="label"><span>Další zápas${next.round ? ` · ${next.round}. kolo` : ""}</span><span class="soon">${countdown(next.kickoff, now)}</span></div>
   <div class="match">${side(next.home)}<div class="when"><b>${escapeHtml(when.time)}</b><span>${escapeHtml(when.day)}</span></div>${side(next.away)}</div>
@@ -61,15 +77,9 @@ const lastResultRow = (played, detailUrlOf) => {
   const scoreHtml = detail
     ? `<a href="${escapeHtml(`${detail}${detail.includes("?") ? "&" : "?"}dark`)}" title="Detail zápasu">${score}</a>`
     : last.reportUrl ? `<a href="${escapeHtml(last.reportUrl)}" target="_top" title="Článek o zápase">${score}</a>` : score;
-  // Newest first, the way hockey tables show form.
-  const form = played.slice(-FORM_MATCHES).reverse().map((r) => {
-    const f = resultOf(r);
-    return `<span class="pill ${f.cls}" title="${escapeHtml(`${r.score[0]}:${r.score[1]} (${r.home} – ${r.away}) ${formatKickoff(r.kickoff).day.slice(3)}`)}">${f.letter}</span>`;
-  }).join("");
   return `<section class="card last">
   <div class="label">Poslední výsledek</div>
   <div class="lastrow"><span class="teams">${escapeHtml(last.home)} <b class="score">${scoreHtml}</b> ${escapeHtml(last.away)}</span><span class="pill ${res.cls}" title="${res.title}">${res.letter}</span></div>
-  <div class="form"><span>Forma</span>${form}</div>
 </section>`;
 };
 
@@ -97,7 +107,7 @@ const scorersCard = (rows, photos) => {
 </section>`;
 };
 
-export const renderOverview = ({ schedule, reports, standings, scoringRows, logos, photos, detailUrlOf = () => null, updatedAt }) => {
+export const renderOverview = ({ schedule, leagueMatches = [], reports, standings, scoringRows, logos, photos, detailUrlOf = () => null, updatedAt }) => {
   const rounds = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff);
   const byKickoff = (a, b) => a.kickoff.localeCompare(b.kickoff);
   const played = rounds.filter((r) => r.score).sort(byKickoff);
@@ -130,14 +140,15 @@ export const renderOverview = ({ schedule, reports, standings, scoringRows, logo
   .when { display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .when b { font: 700 30px/1 var(--display); letter-spacing: .02em; }
   .when span { color: var(--dim); font-size: 12px; white-space: nowrap; }
-  .last { margin-bottom: 10px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
+  .last { margin-bottom: 10px; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; }
   .last .label { margin: 0; }
   .lastrow { display: flex; align-items: center; gap: 8px; justify-content: center; min-width: 0; }
   .teams { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .score { font: 700 17px/1 var(--display); margin: 0 4px; letter-spacing: .03em; }
   .score a { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--gold); }
-  .form { display: flex; align-items: center; gap: 3px; color: var(--dim); font-size: 11px; }
-  .form span:first-child { margin-right: 4px; }
+  .mform { display: flex; gap: 3px; justify-content: center; }
+  .mform .pill { min-width: 16px; padding: 1px 3px; font-size: 10px; }
+  .foot a.src { font: inherit; letter-spacing: 0; text-transform: none; text-decoration: underline; text-underline-offset: 2px; }
   .pill { display: inline-block; min-width: 19px; padding: 2px 4px; border-radius: 4px; color: #fff; font: 700 11px/1.2 var(--display); text-align: center; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; table-layout: auto; }
@@ -160,7 +171,7 @@ export const renderOverview = ({ schedule, reports, standings, scoringRows, logo
   /* Phones: keep the two columns (the iframe height is fixed) and drop secondary details. */
   @media (max-width: 480px) {
     body { font-size: 12px; }
-    .opt, .form { display: none; }
+    .opt { display: none; }
     .last { grid-template-columns: auto 1fr; gap: 8px; }
     .side { font-size: 14px; }
     .big, .big svg { width: 44px; height: 44px; }
@@ -168,15 +179,15 @@ export const renderOverview = ({ schedule, reports, standings, scoringRows, logo
     .card { padding: 8px; }
     .team { max-width: 104px; }
     .team span { white-space: nowrap; }
-    .foot span { display: none; }
+    .foot .upd { display: none; }
   }
 </style></head><body>
-${nextMatchCard(next, logos, updatedAt)}
+${nextMatchCard(next, logos, updatedAt, leagueMatches)}
 ${lastResultRow(played, detailUrlOf)}
 <div class="grid">
 ${standingsCard(standings, logos)}
 ${scorersCard(scoringRows, photos)}
 </div>
-<div class="foot"><span>Zdroj: GameStats · aktualizováno ${formatTime(updatedAt)}</span><a href="${CLUB_PAGES.schedule}" target="_top">Celý rozpis →</a></div>
+<div class="foot"><span><span class="upd">Zdroj: </span><a class="src" href="https://mini.gamestats.cz/i/bnb-cup" target="_blank" rel="noopener">GameStats</a><span class="upd"> · aktualizováno ${formatTime(updatedAt)}</span></span><a href="${CLUB_PAGES.schedule}" target="_top">Celý rozpis →</a></div>
 </body></html>`;
 };

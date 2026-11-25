@@ -81,6 +81,20 @@ const linkIn = (cell) => {
   return url.protocol === "https:" ? url.href : null;
 };
 
+// Every match of the league HC Lány plays in (all teams), used for the teams' recent form.
+export const parseLeagueMatches = (html, team) => {
+  for (const section of html.split('<section class="mb-5"').slice(1)) {
+    const table = section.split("</table>")[0];
+    const matches = rowsOf(table).flatMap((row) => {
+      const c = cellsOf(row);
+      if (c.length < 4) return [];
+      return [{ kickoff: toKey(stripTags(c[0])), home: stripTags(c[1]), away: stripTags(c[3]), score: parseScore(stripTags(c[2])) }];
+    });
+    if (matches.some((m) => m.home === team || m.away === team)) return matches;
+  }
+  return [];
+};
+
 // The schedule page has one section per league, each with a single table of all its matches.
 export const parseSchedule = (html, team) => {
   const sections = html.split('<section class="mb-5"').slice(1);
