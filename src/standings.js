@@ -37,11 +37,11 @@ export const parseStandings = (html, team) => {
 
 export const renderStandings = ({ league, teams, logos, updatedAt }) => {
   const body = `<div class="box"><table class="stats" data-sortable>
-  <thead><tr><th class="n">#</th><th>Tým</th><th class="n" data-sort>Z</th><th class="n" data-sort>V</th><th class="n" data-sort>VP</th><th class="n" data-sort>R</th><th class="n" data-sort>PP</th><th class="n" data-sort>P</th><th class="n" data-sort title="Řadí se podle rozdílu skóre">Skóre</th><th class="n" data-sort>Body</th></tr></thead>
+  <thead><tr><th class="n">#</th><th>Tým</th><th class="n" data-sort>Z</th><th class="n" data-sort>V</th><th class="n opt" data-sort>VP</th><th class="n opt" data-sort>R</th><th class="n opt" data-sort>PP</th><th class="n" data-sort>P</th><th class="n" data-sort title="Řadí se podle rozdílu skóre">Skóre</th><th class="n" data-sort>Body</th></tr></thead>
   <tbody>${teams.map((t) => `<tr${t.name === TEAM ? ' class="mark"' : ""}>
     <td class="n rank">${escapeHtml(t.rank)}.</td><td>${teamBadge(t.name, logos)}</td>
-    <td class="n">${t.gp}</td><td class="n">${t.w}</td><td class="n">${t.otw}</td><td class="n">${t.d}</td>
-    <td class="n">${t.otl}</td><td class="n">${t.l}</td><td class="n" data-v="${scoreDiff(t.score)}">${escapeHtml(t.score)}</td><td class="n pts">${t.pts}</td></tr>`).join("")}
+    <td class="n">${t.gp}</td><td class="n">${t.w}</td><td class="n opt">${t.otw}</td><td class="n opt">${t.d}</td>
+    <td class="n opt">${t.otl}</td><td class="n">${t.l}</td><td class="n" data-v="${scoreDiff(t.score)}">${escapeHtml(t.score)}</td><td class="n pts">${t.pts}</td></tr>`).join("")}
   </tbody></table></div>`;
   return renderShell({
     title: `Tabulka – ${league || "BNB Cup"}`,

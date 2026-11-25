@@ -89,6 +89,17 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .pill.bye { padding: 2px 12px; text-transform: uppercase; letter-spacing: .08em; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
   .pill.next { background: var(--accent); font-size: 10px; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0; }
+  .narrow-only { display: none; }
+  /* Phones: the iframe keeps its fixed height, so narrow layouts drop detail instead of stacking rows. */
+  @media (max-width: 520px) {
+    .wide-only, .opt { display: none; }
+    .narrow-only { display: table-cell; }
+    table.stats { font-size: 13px; }
+    table.schedule { font-size: 12px; }
+    table.compact th, table.compact td { padding-left: 3px; padding-right: 3px; }
+    table.schedule .club img, table.schedule .club svg { display: none; }
+    table.schedule .club { display: block; max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .pts a { text-decoration: underline; text-underline-offset: 2px; }

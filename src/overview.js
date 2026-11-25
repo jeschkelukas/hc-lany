@@ -73,7 +73,7 @@ const standingsCard = (standings, logos) => `<section class="card">
   <div class="label">Tabulka · ${escapeHtml(standings.league)}</div>
   <table><tbody>${standings.teams.map((t) => `<tr${t.name === TEAM ? ' class="us"' : ""}>
     <td class="n dim">${escapeHtml(t.rank)}.</td><td><span class="team">${logo(t.name, logos, "mini")}<span>${escapeHtml(t.name)}</span></span></td>
-    <td class="n dim">${t.gp}</td><td class="n pts">${t.pts}</td></tr>`).join("")}
+    <td class="n dim opt">${t.gp}</td><td class="n pts">${t.pts}</td></tr>`).join("")}
   </tbody></table>
   <a class="more" href="${CLUB_PAGES.standings}" target="_top">Celá tabulka →</a>
 </section>`;
@@ -86,7 +86,7 @@ const scorersCard = (rows, photos) => {
     const file = photos.get(r.name);
     const face = file ? `<img class="face" src="../photos/${escapeHtml(file)}" alt="">` : PHOTO_PLACEHOLDER;
     return `<tr><td class="n dim">${escapeHtml(r.rankLabel)}</td><td><span class="team">${face}<span>${escapeHtml(r.name)}</span></span></td>
-    <td class="n dim" title="góly + asistence">${r.g}+${r.a}</td><td class="n pts">${r.pts}</td></tr>`;
+    <td class="n dim opt" title="góly + asistence">${r.g}+${r.a}</td><td class="n pts">${r.pts}</td></tr>`;
   }).join("")}
   </tbody></table>
   <a class="more" href="${CLUB_PAGES.scoring}" target="_top">Celé bodování →</a>
@@ -153,9 +153,18 @@ export const renderOverview = ({ schedule, reports, standings, scoringRows, logo
   .foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; padding: 0 2px; color: var(--dim); font-size: 10px; }
   .foot a { color: var(--gold); text-decoration: none; font: 600 11px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; }
   .empty { margin: 0; color: var(--dim); }
+  /* Phones: keep the two columns (the iframe height is fixed) and drop secondary details. */
   @media (max-width: 480px) {
-    .grid { grid-template-columns: 1fr; }
-    .last { grid-template-columns: 1fr; justify-items: start; }
+    body { font-size: 12px; }
+    .opt, .form { display: none; }
+    .last { grid-template-columns: auto 1fr; gap: 8px; }
+    .side { font-size: 14px; }
+    .big, .big svg { width: 44px; height: 44px; }
+    .when b { font-size: 26px; }
+    .card { padding: 8px; }
+    .team { max-width: 104px; }
+    .team span { white-space: nowrap; }
+    .foot span { display: none; }
   }
 </style></head><body>
 ${nextMatchCard(next, logos, updatedAt)}

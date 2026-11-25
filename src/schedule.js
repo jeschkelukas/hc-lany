@@ -55,7 +55,11 @@ const byeWeek = (index) => {
   const sunday = new Date(monday.getTime() + 6 * DAY_MS);
   const short = (d) => `${d.getUTCDate()}.${d.getUTCMonth() + 1}.`;
   const from = monday.getUTCFullYear() === sunday.getUTCFullYear() ? short(monday) : `${short(monday)}${monday.getUTCFullYear()}`;
-  return `${from}–${short(sunday)}${sunday.getUTCFullYear()}`;
+  const sameMonth = monday.getUTCMonth() === sunday.getUTCMonth();
+  return {
+    full: `${from}–${short(sunday)}${sunday.getUTCFullYear()}`,
+    compact: `${sameMonth ? `${monday.getUTCDate()}.` : short(monday)}–${short(sunday)}`,
+  };
 };
 
 export const formatKickoff = (key) => {
@@ -138,16 +142,21 @@ const outcome = (match) => {
   return '<span class="pill d" title="Remíza">R</span>';
 };
 
-// Date and time get their own columns; a moved match shows the planned value struck through above the new one.
+const shortDate = (key) => `${Number(key.slice(8, 10))}.${Number(key.slice(5, 7))}.`;
+
+// Wide layout: date and time in their own columns. Narrow layout (phones): one compact
+// "16.11. 21:45" column. A moved match shows the planned value struck through above the new one.
 const kickoffCells = (r) => {
-  if (!r.kickoff) return "<td></td><td></td>";
+  if (!r.kickoff) return '<td class="wide-only"></td><td class="wide-only"></td><td class="narrow-only"></td>';
   const now = formatKickoff(r.kickoff);
+  const nowShort = `${shortDate(r.kickoff)} <span class="muted">${escapeHtml(now.time)}</span>`;
   if (!r.planned || r.planned === r.kickoff) {
-    return `<td>${escapeHtml(now.day)}</td><td class="muted">${escapeHtml(now.time)}</td>`;
+    return `<td class="wide-only">${escapeHtml(now.day)}</td><td class="wide-only muted">${escapeHtml(now.time)}</td><td class="narrow-only">${nowShort}</td>`;
   }
   const was = formatKickoff(r.planned);
-  const stack = (old, current) => `<s class="muted">${escapeHtml(old)}</s><br><span class="moved">${escapeHtml(current)}</span>`;
-  return `<td>${stack(was.day, now.day)}</td><td>${stack(was.time, now.time)}</td>`;
+  const stack = (old, current) => `<s class="muted">${old}</s><br><span class="moved">${current}</span>`;
+  return `<td class="wide-only">${stack(escapeHtml(was.day), escapeHtml(now.day))}</td><td class="wide-only">${stack(escapeHtml(was.time), escapeHtml(now.time))}</td>`
+    + `<td class="narrow-only">${stack(shortDate(r.planned), `${shortDate(r.kickoff)} ${escapeHtml(now.time)}`)}</td>`;
 };
 
 // Fixed slots (home goals | colon | away goals | outcome) keep every row aligned on the colon.
@@ -173,14 +182,17 @@ export const renderSchedule = ({ league, matches, reports, logos, updatedAt }) =
   const side = (name) => (name === TEAM ? `<span class="me">${teamBadge(name, logos)}</span>` : teamBadge(name, logos));
   const rowClass = (r) => [r === next && "mark", r.halfBreak && "half"].filter(Boolean).join(" ");
   const body = `<div class="box"><table class="compact schedule">
-  <thead><tr><th class="n">Kolo</th><th>Termín</th><th>Čas</th><th>Domácí</th><th class="c">Výsledek</th><th>Hosté</th></tr></thead>
+  <thead><tr><th class="n">Kolo</th><th class="wide-only">Termín</th><th class="wide-only">Čas</th><th class="narrow-only">Termín</th><th>Domácí</th><th class="c">Výsledek</th><th>Hosté</th></tr></thead>
   <tbody>${rows.map((r) => {
     const cls = rowClass(r);
     const open = `<tr${cls ? ` class="${cls}"` : ""}><td class="n rank">${r.round ? `${r.round}.` : ""}</td>`;
-    if (r.bye) return `${open}<td class="muted" colspan="2">${escapeHtml(r.week ?? "")}</td><td colspan="3" class="c"><span class="pill d bye">volno</span></td></tr>`;
-    return `${open}${kickoffCells(r)}<td>${side(r.home)}</td>
+    if (r.bye) {
+      return `${open}<td class="muted wide-only" colspan="2">${escapeHtml(r.week?.full ?? "")}</td><td class="muted narrow-only">${escapeHtml(r.week?.compact ?? "")}</td>`
+        + `<td colspan="3" class="c"><span class="pill d bye">volno</span></td></tr>`;
+    }
+    return `${open}${kickoffCells(r)}<td class="team">${side(r.home)}</td>
     <td class="res">${resultCell(r, r === next)}</td>
-    <td>${side(r.away)}</td></tr>`;
+    <td class="team">${side(r.away)}</td></tr>`;
   }).join("")}
   </tbody></table></div>`;
   return renderShell({
