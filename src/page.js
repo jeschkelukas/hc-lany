@@ -13,6 +13,9 @@ export const decode = (s) =>
 export const escapeHtml = (s) =>
   String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[ch]);
 
+export const slug = (s) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
 export const stripTags = (s) => decode(s.replace(/<[^>]+>/g, "").trim());
 
 export const cellsOf = (row) => [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1]);
@@ -39,6 +42,8 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   tbody tr:nth-child(even) td { background: var(--zebra); }
   tbody tr.mark td { background: var(--mark); font-weight: bold; }
   tr.zero td { color: var(--muted); }
+  .club { display: inline-flex; align-items: center; gap: 8px; }
+  .club img, .club svg { width: 22px; height: 22px; object-fit: contain; flex: 0 0 22px; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .foot { margin: 8px 0 0; font-size: 11px; color: var(--muted); }
