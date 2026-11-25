@@ -91,7 +91,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .pill.next { background: var(--accent); font-size: 10px; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0; }
   .narrow-only { display: none; }
   /* Phones: the iframe keeps its fixed height, so narrow layouts drop detail instead of stacking rows. */
-  @media (max-width: 520px) {
+  @media (max-width: 600px) {
     .wide-only, .opt { display: none; }
     .narrow-only { display: table-cell; }
     table.stats { font-size: 13px; }

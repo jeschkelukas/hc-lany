@@ -43,7 +43,7 @@ The exact HTML pasted into each page of the club website is kept in `embeds/`
 ## Phones
 
 The club website shows the widgets in fixed-height iframes, and the same height applies on
-phones. So the phone layouts (iframe narrower than 520 px) drop detail instead of stacking
+phones. So the phone layouts (iframe narrower than 600 px) drop detail instead of stacking
 rows, and every widget fits its recommended iframe height from 340 px wide up:
 
 - **Schedule** – date and time merge into one compact column (`16.11. 21:45`), team logos
