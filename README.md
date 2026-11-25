@@ -69,6 +69,19 @@ rows, and every widget fits its recommended iframe height from 340 px wide up:
   per match, combined into the match detail pages (`zapas/<date>-<opponent>/`) that the
   schedule and the homepage overview link to.
 
+## Network use
+
+Visitors never contact GameStats: the widgets are static pages with the data built in. The
+build itself keeps its downloads small:
+
+- Logos and player photos are cached as thumbnails in `data/images/` (GameStats upload names
+  are content hashes), so only new or changed images are downloaded.
+- Player pages are fetched only for players whose season line (games, goals, assists,
+  points) changed since the snapshot; the rest of the per-match points come from
+  `data/snapshot.json`.
+- Each run still reads the three small GameStats pages (stats, overview, schedule) and the
+  club website's article lists, which are needed to notice any change at all.
+
 ## Backups and safeguards
 
 - Every build saves the downloaded data (player stats, standings, schedule and per-match

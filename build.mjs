@@ -1,9 +1,9 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "./src/scoring.js";
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
 import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseSchedule, renderSchedule } from "./src/schedule.js";
-import { fetchPlayerMatches, matchSlug, renderMatch, scorersByMatch } from "./src/matches.js";
+import { fetchPlayerMatches, matchSlug, playerMatchesFromArchive, renderMatch, scorersByMatch } from "./src/matches.js";
 import { fetchReports } from "./src/reports.js";
 import { renderOverview } from "./src/overview.js";
 import { slug } from "./src/page.js";
@@ -39,30 +39,43 @@ const scoring = guardScoring(freshScoring, archive?.scoring, sameSeason);
 const standings = guardStandings(freshStandings, archive?.standings, sameSeason);
 const schedule = guardSchedule(freshSchedule, archive?.schedule, sameSeason);
 
-// GameStats serves full-size uploads; shrink them to thumbnail size when ImageMagick is available
-// (the workflow installs it), otherwise keep the original file.
+// GameStats serves full-size uploads; shrink them to thumbnail size with ImageMagick (the
+// workflow installs it). Returns false when ImageMagick is unavailable.
 const shrink = (path, geometry) => {
   for (const cmd of ["magick", "convert"]) {
     try {
       execFileSync(cmd, [path, "-resize", geometry, "-strip", "-quality", "82", path], { stdio: "ignore" });
-      return;
+      return true;
     } catch {
       // try the next binary name
     }
   }
   console.warn(`ImageMagick unavailable, ${path} kept at full size`);
+  return false;
 };
 
-// Images are copied into dist/<dir>; a missing or broken one falls back to the widget's placeholder.
+// Upload file names on GameStats are content hashes, so a cached thumbnail in data/images is
+// valid for as long as the URL stays the same: only new or changed images are downloaded.
+// Only shrunk thumbnails are cached, so a local build without ImageMagick never commits full-size files.
+let imageDownloads = 0;
 const saveImage = (dir, geometry) => async ({ name, url }) => {
   if (!url) return [];
+  const file = `${slug(name)}.${new URL(url).pathname.split(".").pop().toLowerCase()}`;
+  const cached = `data/images/${dir}/${new URL(url).pathname.split("/").pop()}`;
+  mkdirSync(`dist/${dir}`, { recursive: true });
+  if (existsSync(cached)) {
+    copyFileSync(cached, `dist/${dir}/${file}`);
+    return [[name, file]];
+  }
   try {
     const res = await fetch(url);
+    imageDownloads += 1;
     if (!res.ok || !res.headers.get("content-type")?.startsWith("image/")) throw new Error(String(res.status));
-    const file = `${slug(name)}.${new URL(url).pathname.split(".").pop().toLowerCase()}`;
-    mkdirSync(`dist/${dir}`, { recursive: true });
     writeFileSync(`dist/${dir}/${file}`, Buffer.from(await res.arrayBuffer()));
-    if (geometry) shrink(`dist/${dir}/${file}`, geometry);
+    if (shrink(`dist/${dir}/${file}`, geometry)) {
+      mkdirSync(`data/images/${dir}`, { recursive: true });
+      copyFileSync(`dist/${dir}/${file}`, cached);
+    }
     return [[name, file]];
   } catch (error) {
     console.warn(`${dir}: ${name} failed (${error.message}), using placeholder`);
@@ -70,7 +83,7 @@ const saveImage = (dir, geometry) => async ({ name, url }) => {
   }
 };
 const saveAll = async (items, save) => new Map((await Promise.all(items.map(save))).flat());
-const logos = await saveAll(standings.teams.map((t) => ({ name: t.name, url: t.logoUrl })), saveImage("logos"));
+const logos = await saveAll(standings.teams.map((t) => ({ name: t.name, url: t.logoUrl })), saveImage("logos", "112x112>"));
 const photos = await saveAll(scoring.players.map((p) => ({ name: p.name, url: p.photoUrl })), saveImage("photos", "60x80^"));
 
 const scoringRows = buildTable(scoring, ROSTER);
@@ -82,7 +95,16 @@ const reports = await fetchReports(SEASON_START).catch((error) => {
   return [];
 });
 // Match details: per-match points of every HC Lány scorer, read from their GameStats player pages.
-const scorers = mergeMatchScorers(scorersByMatch(await fetchPlayerMatches(scoring.players)), archive?.matchScorers, sameSeason);
+// Player pages are only fetched for players whose season line changed since the snapshot;
+// everyone else's per-match points come from the archive.
+const archivedLine = new Map((sameSeason ? archive?.scoring?.players ?? [] : []).map((p) => [p.name, `${p.gp}|${p.g}|${p.a}|${p.pts}`]));
+const changed = scoring.players.filter((p) => archivedLine.get(p.name) !== `${p.gp}|${p.g}|${p.a}|${p.pts}`);
+const unchangedNames = new Set(scoring.players.filter((p) => !changed.includes(p)).map((p) => p.name));
+const playerMatches = [
+  ...playerMatchesFromArchive(sameSeason ? archive?.matchScorers : null, unchangedNames),
+  ...await fetchPlayerMatches(changed),
+];
+const scorers = mergeMatchScorers(scorersByMatch(playerMatches), archive?.matchScorers, sameSeason);
 saveSnapshot({ league: scoring.league, scoring, standings, schedule, matchScorers: Object.fromEntries([...scorers].sort()) }, updatedAt);
 const played = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff && r.score);
 for (const round of played) {
@@ -98,4 +120,4 @@ write("rozpis", renderSchedule({ ...schedule, reports, logos, detailUrlOf, updat
 write("prehled", renderOverview({ schedule, reports, standings, scoringRows, logos, photos, detailUrlOf, updatedAt }));
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
 <ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li></ul>`);
-console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, match details: ${played.length}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);
+console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, image downloads: ${imageDownloads}, player pages fetched: ${changed.length}, match details: ${played.length}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);

@@ -45,6 +45,15 @@ export const fetchPlayerMatches = async (players) => {
   return results;
 };
 
+// Rebuilds per-player match rows from the archived snapshot (kick-off -> scorers).
+export const playerMatchesFromArchive = (matchScorers, names) => {
+  const byName = new Map([...names].map((n) => [n, []]));
+  for (const [kickoff, list] of Object.entries(matchScorers ?? {})) {
+    for (const s of list) byName.get(s.name)?.push({ kickoff, g: s.g, a: s.a, pts: s.pts });
+  }
+  return [...byName].map(([name, matches]) => ({ name, matches }));
+};
+
 export const matchSlug = (r) => `${r.kickoff.slice(0, 10)}-${slug(r.home === TEAM ? r.away : r.home)}`;
 
 // Map of kick-off -> HC Lány scorers in that match, best first.
