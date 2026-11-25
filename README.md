@@ -9,14 +9,14 @@ them with an `<iframe>`, so the pages there never need manual updates.
 
 | Widget | URL | Iframe height |
 | --- | --- | --- |
-| Canadian scoring (HC Lány players) | https://jeschkelukas.github.io/lany-bodovani/bodovani/ | 1060 |
-| League standings (HC Lány's league) | https://jeschkelukas.github.io/lany-bodovani/tabulka/ | 400 |
-| HC Lány match schedule | https://jeschkelukas.github.io/lany-bodovani/rozpis/ | 720 |
+| Canadian scoring (HC Lány players) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1060 |
+| League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
+| HC Lány match schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 720 |
 
 Embed snippet (change `src` and `height` per widget):
 
 ```html
-<iframe src="https://jeschkelukas.github.io/lany-bodovani/rozpis/" width="100%" height="720" scrolling="no" style="border:0;overflow:hidden" loading="lazy" title="Rozpis utkání HC Lány"></iframe>
+<iframe src="https://jeschkelukas.github.io/hc-lany/rozpis/" width="100%" height="720" scrolling="no" style="border:0;overflow:hidden" loading="lazy" title="Rozpis utkání HC Lány"></iframe>
 ```
 
 The widget text is in Czech, because it is shown on the club's Czech website.
