@@ -1,0 +1,506 @@
+{
+  "league": "2. liga 2026/27",
+  "scoring": {
+    "league": "2. liga 2026/27",
+    "players": [
+      {
+        "name": "Hauf Ivan",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/b64842c7737b36df78c64930.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e2da1cda414b97eac",
+        "leagueRank": "5",
+        "gp": 2,
+        "g": 2,
+        "a": 4,
+        "pts": 6
+      },
+      {
+        "name": "Jeschke Lukáš",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/2855ef0bd525311f936b72d2.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e329c0a2202977231",
+        "leagueRank": "8",
+        "gp": 2,
+        "g": 2,
+        "a": 3,
+        "pts": 5
+      },
+      {
+        "name": "Hořejší Milan",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/17381d6d1cc270670bf4be98.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e308224bf7a2f7da3",
+        "leagueRank": "16",
+        "gp": 3,
+        "g": 3,
+        "a": 1,
+        "pts": 4
+      },
+      {
+        "name": "Pokorný Radek",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/ab3a1207a00454050aa63511.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e3e611103f3e7de14",
+        "leagueRank": "18",
+        "gp": 2,
+        "g": 2,
+        "a": 2,
+        "pts": 4
+      },
+      {
+        "name": "Ungrman Petr",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/c8b07125db3563c4d4798e0b.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e463366064b8b9938",
+        "leagueRank": "24",
+        "gp": 2,
+        "g": 2,
+        "a": 1,
+        "pts": 3
+      },
+      {
+        "name": "Hoffmann Marek",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/2c0c50f638593c99f1b28818.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e2fbe066719930788",
+        "leagueRank": "30",
+        "gp": 2,
+        "g": 1,
+        "a": 2,
+        "pts": 3
+      },
+      {
+        "name": "Švácha Jiří",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/6c6b332f3b13794126c80bb4.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e4530856333f3b87b",
+        "leagueRank": "33",
+        "gp": 1,
+        "g": 2,
+        "a": 0,
+        "pts": 2
+      },
+      {
+        "name": "Náprstek Martin",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/3484b20d4344a75a1172f5d6.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e3cbd21c9a6750517",
+        "leagueRank": "46",
+        "gp": 3,
+        "g": 1,
+        "a": 1,
+        "pts": 2
+      },
+      {
+        "name": "Štechmiler Jaroslav",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/48ca9a3aee75139a9b33dab7.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e44a97742ece74c5a",
+        "leagueRank": "63",
+        "gp": 3,
+        "g": 1,
+        "a": 0,
+        "pts": 1
+      },
+      {
+        "name": "Lomberský Aleš",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/730040eaf3c025a1405a1b68.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18af6b0fa380219ae8e",
+        "leagueRank": "83",
+        "gp": 3,
+        "g": 0,
+        "a": 1,
+        "pts": 1
+      },
+      {
+        "name": "Taraba Martin",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/c969dc5ece39f11d30eb873e.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e45b6d5a63e6f0d1b",
+        "leagueRank": "83",
+        "gp": 3,
+        "g": 0,
+        "a": 1,
+        "pts": 1
+      }
+    ]
+  },
+  "standings": {
+    "league": "2. liga 2026/27",
+    "teams": [
+      {
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/97713e9bc08ec8e44adf4c59.jpg",
+        "rank": "1",
+        "name": "Nové Strašecí",
+        "gp": 3,
+        "w": 2,
+        "otw": 0,
+        "d": 1,
+        "otl": 0,
+        "l": 0,
+        "score": "18:13",
+        "pts": 5
+      },
+      {
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/88f3942d0efd42267a21157b.webp",
+        "rank": "2",
+        "name": "Delfins Zátiší",
+        "gp": 2,
+        "w": 2,
+        "otw": 0,
+        "d": 0,
+        "otl": 0,
+        "l": 0,
+        "score": "13:4",
+        "pts": 4
+      },
+      {
+        "logoUrl": null,
+        "rank": "3",
+        "name": "Kralovice 1944",
+        "gp": 3,
+        "w": 2,
+        "otw": 0,
+        "d": 0,
+        "otl": 0,
+        "l": 1,
+        "score": "15:11",
+        "pts": 4
+      },
+      {
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/2b6d980b59d6e8eee30fa02b.jpg",
+        "rank": "4",
+        "name": "HC Lány",
+        "gp": 3,
+        "w": 1,
+        "otw": 0,
+        "d": 0,
+        "otl": 0,
+        "l": 2,
+        "score": "16:12",
+        "pts": 2
+      },
+      {
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/fb4e866d32b1da70b3c31c0d.jpg",
+        "rank": "5",
+        "name": "Old Stars",
+        "gp": 2,
+        "w": 1,
+        "otw": 0,
+        "d": 0,
+        "otl": 0,
+        "l": 1,
+        "score": "17:13",
+        "pts": 2
+      },
+      {
+        "logoUrl": null,
+        "rank": "6",
+        "name": "Rynholec",
+        "gp": 3,
+        "w": 1,
+        "otw": 0,
+        "d": 0,
+        "otl": 0,
+        "l": 2,
+        "score": "16:15",
+        "pts": 2
+      },
+      {
+        "logoUrl": null,
+        "rank": "7",
+        "name": "Sýkořice",
+        "gp": 3,
+        "w": 1,
+        "otw": 0,
+        "d": 0,
+        "otl": 0,
+        "l": 2,
+        "score": "11:11",
+        "pts": 2
+      },
+      {
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/37a4e02825ba79fdca1c8954.png",
+        "rank": "8",
+        "name": "Mladotice",
+        "gp": 3,
+        "w": 1,
+        "otw": 0,
+        "d": 0,
+        "otl": 0,
+        "l": 2,
+        "score": "8:27",
+        "pts": 2
+      },
+      {
+        "logoUrl": null,
+        "rank": "9",
+        "name": "Lokomotiva",
+        "gp": 2,
+        "w": 0,
+        "otw": 0,
+        "d": 1,
+        "otl": 0,
+        "l": 1,
+        "score": "8:16",
+        "pts": 1
+      }
+    ]
+  },
+  "schedule": {
+    "league": "2. liga 2026/27",
+    "matches": [
+      {
+        "kickoff": "2026-11-13 20:15",
+        "home": "HC Lány",
+        "away": "Kralovice 1944",
+        "score": [
+          4,
+          6
+        ],
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2026-11-16 21:45",
+        "home": "Sýkořice",
+        "away": "HC Lány",
+        "score": [
+          5,
+          2
+        ],
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2026-11-20 21:50",
+        "home": "Mladotice",
+        "away": "HC Lány",
+        "score": [
+          1,
+          10
+        ],
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2026-11-26 22:05",
+        "home": "HC Lány",
+        "away": "Old Stars",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2026-12-04 21:50",
+        "home": "Rynholec",
+        "away": "HC Lány",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2026-12-18 20:15",
+        "home": "HC Lány",
+        "away": "Nové Strašecí",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-01-07 20:30",
+        "home": "Delfins Zátiší",
+        "away": "HC Lány",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-01-14 22:05",
+        "home": "HC Lány",
+        "away": "Lokomotiva",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-01-21 20:30",
+        "home": "HC Lány",
+        "away": "Sýkořice",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-01-28 20:30",
+        "home": "Kralovice 1944",
+        "away": "HC Lány",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-02-11 22:05",
+        "home": "HC Lány",
+        "away": "Mladotice",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-02-19 21:50",
+        "home": "Old Stars",
+        "away": "HC Lány",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-02-25 22:05",
+        "home": "HC Lány",
+        "away": "Rynholec",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-03-11 20:30",
+        "home": "Nové Strašecí",
+        "away": "HC Lány",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-03-19 20:15",
+        "home": "HC Lány",
+        "away": "Delfins Zátiší",
+        "score": null,
+        "note": "",
+        "url": null
+      },
+      {
+        "kickoff": "2027-03-26 21:50",
+        "home": "Lokomotiva",
+        "away": "HC Lány",
+        "score": null,
+        "note": "",
+        "url": null
+      }
+    ]
+  },
+  "matchScorers": {
+    "2026-11-13 20:15": [
+      {
+        "name": "Jeschke Lukáš",
+        "g": 2,
+        "a": 2,
+        "pts": 4
+      },
+      {
+        "name": "Pokorný Radek",
+        "g": 2,
+        "a": 2,
+        "pts": 4
+      }
+    ],
+    "2026-11-16 21:45": [
+      {
+        "name": "Hauf Ivan",
+        "g": 1,
+        "a": 0,
+        "pts": 1
+      },
+      {
+        "name": "Hořejší Milan",
+        "g": 1,
+        "a": 0,
+        "pts": 1
+      },
+      {
+        "name": "Jeschke Lukáš",
+        "g": 0,
+        "a": 1,
+        "pts": 1
+      },
+      {
+        "name": "Náprstek Martin",
+        "g": 0,
+        "a": 1,
+        "pts": 1
+      }
+    ],
+    "2026-11-20 21:50": [
+      {
+        "name": "Hauf Ivan",
+        "g": 1,
+        "a": 4,
+        "pts": 5
+      },
+      {
+        "name": "Hořejší Milan",
+        "g": 2,
+        "a": 1,
+        "pts": 3
+      },
+      {
+        "name": "Ungrman Petr",
+        "g": 2,
+        "a": 1,
+        "pts": 3
+      },
+      {
+        "name": "Hoffmann Marek",
+        "g": 1,
+        "a": 2,
+        "pts": 3
+      },
+      {
+        "name": "Švácha Jiří",
+        "g": 2,
+        "a": 0,
+        "pts": 2
+      },
+      {
+        "name": "Náprstek Martin",
+        "g": 1,
+        "a": 0,
+        "pts": 1
+      },
+      {
+        "name": "Štechmiler Jaroslav",
+        "g": 1,
+        "a": 0,
+        "pts": 1
+      },
+      {
+        "name": "Lomberský Aleš",
+        "g": 0,
+        "a": 1,
+        "pts": 1
+      },
+      {
+        "name": "Taraba Martin",
+        "g": 0,
+        "a": 1,
+        "pts": 1
+      }
+    ]
+  },
+  "matchExtras": {
+    "2026-11-13-kralovice-1944": {
+      "periods": [
+        "2:1",
+        "2:1",
+        "0:4"
+      ],
+      "penalties": "1:0"
+    },
+    "2026-11-16-sykorice": {
+      "periods": [
+        "1:1",
+        "0:1",
+        "1:3"
+      ],
+      "penalties": "4:2"
+    },
+    "2026-11-20-mladotice": {
+      "periods": [
+        "3:0",
+        "2:0",
+        "5:1"
+      ],
+      "penalties": "0:2"
+    }
+  }
+}
