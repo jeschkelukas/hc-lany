@@ -78,6 +78,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .next { font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase; letter-spacing: .04em; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
+  .pts a { text-decoration: underline; text-underline-offset: 2px; }
   .foot { margin: 8px 0 0; font-size: 11px; color: var(--muted); }
   .msg { padding: 12px; }
 </style></head><body>
