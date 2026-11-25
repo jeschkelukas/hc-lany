@@ -89,6 +89,12 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .pill.bye { padding: 2px 12px; text-transform: uppercase; letter-spacing: .08em; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
   .pill.next { background: var(--accent); font-size: 10px; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0; }
+  .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 2px solid var(--accent); margin-bottom: 10px; }
+  .summary div { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
+  .summary div + div { border-left: 1px solid var(--line); }
+  .summary span { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .summary b { font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .summary .total b { color: var(--loss); }
   .narrow-only { display: none; }
   /* Phones: the iframe keeps its fixed height, so narrow layouts drop detail instead of stacking rows. */
   @media (max-width: 600px) {
@@ -106,6 +112,9 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
     table.stats th { padding-left: 3px; padding-right: 3px; }
     th[data-sort] button { padding: 5px 3px; }
     .foot { font-size: 10px; }
+    .summary div { padding: 6px; }
+    .summary span { font-size: 9px; letter-spacing: .02em; }
+    .summary b { font-size: 19px; }
   }
   @media (max-width: 370px) {
     table.schedule .club { max-width: 64px; }

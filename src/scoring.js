@@ -94,10 +94,17 @@ const playerCell = (r, photos) => {
   return `<span class="player">${face}${name}</span>`;
 };
 
+// Team totals strip above the table: how many players scored and the team's goals, assists and points.
+const summary = (rows) => {
+  const sum = (key) => rows.reduce((total, r) => total + r[key], 0);
+  const tile = (label, value, cls = "") => `<div${cls ? ` class="${cls}"` : ""}><span>${label}</span><b>${value}</b></div>`;
+  return `<div class="summary">${tile("Hráčů s body", rows.filter((r) => r.pts > 0).length)}${tile("Góly", sum("g"))}${tile("Asistence", sum("a"))}${tile("Body", sum("pts"), "total")}</div>`;
+};
+
 export const renderPage = ({ league, rows, photos = new Map(), updatedAt, error }) => {
   const body = error
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
-    : `<div class="box"><table class="stats players" data-sortable>
+    : `${summary(rows)}<div class="box"><table class="stats players" data-sortable>
   <thead><tr><th class="n">#</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
   <tbody>${rows.map((r) => `<tr${r.pts === 0 ? ' class="zero"' : ""}>
     <td class="n rank">${r.rankLabel}</td>
