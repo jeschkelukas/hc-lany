@@ -80,6 +80,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .tag { display: inline-block; width: 1.7em; margin-left: 3px; text-align: left; vertical-align: middle; }
   tbody tr.half td { border-top: 3px solid var(--line); }
   .pill { display: inline-block; min-width: 18px; padding: 1px 5px; border-radius: 4px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; }
+  .pill.bye { padding: 2px 12px; text-transform: uppercase; letter-spacing: .08em; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
   .next { font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase; letter-spacing: .04em; }
   a { color: var(--accent); text-decoration: none; }

@@ -176,7 +176,7 @@ export const renderSchedule = ({ league, matches, reports, logos, updatedAt }) =
   <tbody>${rows.map((r) => {
     const cls = rowClass(r);
     const open = `<tr${cls ? ` class="${cls}"` : ""}><td class="n rank">${r.round ? `${r.round}.` : ""}</td>`;
-    if (r.bye) return `${open}<td class="muted" colspan="2">${escapeHtml(r.week ?? "")}</td><td colspan="3" class="muted">volno</td></tr>`;
+    if (r.bye) return `${open}<td class="muted" colspan="2">${escapeHtml(r.week ?? "")}</td><td colspan="3" class="c"><span class="pill d bye">volno</span></td></tr>`;
     return `${open}${kickoffCells(r)}<td>${side(r.home)}</td>
     <td class="res">${resultCell(r, r === next)}</td>
     <td>${side(r.away)}</td></tr>`;
