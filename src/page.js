@@ -63,28 +63,22 @@ document.querySelectorAll("table[data-sortable]").forEach((table) => {
   const original = [...tbody.rows];
   const headers = [...table.tHead.rows[0].cells];
   let active = { index: -1, dir: 0 };
-  const valueOf = (row, index, isText) => {
+  const valueOf = (row, index) => {
     const cell = row.cells[index];
-    const raw = cell.dataset.v ?? cell.textContent.trim();
-    return isText ? raw : Number.parseFloat(raw) || 0;
+    return Number.parseFloat(cell.dataset.v ?? cell.textContent) || 0;
   };
   headers.forEach((th, index) => {
-    const kind = th.dataset.sort;
-    if (!kind) return;
-    const isText = kind === "text";
+    if (!th.hasAttribute("data-sort")) return;
     const button = document.createElement("button");
     button.type = "button";
     button.textContent = th.textContent;
     th.textContent = "";
     th.append(button);
     button.addEventListener("click", () => {
-      const firstDir = kind === "num" ? -1 : 1;
-      const dir = active.index === index ? -active.dir : firstDir;
+      const dir = active.index === index ? -active.dir : -1;
       active = { index, dir };
       const rows = [...original].sort((a, b) => {
-        const x = valueOf(a, index, isText);
-        const y = valueOf(b, index, isText);
-        const diff = isText ? x.localeCompare(y, "cs") : x - y;
+        const diff = valueOf(a, index) - valueOf(b, index);
         return diff * dir || original.indexOf(a) - original.indexOf(b);
       });
       tbody.append(...rows);
