@@ -134,7 +134,7 @@ export const renderOverview = ({ schedule, leagueMatches = [], reports, standing
   .soon { color: var(--bg); background: var(--gold); border-radius: 99px; padding: 3px 9px; letter-spacing: .06em; }
   .match { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
   .side { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font: 600 16px/1.1 var(--display); letter-spacing: .02em; text-transform: uppercase; }
-  .side.us span { color: var(--gold); }
+  .side.us > span { color: var(--gold); }
   .big { width: 52px; height: 52px; object-fit: contain; display: block; }
   .big svg { width: 52px; height: 52px; display: block; }
   .when { display: flex; flex-direction: column; align-items: center; gap: 2px; }
