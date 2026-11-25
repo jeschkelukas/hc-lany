@@ -72,6 +72,12 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   table.compact th, table.compact td { padding-left: 5px; padding-right: 5px; }
   .me { font-weight: bold; }
   .moved { color: var(--loss); }
+  table.schedule td.res { white-space: nowrap; text-align: center; }
+  .score { display: inline-grid; grid-template-columns: 1.6em .5em 1.6em; align-items: center; font-weight: bold; vertical-align: middle; }
+  .score .h { text-align: right; } .score .colon { text-align: center; } .score .a { text-align: left; }
+  .score .wide { grid-column: 1 / -1; text-align: center; font-weight: bold; }
+  a.score { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  .tag { display: inline-block; width: 1.9em; margin-left: 4px; text-align: left; vertical-align: middle; }
   tbody tr.half td { border-top: 3px solid var(--line); }
   .pill { display: inline-block; min-width: 18px; padding: 1px 5px; border-radius: 4px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }

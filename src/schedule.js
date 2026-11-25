@@ -138,22 +138,30 @@ const outcome = (match) => {
   return '<span class="pill d" title="Remíza">R</span>';
 };
 
-const kickoffCell = (r) => {
-  if (!r.kickoff) return "–";
+// Date and time get their own columns; a moved match shows the planned value struck through above the new one.
+const kickoffCells = (r) => {
+  if (!r.kickoff) return "<td></td><td></td>";
   const now = formatKickoff(r.kickoff);
   if (!r.planned || r.planned === r.kickoff) {
-    return `${escapeHtml(now.day)} <span class="muted">${escapeHtml(now.time)}</span>`;
+    return `<td>${escapeHtml(now.day)}</td><td class="muted">${escapeHtml(now.time)}</td>`;
   }
   const was = formatKickoff(r.planned);
-  return `<s class="muted">${escapeHtml(was.day)} ${escapeHtml(was.time)}</s><br><span class="moved">${escapeHtml(now.day)} ${escapeHtml(now.time)}</span>`;
+  const stack = (old, current) => `<s class="muted">${escapeHtml(old)}</s><br><span class="moved">${escapeHtml(current)}</span>`;
+  return `<td>${stack(was.day, now.day)}</td><td>${stack(was.time, now.time)}</td>`;
 };
 
+// Fixed slots (home goals | colon | away goals | outcome) keep every row aligned on the colon.
 const resultCell = (r, isNext) => {
-  if (!r.score) return isNext ? '<span class="next">další</span>' : "–";
-  const text = `${r.score[0]}:${r.score[1]}`;
+  const tag = `<span class="tag">${outcome(r)}</span>`;
+  if (!r.score) {
+    return `<span class="score"><span class="wide">${isNext ? '<span class="next">další</span>' : "–"}</span></span>${tag}`;
+  }
+  const goals = `<span class="h">${r.score[0]}</span><span class="colon">:</span><span class="a">${r.score[1]}</span>`;
+  const title = r.note ? ` title="${escapeHtml(r.note)}"` : "";
   // Club reports open in the club page itself (the widget sits in its iframe); GameStats in a new tab.
-  if (r.reportUrl) return `<a href="${escapeHtml(r.reportUrl)}" target="_top" title="Článek o zápase">${text}</a>`;
-  return r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${text}</a>` : text;
+  if (r.reportUrl) return `<a class="score" href="${escapeHtml(r.reportUrl)}" target="_top"${title || ' title="Článek o zápase"'}>${goals}</a>${tag}`;
+  if (r.url) return `<a class="score" href="${escapeHtml(r.url)}" target="_blank" rel="noopener"${title}>${goals}</a>${tag}`;
+  return `<span class="score"${title}>${goals}</span>${tag}`;
 };
 
 export const renderSchedule = ({ league, matches, reports, logos, updatedAt }) => {
@@ -163,14 +171,14 @@ export const renderSchedule = ({ league, matches, reports, logos, updatedAt }) =
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff))[0];
   const side = (name) => (name === TEAM ? `<span class="me">${teamBadge(name, logos)}</span>` : teamBadge(name, logos));
   const rowClass = (r) => [r === next && "mark", r.halfBreak && "half"].filter(Boolean).join(" ");
-  const body = `<div class="box"><table class="compact">
-  <thead><tr><th class="n">Kolo</th><th>Termín</th><th>Domácí</th><th class="c">Výsledek</th><th>Hosté</th></tr></thead>
+  const body = `<div class="box"><table class="compact schedule">
+  <thead><tr><th class="n">Kolo</th><th>Termín</th><th>Čas</th><th>Domácí</th><th class="c">Výsledek</th><th>Hosté</th></tr></thead>
   <tbody>${rows.map((r) => {
     const cls = rowClass(r);
     const open = `<tr${cls ? ` class="${cls}"` : ""}><td class="n rank">${r.round ? `${r.round}.` : ""}</td>`;
-    if (r.bye) return `${open}<td class="muted">${escapeHtml(r.week ?? "")}</td><td colspan="3" class="muted">volno</td></tr>`;
-    return `${open}<td>${kickoffCell(r)}</td><td>${side(r.home)}</td>
-    <td class="c"><span class="pts">${resultCell(r, r === next)}</span>${r.note ? ` <span class="muted">${escapeHtml(r.note)}</span>` : ""} ${outcome(r)}</td>
+    if (r.bye) return `${open}<td class="muted" colspan="2">${escapeHtml(r.week ?? "")}</td><td colspan="3" class="muted">volno</td></tr>`;
+    return `${open}${kickoffCells(r)}<td>${side(r.home)}</td>
+    <td class="res">${resultCell(r, r === next)}</td>
     <td>${side(r.away)}</td></tr>`;
   }).join("")}
   </tbody></table></div>`;
