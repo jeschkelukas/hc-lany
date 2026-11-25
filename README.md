@@ -27,7 +27,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/`
 (`uvod.html` for the homepage intro box, one file per article), as a backup.
 `vybor.html` (committee cards with photos, initials where no photo exists yet) is the
 only one with real content: it can be pasted as HTML, and the build also publishes it as
-the `vybor/` page. To add a photo, replace a person's initials `<div>` with an `<img>`.
+the `vybor/` page. To add a photo, replace a person's initials `<div>` with an `<img>`; photos that are not on
+GameStats go to `embeds/photos/` and are published at `https://jeschkelukas.github.io/hc-lany/vybor/<file>`.
 
 ## What each widget shows
 
