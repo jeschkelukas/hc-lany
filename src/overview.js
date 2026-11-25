@@ -9,7 +9,7 @@ export const CLUB_PAGES = {
   standings: `${CLUB}/tabulka-souteze-2026-2027.html`,
   scoring: `${CLUB}/kanadske-bodovani-2026-2027.html`,
 };
-const TOP_SCORERS = 5;
+const TOP_SCORERS = 9;
 const FORM_MATCHES = 5;
 const DAY_MS = 86_400_000;
 
@@ -72,7 +72,7 @@ const lastResultRow = (played) => {
 const standingsCard = (standings, logos) => `<section class="card">
   <div class="label">Tabulka · ${escapeHtml(standings.league)}</div>
   <table><tbody>${standings.teams.map((t) => `<tr${t.name === TEAM ? ' class="us"' : ""}>
-    <td class="n dim">${escapeHtml(t.rank)}.</td><td class="team">${logo(t.name, logos, "mini")}<span>${escapeHtml(t.name)}</span></td>
+    <td class="n dim">${escapeHtml(t.rank)}.</td><td><span class="team">${logo(t.name, logos, "mini")}<span>${escapeHtml(t.name)}</span></span></td>
     <td class="n dim">${t.gp}</td><td class="n pts">${t.pts}</td></tr>`).join("")}
   </tbody></table>
   <a class="more" href="${CLUB_PAGES.standings}" target="_top">Celá tabulka →</a>
@@ -85,7 +85,7 @@ const scorersCard = (rows, photos) => {
   <table><tbody>${top.map((r) => {
     const file = photos.get(r.name);
     const face = file ? `<img class="face" src="../photos/${escapeHtml(file)}" alt="">` : PHOTO_PLACEHOLDER;
-    return `<tr><td class="n dim">${escapeHtml(r.rankLabel)}</td><td class="team">${face}<span>${escapeHtml(r.name)}</span></td>
+    return `<tr><td class="n dim">${escapeHtml(r.rankLabel)}</td><td><span class="team">${face}<span>${escapeHtml(r.name)}</span></span></td>
     <td class="n dim" title="góly + asistence">${r.g}+${r.a}</td><td class="n pts">${r.pts}</td></tr>`;
   }).join("")}
   </tbody></table>
@@ -136,17 +136,18 @@ export const renderOverview = ({ schedule, reports, standings, scoringRows, logo
   .form span:first-child { margin-right: 4px; }
   .pill { display: inline-block; min-width: 19px; padding: 2px 4px; border-radius: 4px; color: #fff; font: 700 11px/1.2 var(--display); text-align: center; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
-  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; table-layout: auto; }
+  td { height: 26px; }
   td { padding: 3px 4px; border-top: 1px solid var(--line); white-space: nowrap; }
   tr:first-child td { border-top: 0; }
   .n { text-align: right; width: 1%; }
   .dim { color: var(--dim); }
   .pts { font: 700 14px/1 var(--display); color: var(--gold); padding-left: 8px; }
-  .team { display: flex; align-items: center; gap: 6px; overflow: hidden; }
+  .team { display: flex; align-items: center; gap: 6px; min-width: 0; }
   .team span { overflow: hidden; text-overflow: ellipsis; }
   tr.us td { background: rgba(245,197,24,.14); color: var(--gold); font-weight: bold; }
   .mini, .mini svg { width: 16px; height: 16px; object-fit: contain; display: block; flex: 0 0 16px; }
-  .face { width: 18px; height: 24px; object-fit: cover; border-radius: 3px; display: block; flex: 0 0 18px; }
+  .face { width: 14px; height: 18px; object-fit: cover; border-radius: 3px; display: block; flex: 0 0 14px; }
   .more { display: inline-block; margin-top: 8px; font: 600 11px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); text-decoration: none; }
   .more:hover { text-decoration: underline; }
   .foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; padding: 0 2px; color: var(--dim); font-size: 10px; }
