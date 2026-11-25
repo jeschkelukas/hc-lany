@@ -76,11 +76,11 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .me { font-weight: bold; }
   .moved { color: var(--loss); }
   table.schedule td.res { white-space: nowrap; text-align: center; }
-  .score { display: inline-grid; grid-template-columns: 1.5em .45em 1.5em; align-items: center; font-weight: bold; vertical-align: middle; }
+  .score { display: inline-grid; grid-template-columns: 1.35em .45em 1.35em; align-items: center; font-weight: bold; vertical-align: middle; }
   .score .h { text-align: right; } .score .colon { text-align: center; } .score .a { text-align: left; }
   .score .wide { grid-column: 1 / -1; text-align: center; font-weight: bold; }
   a.score { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
-  .tag { display: inline-block; width: 3.2em; margin-left: 8px; text-align: left; vertical-align: middle; }
+  .tag { display: inline-block; width: 2.9em; margin-left: 7px; text-align: left; vertical-align: middle; }
   tbody tr.half td { border-top: 3px solid var(--line); }
   .pill { display: inline-block; min-width: 18px; padding: 1px 5px; border-radius: 4px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; }
   .pill.bye { padding: 2px 12px; text-transform: uppercase; letter-spacing: .08em; }
