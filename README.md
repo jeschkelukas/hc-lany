@@ -65,9 +65,23 @@ rows, and every widget fits its recommended iframe height from 340 px wide up:
   match by the score in its title (`HC Lány - <opponent> x : y`, HC Lány goals first),
   the opponent name and a publish date within 30 days after the match.
 
-If GameStats cannot be read or parsed, the build fails and GitHub Pages keeps serving
-the previous version. If the club website is down, the schedule is published without
-report links.
+- GameStats player pages ("Přehled zápasů") – each HC Lány scorer's goals and assists
+  per match, combined into the match detail pages (`zapas/<date>-<opponent>/`) that the
+  schedule and the homepage overview link to.
+
+## Backups and safeguards
+
+- Every build saves the downloaded data (player stats, standings, schedule and per-match
+  scorers) to `data/snapshot.json` plus a dated copy `data/archive/YYYY-MM-DD.json` (the
+  day's latest state). The workflow commits them whenever they change, so the git history
+  holds every state.
+- Within one season, points, played matches and recorded scorers never go down. If a fresh
+  download comes back thinner than the snapshot (a GameStats glitch, an empty page), the
+  build keeps the archived data for that part and logs a warning. Per match, the list with
+  more recorded goals and assists wins. A new season (different league label) starts fresh.
+- If GameStats cannot be read or parsed at all, the build fails and GitHub Pages keeps
+  serving the previous version. If the club website is down, the schedule is published
+  without report links.
 
 ## Manual data
 

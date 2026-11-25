@@ -9,7 +9,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
   actions: write
@@ -29,6 +29,17 @@ jobs:
       # ImageMagick shrinks player photos to thumbnails; the build still works without it.
       - run: sudo apt-get install -y -qq --no-install-recommends imagemagick >/dev/null
       - run: node build.mjs
+      # Archive the data snapshot (only when it changed); git history is the backup of every state.
+      # Pushes made with the workflow token do not trigger another run.
+      - name: Save data snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if ! git diff --cached --quiet; then
+            git commit -m "data: snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --quiet && git push --quiet || echo "::warning::snapshot push failed, will retry next run"
+          fi
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

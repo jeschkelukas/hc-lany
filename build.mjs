@@ -7,6 +7,7 @@ import { fetchPlayerMatches, matchSlug, renderMatch, scorersByMatch } from "./sr
 import { fetchReports } from "./src/reports.js";
 import { renderOverview } from "./src/overview.js";
 import { slug } from "./src/page.js";
+import { guardSchedule, guardScoring, guardStandings, loadSnapshot, mergeMatchScorers, saveSnapshot } from "./src/snapshot.js";
 
 // Each widget gets its own folder so its iframe URL stays stable when more widgets are added.
 const write = (path, html) => {
@@ -24,12 +25,19 @@ const updatedAt = new Date();
 const [statsHtml, overviewHtml, scheduleHtml] = await Promise.all([SOURCE, STANDINGS_SOURCE, SCHEDULE_SOURCE].map(download));
 
 // A failed parse throws, so the job fails and GitHub Pages keeps serving the previous version.
-const scoring = parseTeamScoring(statsHtml, TEAM);
-if (!scoring) throw new Error(`${TEAM} not found in GameStats scoring`);
-const standings = parseStandings(overviewHtml, TEAM);
-if (!standings) throw new Error(`${TEAM} not found in GameStats standings`);
-const schedule = parseSchedule(scheduleHtml, TEAM);
-if (!schedule) throw new Error(`${TEAM} not found in GameStats schedule`);
+const freshScoring = parseTeamScoring(statsHtml, TEAM);
+if (!freshScoring) throw new Error(`${TEAM} not found in GameStats scoring`);
+const freshStandings = parseStandings(overviewHtml, TEAM);
+if (!freshStandings) throw new Error(`${TEAM} not found in GameStats standings`);
+const freshSchedule = parseSchedule(scheduleHtml, TEAM);
+if (!freshSchedule) throw new Error(`${TEAM} not found in GameStats schedule`);
+
+// Thinner data than the archived snapshot (same season) is treated as a GameStats glitch.
+const archive = loadSnapshot();
+const sameSeason = archive?.league === freshScoring.league;
+const scoring = guardScoring(freshScoring, archive?.scoring, sameSeason);
+const standings = guardStandings(freshStandings, archive?.standings, sameSeason);
+const schedule = guardSchedule(freshSchedule, archive?.schedule, sameSeason);
 
 // GameStats serves full-size uploads; shrink them to thumbnail size when ImageMagick is available
 // (the workflow installs it), otherwise keep the original file.
@@ -74,7 +82,8 @@ const reports = await fetchReports(SEASON_START).catch((error) => {
   return [];
 });
 // Match details: per-match points of every HC Lány scorer, read from their GameStats player pages.
-const scorers = scorersByMatch(await fetchPlayerMatches(scoring.players));
+const scorers = mergeMatchScorers(scorersByMatch(await fetchPlayerMatches(scoring.players)), archive?.matchScorers, sameSeason);
+saveSnapshot({ league: scoring.league, scoring, standings, schedule, matchScorers: Object.fromEntries([...scorers].sort()) }, updatedAt);
 const played = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff && r.score);
 for (const round of played) {
   write(`zapas/${matchSlug(round)}`, renderMatch({
