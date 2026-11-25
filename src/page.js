@@ -63,6 +63,9 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   tbody tr:nth-child(even) td { background: var(--zebra); }
   tbody tr.mark td { background: var(--mark); font-weight: bold; }
   tr.zero td { color: var(--muted); }
+  .player { display: flex; align-items: center; gap: 8px; }
+  .face { display: block; width: 21px; height: 28px; object-fit: cover; border-radius: 3px; flex: 0 0 21px; }
+  table.players td { padding-top: 3px; padding-bottom: 3px; }
   .club { display: flex; align-items: center; gap: 8px; }
   .club img, .club svg { display: block; width: 20px; height: 20px; object-fit: contain; flex: 0 0 20px; }
   th[data-sort] { padding: 0; }

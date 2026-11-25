@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "./src/scoring.js";
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
@@ -28,24 +29,40 @@ if (!standings) throw new Error(`${TEAM} not found in GameStats standings`);
 const schedule = parseSchedule(scheduleHtml, TEAM);
 if (!schedule) throw new Error(`${TEAM} not found in GameStats schedule`);
 
-// Logos of the league's teams are copied to dist/logos; a missing or broken one falls back to the placeholder shield.
-const saveLogo = async ({ name, logoUrl }) => {
-  if (!logoUrl) return [];
+// GameStats serves full-size uploads; shrink them to thumbnail size when ImageMagick is available
+// (it is on GitHub's Ubuntu runners), otherwise keep the original file.
+const shrink = (path, geometry) => {
+  for (const cmd of ["magick", "convert"]) {
+    try {
+      execFileSync(cmd, [path, "-resize", geometry, "-strip", "-quality", "82", path], { stdio: "ignore" });
+      return;
+    } catch {
+      // try the next binary name, or leave the image as downloaded
+    }
+  }
+};
+
+// Images are copied into dist/<dir>; a missing or broken one falls back to the widget's placeholder.
+const saveImage = (dir, geometry) => async ({ name, url }) => {
+  if (!url) return [];
   try {
-    const res = await fetch(logoUrl);
+    const res = await fetch(url);
     if (!res.ok || !res.headers.get("content-type")?.startsWith("image/")) throw new Error(String(res.status));
-    const file = `${slug(name)}.${new URL(logoUrl).pathname.split(".").pop().toLowerCase()}`;
-    mkdirSync("dist/logos", { recursive: true });
-    writeFileSync(`dist/logos/${file}`, Buffer.from(await res.arrayBuffer()));
+    const file = `${slug(name)}.${new URL(url).pathname.split(".").pop().toLowerCase()}`;
+    mkdirSync(`dist/${dir}`, { recursive: true });
+    writeFileSync(`dist/${dir}/${file}`, Buffer.from(await res.arrayBuffer()));
+    if (geometry) shrink(`dist/${dir}/${file}`, geometry);
     return [[name, file]];
   } catch (error) {
-    console.warn(`Logo for ${name} failed (${error.message}), using placeholder`);
+    console.warn(`${dir}: ${name} failed (${error.message}), using placeholder`);
     return [];
   }
 };
-const logos = new Map((await Promise.all(standings.teams.map(saveLogo))).flat());
+const saveAll = async (items, save) => new Map((await Promise.all(items.map(save))).flat());
+const logos = await saveAll(standings.teams.map((t) => ({ name: t.name, url: t.logoUrl })), saveImage("logos"));
+const photos = await saveAll(scoring.players.map((p) => ({ name: p.name, url: p.photoUrl })), saveImage("photos", "60x80^"));
 
-write("bodovani", renderPage({ league: scoring.league, rows: buildTable(scoring, ROSTER), updatedAt }));
+write("bodovani", renderPage({ league: scoring.league, rows: buildTable(scoring, ROSTER), photos, updatedAt }));
 write("tabulka", renderStandings({ ...standings, logos, updatedAt }));
 // Club match reports are optional: if the club site is down, the schedule is published without links.
 const reports = await fetchReports(SEASON_START).catch((error) => {
@@ -55,4 +72,4 @@ const reports = await fetchReports(SEASON_START).catch((error) => {
 write("rozpis", renderSchedule({ ...schedule, reports, logos, updatedAt }));
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
 <ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li></ul>`);
-console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);
+console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);

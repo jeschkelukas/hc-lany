@@ -49,8 +49,10 @@ export const parseTeamScoring = (html, team) => {
       const teamName = cells[2].match(/<span class="text-secondary">([^<]+)<\/span>/);
       if (!link || !teamName || decode(teamName[1]).trim() !== team) return [];
       const num = (i) => Number.parseInt(stripTags(cells[i]), 10) || 0;
+      const photo = cells[1].match(/<img src="([^"]+)"/);
       return [{
         name: decode(link[2]).trim(),
+        photoUrl: photo ? new URL(decode(photo[1]), SOURCE).href : null,
         url: new URL(link[1], SOURCE).href,
         leagueRank: stripTags(cells[0]).replace(/\.$/, ""),
         gp: num(3),
@@ -82,14 +84,24 @@ export const buildTable = (scoring, roster) => {
   return rows.map((p) => ({ ...p, rankLabel: `${groups.indexOf(groupOf(p)) + 1}.` }));
 };
 
-export const renderPage = ({ league, rows, updatedAt, error }) => {
+// Grey head-and-shoulders silhouette for players without a GameStats photo.
+const PHOTO_PLACEHOLDER = '<svg class="face" viewBox="0 0 24 32" aria-hidden="true"><rect width="24" height="32" rx="3" fill="#dfe4ea"/><circle cx="12" cy="12" r="5" fill="#a9b4c0"/><path d="M3 32c0-6 4-10 9-10s9 4 9 10z" fill="#a9b4c0"/></svg>';
+
+const playerCell = (r, photos) => {
+  const file = photos.get(r.name);
+  const face = file ? `<img class="face" src="../photos/${escapeHtml(file)}" alt="" loading="lazy">` : PHOTO_PLACEHOLDER;
+  const name = r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.name)}</a>` : escapeHtml(r.name);
+  return `<span class="player">${face}${name}</span>`;
+};
+
+export const renderPage = ({ league, rows, photos = new Map(), updatedAt, error }) => {
   const body = error
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
-    : `<div class="box"><table class="stats" data-sortable>
+    : `<div class="box"><table class="stats players" data-sortable>
   <thead><tr><th class="n">#</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
   <tbody>${rows.map((r) => `<tr${r.pts === 0 ? ' class="zero"' : ""}>
     <td class="n rank">${r.rankLabel}</td>
-    <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.name)}</a>` : escapeHtml(r.name)}</td>
+    <td>${playerCell(r, photos)}</td>
     <td class="n" data-v="${r.gp ?? -1}">${r.gp ?? ""}</td><td class="n">${r.g}</td><td class="n">${r.a}</td>
     <td class="n pts">${r.pts}</td><td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : ""}</td></tr>`).join("")}
   </tbody></table></div>`;
