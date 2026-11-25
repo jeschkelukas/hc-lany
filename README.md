@@ -12,6 +12,7 @@ them with an `<iframe>`, so the pages there never need manual updates.
 | Canadian scoring (HC Lány players) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1060 |
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
 | HC Lány match schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 720 |
+| Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 540 |
 
 Embed snippet (change `src` and `height` per widget):
 
@@ -21,6 +22,9 @@ Embed snippet (change `src` and `height` per widget):
 
 The widget text is in Czech, because it is shown on the club's Czech website.
 
+The exact HTML pasted into each page of the club website is kept in `embeds/`
+(`uvod.html` for the homepage intro box, one file per article), as a backup.
+
 ## What each widget shows
 
 - **Canadian scoring** – every HC Lány scorer from GameStats with a photo thumbnail,
@@ -28,6 +32,9 @@ The widget text is in Czech, because it is shown on the club's Czech website.
   Tied players share a rank (dense ranking). Stat columns are sortable by click.
 - **League standings** – the league table with team logos (a coloured shield with the
   initial when a team has no logo) and the HC Lány row highlighted. Sortable by click.
+- **Homepage overview** – next match card with a countdown, last result with the
+  recent form, mini standings and the top scorers, styled to match the dark-blue intro
+  box on the club homepage. Links lead to the full article pages.
 - **Match schedule** – all rounds including bye weeks (shown with their Monday–Sunday
   week), moved matches with the original date struck through, results with a
   win/draw/loss badge and the next match highlighted. Results link to the match report
