@@ -38,8 +38,9 @@ The exact HTML pasted into each page of the club website is kept in `embeds/`
   box on the club homepage. Links lead to the full article pages.
 - **Match schedule** – all rounds including bye weeks (shown with their Monday–Sunday
   week), moved matches with the original date struck through, results with a
-  win/draw/loss badge and the next match highlighted. Results link to the match report
-  on the club website.
+  win/draw/loss badge and the next match highlighted. Clicking a result opens the match
+  detail (score, logos, date and every HC Lány scorer's goals and assists) inside the same
+  iframe; a match without a detail page falls back to the club's match report.
 
 ## Phones
 

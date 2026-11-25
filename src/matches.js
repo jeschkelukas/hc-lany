@@ -157,6 +157,6 @@ export const renderMatch = ({ round, scorers, logos, photos, league, scheduleUrl
 <h2>Body ${escapeHtml(TEAM)}</h2>
 ${scorers.length ? `<table><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
 ${missing}
-<div class="foot"><span>Zdroj: GameStats · aktualizováno ${formatTime(updatedAt)}</span>${round.reportUrl ? `<a href="${escapeHtml(round.reportUrl)}" target="_top">Článek o zápase →</a>` : ""}</div>
+<div class="foot"><span>Zdroj: GameStats · aktualizováno ${formatTime(updatedAt)}</span></div>
 </body></html>`;
 };
