@@ -6,6 +6,7 @@ a zveřejní widgety pro web klubu na GitHub Pages. Na webu jsou vložené přes
 | Widget | Adresa |
 | --- | --- |
 | Kanadské bodování | https://jeschkelukas.github.io/lany-bodovani/bodovani/ |
+| Tabulka soutěže (liga HC Lány) | https://jeschkelukas.github.io/lany-bodovani/tabulka/ |
 
 - Soupiska (hráči, kteří se ukazují i s nulou): `ROSTER` v `src/scoring.js`.
 - Nový widget: vlastní složka v `dist/` přes `write("<nazev>", html)` v `build.mjs`.

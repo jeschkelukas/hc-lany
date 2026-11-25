@@ -1,5 +1,7 @@
-export const SOURCE = "https://mini.gamestats.cz/i/bnb-cup/stats";
-export const TEAM = "HC Lány";
+import { GAMESTATS, TEAM, cellsOf, decode, escapeHtml, renderShell, rowsOf, stripTags } from "./page.js";
+
+export { TEAM };
+export const SOURCE = `${GAMESTATS}/stats`;
 
 // Club roster. Players listed here show up even with zero points; scorers missing
 // from this list are still added automatically from GameStats.
@@ -33,29 +35,15 @@ export const ROSTER = [
   "Ungrman Petr",
 ];
 
-const decode = (s) =>
-  s
-    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;|&apos;/g, "'")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&amp;/g, "&");
-
-const escapeHtml = (s) =>
-  String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[ch]);
-
-const stripTags = (s) => decode(s.replace(/<[^>]+>/g, "").trim());
-
 export const parseTeamScoring = (html, team) => {
   const sections = html.split('<section class="mb-5">').slice(1);
   for (const section of sections) {
     const leagueMatch = section.match(/<p class="text-secondary mb-3">([^<]*)<\/p>/);
     const league = leagueMatch ? decode(leagueMatch[1]).split(" · ")[0].trim() : "";
     const canadian = section.split("Kanadské bodování")[1]?.split("</table>")[0] ?? "";
-    const rows = [...canadian.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
+    const rows = rowsOf(canadian);
     const players = rows.flatMap((row) => {
-      const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1]);
+      const cells = cellsOf(row);
       if (cells.length < 8) return [];
       const link = cells[1].match(/href="([^"]+)"[^>]*>([^<]+)<\/a>/);
       const teamName = cells[2].match(/<span class="text-secondary">([^<]+)<\/span>/);
@@ -102,9 +90,6 @@ const fillRanks = (rows) => {
   });
 };
 
-const formatTime = (date) =>
-  new Intl.DateTimeFormat("cs-CZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Prague" }).format(date);
-
 export const renderPage = ({ league, rows, updatedAt, error }) => {
   const body = error
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
@@ -117,27 +102,11 @@ export const renderPage = ({ league, rows, updatedAt, error }) => {
     <td class="n pts">${r.pts}</td><td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : "–"}</td></tr>`).join("")}
   </tbody></table></div>`;
 
-  return `<!doctype html>
-<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kanadské bodování ${escapeHtml(TEAM)}</title>
-<style>
-  :root { --fg: #1b2430; --muted: #6b7684; --line: #dfe4ea; --accent: #1f4fa3; --zebra: #f6f8fa; }
-  body { margin: 0; padding: 8px; font: 14px/1.4 Verdana, Arial, sans-serif; color: var(--fg); background: #fff; }
-  .box { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  th, td { padding: 5px 8px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--line); }
-  th { font-size: 12px; color: var(--muted); font-weight: normal; border-bottom: 2px solid var(--accent); }
-  .n { text-align: right; }
-  .rank, .muted { color: var(--muted); }
-  .pts { font-weight: bold; }
-  tbody tr:nth-child(even) td { background: var(--zebra); }
-  tr.zero td { color: var(--muted); }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .foot { margin: 8px 0 0; font-size: 11px; color: var(--muted); }
-  .msg { padding: 12px; }
-</style></head><body>
-${body}
-<p class="foot">${escapeHtml(league || "BNB Cup")} · Z = zápasy, G = góly, A = asistence, B = body, Liga = pořadí v celé lize · Zdroj: <a href="${SOURCE}" target="_blank" rel="noopener">GameStats</a>, aktualizováno ${formatTime(updatedAt)}</p>
-</body></html>`;
+  return renderShell({
+    title: `Kanadské bodování ${TEAM}`,
+    body,
+    legend: `${league || "BNB Cup"} · Z = zápasy, G = góly, A = asistence, B = body, Liga = pořadí v celé lize`,
+    sourceUrl: SOURCE,
+    updatedAt,
+  });
 };

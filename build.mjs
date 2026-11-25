@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "./src/scoring.js";
+import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
 
 // Each widget gets its own folder so its iframe URL stays stable when more widgets are added.
 const write = (path, html) => {
@@ -7,12 +8,23 @@ const write = (path, html) => {
   writeFileSync(`dist/${path}/index.html`, html);
 };
 
-const res = await fetch(SOURCE);
-if (!res.ok) throw new Error(`GameStats returned ${res.status}`);
-const scoring = parseTeamScoring(await res.text(), TEAM);
-if (!scoring) throw new Error(`${TEAM} not found in GameStats scoring, keeping the previous deployment`);
+const download = async (url) => {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url} returned ${res.status}`);
+  return res.text();
+};
 
-write("bodovani", renderPage({ league: scoring.league, rows: buildTable(scoring, ROSTER), updatedAt: new Date() }));
+const updatedAt = new Date();
+const [statsHtml, overviewHtml] = await Promise.all([download(SOURCE), download(STANDINGS_SOURCE)]);
+
+// A failed parse throws, so the job fails and GitHub Pages keeps serving the previous version.
+const scoring = parseTeamScoring(statsHtml, TEAM);
+if (!scoring) throw new Error(`${TEAM} not found in GameStats scoring`);
+const standings = parseStandings(overviewHtml, TEAM);
+if (!standings) throw new Error(`${TEAM} not found in GameStats standings`);
+
+write("bodovani", renderPage({ league: scoring.league, rows: buildTable(scoring, ROSTER), updatedAt }));
+write("tabulka", renderStandings({ ...standings, updatedAt }));
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
-<ul><li><a href="bodovani/">Kanadské bodování</a></li></ul>`);
-console.log(`Wrote dist/bodovani/index.html with ${scoring.players.length} scorers (${scoring.league})`);
+<ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li></ul>`);
+console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams (${standings.league})`);
