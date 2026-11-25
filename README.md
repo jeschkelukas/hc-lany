@@ -9,7 +9,7 @@ them with an `<iframe>`, so the pages there never need manual updates.
 
 | Widget | URL | Iframe height |
 | --- | --- | --- |
-| Canadian scoring (HC Lány players) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1060 |
+| Canadian scoring (HC Lány players) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1180 |
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
 | HC Lány match schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 720 |
 | Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 540 |
@@ -27,7 +27,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/`
 
 ## What each widget shows
 
-- **Canadian scoring** – every HC Lány scorer from GameStats with a photo thumbnail,
+- **Canadian scoring** – team totals strip (scorers, goals, assists, points), an
+  accent-insensitive player search, and every HC Lány scorer from GameStats with a photo thumbnail,
   plus the rest of the roster with zero points (silhouette instead of a photo).
   Tied players share a rank (dense ranking). Stat columns are sortable by click.
 - **League standings** – the league table with team logos (a coloured shield with the
