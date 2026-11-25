@@ -1,5 +1,5 @@
 {
-  "name": "lany-bodovani",
+  "name": "hc-lany",
   "private": true,
   "type": "module",
   "scripts": { "build": "node build.mjs" }
