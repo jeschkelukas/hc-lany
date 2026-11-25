@@ -102,10 +102,14 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
     table.compact th, table.compact td { padding-left: 2px; padding-right: 2px; }
     table.schedule .pill.next { display: none; }
     table.schedule .tag { width: 1.7em; margin-left: 4px; }
-    table.stats td { padding: 4px 3px; }
+    table.stats td { padding-left: 3px; padding-right: 3px; }
     table.stats th { padding-left: 3px; padding-right: 3px; }
     th[data-sort] button { padding: 5px 3px; }
     .foot { font-size: 10px; }
+  }
+  @media (max-width: 370px) {
+    table.schedule .club { max-width: 64px; }
+    table.schedule { font-size: 11px; }
   }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
