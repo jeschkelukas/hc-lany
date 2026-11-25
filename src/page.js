@@ -60,7 +60,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   table.stats th.n:not(:first-child), table.stats td.n:not(.rank) { width: 2.6em; }
   .rank, .muted { color: var(--muted); }
   .pts { font-weight: bold; }
-  tbody tr:nth-child(even) td { background: var(--zebra); }
+  tbody tr.alt td { background: var(--zebra); }
   tbody tr.mark td { background: var(--mark); font-weight: bold; }
   tr.zero td { color: var(--muted); }
   .player { display: flex; align-items: center; gap: 8px; }
@@ -95,6 +95,12 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .summary span { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
   .summary b { font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; }
   .summary .total b { color: var(--loss); }
+  .search { position: relative; margin-bottom: 8px; }
+  .search input { width: 100%; box-sizing: border-box; font: inherit; padding: 7px 32px 7px 10px; border: 1px solid var(--line); border-radius: 6px; color: var(--fg); background: #fff; }
+  .search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .search button { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; padding: 4px 8px; cursor: pointer; }
+  .search input::-webkit-search-cancel-button { display: none; }
+  .nomatch { padding: 14px 8px; color: var(--muted); }
   .narrow-only { display: none; }
   /* Phones: the iframe keeps its fixed height, so narrow layouts drop detail instead of stacking rows. */
   @media (max-width: 600px) {
@@ -104,10 +110,12 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
     table.schedule { font-size: 12px; }
     table.compact th, table.compact td { padding-left: 3px; padding-right: 3px; }
     table.schedule .club img, table.schedule .club svg { display: none; }
-    table.schedule .club { display: block; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    table.schedule .club { display: block; max-width: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    table.schedule .pill { min-width: 0; padding: 1px 4px; font-size: 10px; }
+    table.schedule td.team:last-child { padding-left: 6px; }
     table.compact th, table.compact td { padding-left: 2px; padding-right: 2px; }
     table.schedule .pill.next { display: none; }
-    table.schedule .tag { width: 1.7em; margin-left: 4px; }
+    table.schedule .tag { width: 1.6em; margin-left: 4px; }
     table.stats td { padding-left: 3px; padding-right: 3px; }
     table.stats th { padding-left: 3px; padding-right: 3px; }
     th[data-sort] button { padding: 5px 3px; }
@@ -129,6 +137,35 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
 ${body}
 <p class="foot">${escapeHtml(legend)} · Zdroj: <a href="${sourceUrl}" target="_blank" rel="noopener">GameStats</a>, aktualizováno ${formatTime(updatedAt)}</p>
 <script>
+// Zebra stripes follow the visible order, so they stay even after sorting or filtering.
+const restripe = (tbody) => {
+  [...tbody.rows].filter((row) => !row.hidden).forEach((row, i) => row.classList.toggle("alt", i % 2 === 1));
+};
+document.querySelectorAll("tbody").forEach(restripe);
+
+// Player search: accent-insensitive, so "horejsi" finds "Hořejší".
+const fold = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+document.querySelectorAll("[data-filter]").forEach((box) => {
+  const input = box.querySelector("input");
+  const clear = box.querySelector("button");
+  const table = document.getElementById(box.dataset.filter);
+  const empty = document.getElementById(box.dataset.filter + "-empty");
+  const apply = () => {
+    const q = fold(input.value.trim());
+    let shown = 0;
+    [...table.tBodies[0].rows].forEach((row) => {
+      row.hidden = q !== "" && !fold(row.dataset.name || row.textContent).includes(q);
+      if (!row.hidden) shown += 1;
+    });
+    clear.hidden = q === "";
+    empty.hidden = shown > 0;
+    restripe(table.tBodies[0]);
+  };
+  input.addEventListener("input", apply);
+  clear.addEventListener("click", () => { input.value = ""; apply(); input.focus(); });
+  apply();
+});
+
 document.querySelectorAll("table[data-sortable]").forEach((table) => {
   const tbody = table.tBodies[0];
   const original = [...tbody.rows];
@@ -153,6 +190,7 @@ document.querySelectorAll("table[data-sortable]").forEach((table) => {
         return diff * dir || original.indexOf(a) - original.indexOf(b);
       });
       tbody.append(...rows);
+      restripe(tbody);
       headers.forEach((h) => h.removeAttribute("aria-sort"));
       th.setAttribute("aria-sort", dir > 0 ? "ascending" : "descending");
     });

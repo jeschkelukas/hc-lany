@@ -104,14 +104,15 @@ const summary = (rows) => {
 export const renderPage = ({ league, rows, photos = new Map(), updatedAt, error }) => {
   const body = error
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
-    : `${summary(rows)}<div class="box"><table class="stats players" data-sortable>
+    : `${summary(rows)}<div class="search" data-filter="players"><input id="q" type="search" placeholder="Hledat hráče" aria-label="Hledat hráče" autocomplete="off"><button type="button" aria-label="Vymazat hledání" hidden>×</button></div>
+  <div class="box"><table id="players" class="stats players" data-sortable>
   <thead><tr><th class="n">#</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
-  <tbody>${rows.map((r) => `<tr${r.pts === 0 ? ' class="zero"' : ""}>
+  <tbody>${rows.map((r) => `<tr data-name="${escapeHtml(r.name)}"${r.pts === 0 ? ' class="zero"' : ""}>
     <td class="n rank">${r.rankLabel}</td>
     <td>${playerCell(r, photos)}</td>
     <td class="n" data-v="${r.gp ?? -1}">${r.gp ?? ""}</td><td class="n">${r.g}</td><td class="n">${r.a}</td>
     <td class="n pts">${r.pts}</td><td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : ""}</td></tr>`).join("")}
-  </tbody></table></div>`;
+  </tbody></table><div id="players-empty" class="nomatch" hidden>Žádný hráč neodpovídá hledání.</div></div>`;
 
   return renderShell({
     title: `Kanadské bodování ${TEAM}`,
