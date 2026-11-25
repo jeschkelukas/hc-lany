@@ -85,7 +85,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .pill { display: inline-block; min-width: 18px; padding: 1px 5px; border-radius: 4px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; }
   .pill.bye { padding: 2px 12px; text-transform: uppercase; letter-spacing: .08em; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
-  .pill.next { background: var(--accent); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+  .pill.next { background: var(--accent); font-size: 10px; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .pts a { text-decoration: underline; text-underline-offset: 2px; }
