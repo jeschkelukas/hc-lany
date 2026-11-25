@@ -98,8 +98,8 @@ export const renderPage = ({ league, rows, updatedAt, error }) => {
   <tbody>${fillRanks(rows).map((r) => `<tr${r.pts === 0 ? ' class="zero"' : ""}>
     <td class="n rank">${r.rank}.</td>
     <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.name)}</a>` : escapeHtml(r.name)}</td>
-    <td class="n" data-v="${r.gp ?? -1}">${r.gp ?? "–"}</td><td class="n">${r.g}</td><td class="n">${r.a}</td>
-    <td class="n pts">${r.pts}</td><td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : "–"}</td></tr>`).join("")}
+    <td class="n" data-v="${r.gp ?? -1}">${r.gp ?? ""}</td><td class="n">${r.g}</td><td class="n">${r.a}</td>
+    <td class="n pts">${r.pts}</td><td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : ""}</td></tr>`).join("")}
   </tbody></table></div>`;
 
   return renderShell({
