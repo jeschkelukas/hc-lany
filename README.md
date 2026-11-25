@@ -5,6 +5,9 @@ Every 30 minutes a GitHub Action pulls the BNB Cup data from GameStats
 publishes them on GitHub Pages. The club website (https://hclany.estranky.cz/) embeds
 them with an `<iframe>`, so the pages there never need manual updates.
 
+The repository also keeps the HTML pasted into the club website (`embeds/`), including the
+hand-written committee page with photos (see [Committee page](#committee-page)).
+
 ## Widgets
 
 | Widget | URL | Iframe height |
@@ -13,7 +16,6 @@ them with an `<iframe>`, so the pages there never need manual updates.
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
 | HC Lány match schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 720 |
 | Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 540 |
-| Club committee (hand-written, from `embeds/vybor.html`) | https://jeschkelukas.github.io/hc-lany/vybor/ | 470 |
 
 Embed snippet (change `src` and `height` per widget):
 
@@ -23,12 +25,15 @@ Embed snippet (change `src` and `height` per widget):
 
 The widget text is in Czech, because it is shown on the club's Czech website.
 
-The exact HTML pasted into each page of the club website is kept in `embeds/`
-(`uvod.html` for the homepage intro box, one file per article), as a backup.
-`vybor.html` (committee cards with photos, initials where no photo exists yet) is the
-only one with real content: it can be pasted as HTML, and the build also publishes it as
-the `vybor/` page. To add a photo, replace a person's initials `<div>` with an `<img>`; photos that are not on
-GameStats go to `embeds/photos/` and are published at `https://jeschkelukas.github.io/hc-lany/vybor/<file>`.
+The exact HTML pasted into each page of the club website is kept in `embeds/` as a backup:
+
+| File | Club website page |
+| --- | --- |
+| `uvod.html` | Homepage intro box (welcome text + overview iframe) |
+| `bodovani.html` | Kanadské bodování 2026/2027 |
+| `tabulka.html` | Tabulka soutěže 2026/2027 |
+| `rozpis.html` | Rozpis utkání 2026/2027 |
+| `vybor.html` | Výbor HC Lány (pasted directly, no iframe) |
 
 ## What each widget shows
 
@@ -46,6 +51,9 @@ GameStats go to `embeds/photos/` and are published at `https://jeschkelukas.gith
   win/draw/loss badge and the next match highlighted. Clicking a result opens the match
   detail (score, logos, date and every HC Lány scorer's goals and assists) inside the same
   iframe; a match without a detail page falls back to the club's match report.
+- **Match detail** – also shows the hand-entered period scores and penalties when known
+  (see [Hand-entered match extras](#hand-entered-match-extras)). Opened from the homepage
+  overview it uses the overview's dark colours (`?dark`).
 
 ## Phones
 
@@ -70,7 +78,6 @@ rows, and every widget fits its recommended iframe height from 340 px wide up:
 - Club website homepage and BNB Cup category – match reports. A report is matched to a
   match by the score in its title (`HC Lány - <opponent> x : y`, HC Lány goals first),
   the opponent name and a publish date within 30 days after the match.
-
 - GameStats player pages ("Přehled zápasů") – each HC Lány scorer's goals and assists
   per match, combined into the match detail pages (`zapas/<date>-<opponent>/`) that the
   schedule and the homepage overview link to.
@@ -129,6 +136,30 @@ history of `data/snapshot.json` holds every state since the first build.
   may fail without affecting the widgets.
 - Match detail links carry a build stamp (`?v=…`), so browsers always open the current
   detail instead of a copy GitHub Pages let them cache for 10 minutes.
+
+## Committee page
+
+`embeds/vybor.html` is the Výbor HC Lány article
+(https://hclany.estranky.cz/clanky/vybor-hc-lany.html): one card per committee member with
+a round photo, name and role. Unlike the widgets it is not built from GameStats and is
+**pasted directly into the article** (editor → Source/HTML mode, replacing the whole
+content), so it takes its natural height and wraps on phones.
+
+- **Look** – the dark blue of the site's menu (`#1e3645`, `#315d7a`) with the jersey yellow
+  (`#f5c518`) for the chairman and treasurer, light blue (`#4685bd`) for the members.
+- **Markup** – inline styles only, because the estranky editor removes `<style>` blocks,
+  and inline-block cards instead of flexbox, so they wrap even if the editor drops styles
+  it does not know.
+- **Photos** – a member on the GameStats roster with a photo uses that image (Aleš
+  Lomberský). Others come from the club (`embeds/photos/`, cropped to the face only), and the
+  build publishes them at `https://jeschkelukas.github.io/hc-lany/vybor/<file>`. Members
+  without a photo show their initials.
+- **Adding a photo** – crop it to a square around the face (no phone numbers or names from
+  messenger screenshots), save it as `embeds/photos/<surname>-<name>.jpg`, replace that
+  person's initials `<div>` in `vybor.html` with an `<img>` like the existing ones, push,
+  and paste the updated HTML into the article again.
+- The build also publishes the page itself at https://jeschkelukas.github.io/hc-lany/vybor/
+  (useful as a preview, or as an iframe of about 470 px on desktop if ever needed).
 
 ## Manual data
 
