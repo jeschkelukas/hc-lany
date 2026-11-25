@@ -18,6 +18,24 @@ export const slug = (s) =>
 
 export const stripTags = (s) => decode(s.replace(/<[^>]+>/g, "").trim());
 
+const PLACEHOLDER_COLORS = ["#1f4fa3", "#c8202f", "#2e7d4f", "#7a4fb3", "#b5651d", "#0f7c8c"];
+
+const hash = (s) => [...s].reduce((h, ch) => (h * 31 + ch.codePointAt(0)) >>> 0, 7);
+
+// Shield with the team initial for teams that have no logo in GameStats.
+const placeholderLogo = (name) => {
+  const initials = name.split(/\s+/).filter((w) => /^\p{L}/u.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+  const color = PLACEHOLDER_COLORS[hash(name) % PLACEHOLDER_COLORS.length];
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 22 4v7c0 6-4.5 10.5-10 12C6.5 21.5 2 17 2 11V4z" fill="${color}"/><text x="12" y="15.5" text-anchor="middle" font-family="Verdana, Arial, sans-serif" font-size="${initials.length > 1 ? 8 : 10}" font-weight="bold" fill="#fff">${escapeHtml(initials || "?")}</text></svg>`;
+};
+
+// Logos live in one shared folder at the site root, so every widget links them as ../logos/.
+export const teamBadge = (name, logos) => {
+  const file = logos.get(name);
+  const icon = file ? `<img src="../logos/${escapeHtml(file)}" alt="">` : placeholderLogo(name);
+  return `<span class="club">${icon}${escapeHtml(name)}</span>`;
+};
+
 export const cellsOf = (row) => [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1]);
 export const rowsOf = (table) => [...table.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
 
@@ -30,7 +48,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(title)}</title>
 <style>
-  :root { --fg: #1b2430; --muted: #6b7684; --line: #dfe4ea; --accent: #1f4fa3; --zebra: #f6f8fa; --mark: #fff4cc; }
+  :root { --fg: #1b2430; --muted: #6b7684; --line: #dfe4ea; --accent: #1f4fa3; --zebra: #f6f8fa; --mark: #fff4cc; --win: #2e7d4f; --draw: #6b7684; --loss: #c8202f; }
   body { margin: 0; padding: 8px; font: 14px/1.4 Verdana, Arial, sans-serif; color: var(--fg); background: #fff; }
   .box { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
@@ -50,6 +68,11 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   th[data-sort] button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   th[aria-sort="ascending"] button::after { content: " ▲"; color: var(--accent); }
   th[aria-sort="descending"] button::after { content: " ▼"; color: var(--accent); }
+  .c { text-align: center; }
+  .me { font-weight: bold; }
+  .pill { display: inline-block; min-width: 18px; padding: 1px 5px; border-radius: 4px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; }
+  .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
+  .next { font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase; letter-spacing: .04em; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .foot { margin: 8px 0 0; font-size: 11px; color: var(--muted); }

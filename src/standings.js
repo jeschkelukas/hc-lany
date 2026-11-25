@@ -1,15 +1,4 @@
-import { GAMESTATS, TEAM, cellsOf, decode, escapeHtml, renderShell, rowsOf, stripTags } from "./page.js";
-
-const PLACEHOLDER_COLORS = ["#1f4fa3", "#c8202f", "#2e7d4f", "#7a4fb3", "#b5651d", "#0f7c8c"];
-
-const hash = (s) => [...s].reduce((h, ch) => (h * 31 + ch.codePointAt(0)) >>> 0, 7);
-
-// Shield with the team initial for teams that have no logo in GameStats.
-export const placeholderLogo = (name) => {
-  const initials = name.split(/\s+/).filter((w) => /^\p{L}/u.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const color = PLACEHOLDER_COLORS[hash(name) % PLACEHOLDER_COLORS.length];
-  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 22 4v7c0 6-4.5 10.5-10 12C6.5 21.5 2 17 2 11V4z" fill="${color}"/><text x="12" y="15.5" text-anchor="middle" font-family="Verdana, Arial, sans-serif" font-size="${initials.length > 1 ? 8 : 10}" font-weight="bold" fill="#fff">${escapeHtml(initials || "?")}</text></svg>`;
-};
+import { GAMESTATS, TEAM, cellsOf, decode, escapeHtml, renderShell, rowsOf, stripTags, teamBadge } from "./page.js";
 
 export const STANDINGS_SOURCE = GAMESTATS;
 
@@ -46,11 +35,11 @@ export const parseStandings = (html, team) => {
   return null;
 };
 
-export const renderStandings = ({ league, teams, updatedAt }) => {
+export const renderStandings = ({ league, teams, logos, updatedAt }) => {
   const body = `<div class="box"><table data-sortable>
   <thead><tr><th class="n">#</th><th>Tým</th><th class="n" data-sort>Z</th><th class="n" data-sort>V</th><th class="n" data-sort>VP</th><th class="n" data-sort>R</th><th class="n" data-sort>PP</th><th class="n" data-sort>P</th><th class="n" data-sort title="Řadí se podle rozdílu skóre">Skóre</th><th class="n" data-sort>Body</th></tr></thead>
   <tbody>${teams.map((t) => `<tr${t.name === TEAM ? ' class="mark"' : ""}>
-    <td class="n rank">${escapeHtml(t.rank)}.</td><td><span class="club">${t.logoFile ? `<img src="logos/${escapeHtml(t.logoFile)}" alt="">` : placeholderLogo(t.name)}${escapeHtml(t.name)}</span></td>
+    <td class="n rank">${escapeHtml(t.rank)}.</td><td>${teamBadge(t.name, logos)}</td>
     <td class="n">${t.gp}</td><td class="n">${t.w}</td><td class="n">${t.otw}</td><td class="n">${t.d}</td>
     <td class="n">${t.otl}</td><td class="n">${t.l}</td><td class="n" data-v="${scoreDiff(t.score)}">${escapeHtml(t.score)}</td><td class="n pts">${t.pts}</td></tr>`).join("")}
   </tbody></table></div>`;
