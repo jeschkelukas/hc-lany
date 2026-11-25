@@ -55,13 +55,13 @@ const outcome = (match) => {
 export const renderSchedule = ({ league, matches, logos, updatedAt }) => {
   const nextIndex = matches.findIndex((m) => !m.score);
   const side = (name) => (name === TEAM ? `<span class="me">${teamBadge(name, logos)}</span>` : teamBadge(name, logos));
-  const body = `<div class="box"><table>
-  <thead><tr><th class="n">#</th><th>Datum</th><th>Čas</th><th>Domácí</th><th class="c">Výsledek</th><th>Hosté</th><th class="c"></th></tr></thead>
+  const body = `<div class="box"><table class="compact">
+  <thead><tr><th class="n">#</th><th>Termín</th><th>Domácí</th><th class="c">Výsledek</th><th>Hosté</th></tr></thead>
   <tbody>${matches.map((m, i) => `<tr${i === nextIndex ? ' class="mark"' : ""}>
-    <td class="n rank">${i + 1}.</td><td>${escapeHtml(m.day)}</td><td class="muted">${escapeHtml(m.time)}</td>
+    <td class="n rank">${i + 1}.</td><td>${escapeHtml(m.day)} <span class="muted">${escapeHtml(m.time)}</span></td>
     <td>${side(m.home)}</td>
-    <td class="c pts">${m.score ? `${m.score[0]} : ${m.score[1]}` : i === nextIndex ? '<span class="next">další</span>' : "–"}${m.note ? ` <span class="muted">${escapeHtml(m.note)}</span>` : ""}</td>
-    <td>${side(m.away)}</td><td class="c">${outcome(m)}</td></tr>`).join("")}
+    <td class="c"><span class="pts">${m.score ? `${m.score[0]}:${m.score[1]}` : i === nextIndex ? '<span class="next">další</span>' : "–"}</span>${m.note ? ` <span class="muted">${escapeHtml(m.note)}</span>` : ""} ${outcome(m)}</td>
+    <td>${side(m.away)}</td></tr>`).join("")}
   </tbody></table></div>`;
   return renderShell({
     title: `Rozpis utkání ${TEAM}`,

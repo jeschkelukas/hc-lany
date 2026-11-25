@@ -69,6 +69,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   th[aria-sort="ascending"] button::after { content: " ▲"; color: var(--accent); }
   th[aria-sort="descending"] button::after { content: " ▼"; color: var(--accent); }
   .c { text-align: center; }
+  table.compact th, table.compact td { padding-left: 5px; padding-right: 5px; }
   .me { font-weight: bold; }
   .pill { display: inline-block; min-width: 18px; padding: 1px 5px; border-radius: 4px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
