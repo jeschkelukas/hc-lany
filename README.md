@@ -13,6 +13,7 @@ them with an `<iframe>`, so the pages there never need manual updates.
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
 | HC Lány match schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 720 |
 | Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 540 |
+| Club committee (hand-written, from `embeds/vybor.html`) | https://jeschkelukas.github.io/hc-lany/vybor/ | 470 |
 
 Embed snippet (change `src` and `height` per widget):
 
@@ -24,6 +25,9 @@ The widget text is in Czech, because it is shown on the club's Czech website.
 
 The exact HTML pasted into each page of the club website is kept in `embeds/`
 (`uvod.html` for the homepage intro box, one file per article), as a backup.
+`vybor.html` (committee cards with photos, initials where no photo exists yet) is the
+only one with real content: it can be pasted as HTML, and the build also publishes it as
+the `vybor/` page. To add a photo, replace a person's initials `<div>` with an `<img>`.
 
 ## What each widget shows
 

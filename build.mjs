@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { copyFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "./src/scoring.js";
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
 import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseLeagueMatches, parseSchedule, renderSchedule } from "./src/schedule.js";
@@ -124,6 +124,9 @@ const detailUrlOf = (r) => (detailSlugs.has(matchSlug(r)) ? `../zapas/${matchSlu
 
 write("rozpis", renderSchedule({ ...schedule, reports, logos, detailUrlOf, updatedAt }));
 write("prehled", renderOverview({ schedule, leagueMatches: parseLeagueMatches(scheduleHtml, TEAM), reports, standings, scoringRows, logos, photos, detailUrlOf, updatedAt }));
+// The committee page is hand-written (embeds/vybor.html); publish it too, so it can be iframed.
+write("vybor", `<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Výbor HC Lány</title></head>
+<body style="margin:0;padding:8px;background:#fff">${readFileSync("embeds/vybor.html", "utf8").replace(/<!--[\s\S]*?-->\s*/, "")}</body></html>`);
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
-<ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li></ul>`);
+<ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li><li><a href="vybor/">Výbor HC Lány</a></li></ul>`);
 console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, image downloads: ${imageDownloads}, player pages fetched: ${changed.length}, match details: ${played.length}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);
