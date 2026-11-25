@@ -1,6 +1,6 @@
 # HC Lány – stats widgets from GameStats
 
-Every hour a GitHub Action pulls the BNB Cup data from GameStats
+Every 30 minutes a GitHub Action pulls the BNB Cup data from GameStats
 (https://mini.gamestats.cz/i/bnb-cup), builds small HTML widgets for HC Lány and
 publishes them on GitHub Pages. The club website (https://hclany.estranky.cz/) embeds
 them with an `<iframe>`, so the pages there never need manual updates.
