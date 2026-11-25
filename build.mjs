@@ -30,16 +30,17 @@ const schedule = parseSchedule(scheduleHtml, TEAM);
 if (!schedule) throw new Error(`${TEAM} not found in GameStats schedule`);
 
 // GameStats serves full-size uploads; shrink them to thumbnail size when ImageMagick is available
-// (it is on GitHub's Ubuntu runners), otherwise keep the original file.
+// (the workflow installs it), otherwise keep the original file.
 const shrink = (path, geometry) => {
   for (const cmd of ["magick", "convert"]) {
     try {
       execFileSync(cmd, [path, "-resize", geometry, "-strip", "-quality", "82", path], { stdio: "ignore" });
       return;
     } catch {
-      // try the next binary name, or leave the image as downloaded
+      // try the next binary name
     }
   }
+  console.warn(`ImageMagick unavailable, ${path} kept at full size`);
 };
 
 // Images are copied into dist/<dir>; a missing or broken one falls back to the widget's placeholder.

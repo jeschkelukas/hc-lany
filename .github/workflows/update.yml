@@ -25,6 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # ImageMagick shrinks player photos to thumbnails; the build still works without it.
+      - run: sudo apt-get install -y -qq --no-install-recommends imagemagick >/dev/null
       - run: node build.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
