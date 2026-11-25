@@ -34,7 +34,7 @@ The exact HTML pasted into each page of the club website is kept in `embeds/`
 - **League standings** – the league table with team logos (a coloured shield with the
   initial when a team has no logo) and the HC Lány row highlighted. Sortable by click.
 - **Homepage overview** – next match card with a countdown, last result with the
-  recent form, mini standings and the top scorers, styled to match the dark-blue intro
+  recent form (newest match on the left), mini standings and the top scorers, styled to match the dark-blue intro
   box on the club homepage. Links lead to the full article pages.
 - **Match schedule** – all rounds including bye weeks (shown with their Monday–Sunday
   week), moved matches with the original date struck through, results with a

@@ -61,9 +61,10 @@ const lastResultRow = (played, detailUrlOf) => {
   const scoreHtml = detail
     ? `<a href="${escapeHtml(`${detail}${detail.includes("?") ? "&" : "?"}dark`)}" title="Detail zápasu">${score}</a>`
     : last.reportUrl ? `<a href="${escapeHtml(last.reportUrl)}" target="_top" title="Článek o zápase">${score}</a>` : score;
-  const form = played.slice(-FORM_MATCHES).map((r) => {
+  // Newest first, the way hockey tables show form.
+  const form = played.slice(-FORM_MATCHES).reverse().map((r) => {
     const f = resultOf(r);
-    return `<span class="pill ${f.cls}" title="${escapeHtml(`${r.home} ${r.score[0]}:${r.score[1]} ${r.away}`)}">${f.letter}</span>`;
+    return `<span class="pill ${f.cls}" title="${escapeHtml(`${r.score[0]}:${r.score[1]} (${r.home} – ${r.away}) ${formatKickoff(r.kickoff).day.slice(3)}`)}">${f.letter}</span>`;
   }).join("");
   return `<section class="card last">
   <div class="label">Poslední výsledek</div>
