@@ -152,10 +152,11 @@ const kickoffCells = (r) => {
 
 // Fixed slots (home goals | colon | away goals | outcome) keep every row aligned on the colon.
 const resultCell = (r, isNext) => {
-  const tag = `<span class="tag">${outcome(r)}</span>`;
   if (!r.score) {
-    return `<span class="score"><span class="wide">${isNext ? '<span class="next">další</span>' : "–"}</span></span>${tag}`;
+    const nextTag = isNext ? '<span class="pill next">další</span>' : "";
+    return `<span class="score"><span class="wide">–</span></span><span class="tag">${nextTag}</span>`;
   }
+  const tag = `<span class="tag">${outcome(r)}</span>`;
   const goals = `<span class="h">${r.score[0]}</span><span class="colon">:</span><span class="a">${r.score[1]}</span>`;
   const title = r.note ? ` title="${escapeHtml(r.note)}"` : "";
   // Club reports open in the club page itself (the widget sits in its iframe); GameStats in a new tab.

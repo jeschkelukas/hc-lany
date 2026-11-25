@@ -72,7 +72,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   th[aria-sort="ascending"] button::after { content: " ▲"; color: var(--accent); }
   th[aria-sort="descending"] button::after { content: " ▼"; color: var(--accent); }
   .c { text-align: center; }
-  table.compact th, table.compact td { padding-left: 5px; padding-right: 5px; }
+  table.compact th, table.compact td { padding-left: 4px; padding-right: 4px; }
   .me { font-weight: bold; }
   .moved { color: var(--loss); }
   table.schedule td.res { white-space: nowrap; text-align: center; }
@@ -80,12 +80,12 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .score .h { text-align: right; } .score .colon { text-align: center; } .score .a { text-align: left; }
   .score .wide { grid-column: 1 / -1; text-align: center; font-weight: bold; }
   a.score { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
-  .tag { display: inline-block; width: 1.7em; margin-left: 3px; text-align: left; vertical-align: middle; }
+  .tag { display: inline-block; width: 3.2em; margin-left: 8px; text-align: left; vertical-align: middle; }
   tbody tr.half td { border-top: 3px solid var(--line); }
   .pill { display: inline-block; min-width: 18px; padding: 1px 5px; border-radius: 4px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; }
   .pill.bye { padding: 2px 12px; text-transform: uppercase; letter-spacing: .08em; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
-  .next { font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase; letter-spacing: .04em; }
+  .pill.next { background: var(--accent); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .pts a { text-decoration: underline; text-underline-offset: 2px; }
