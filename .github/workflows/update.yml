@@ -22,21 +22,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       # ImageMagick shrinks player photos to thumbnails; the build still works without it.
       - run: sudo apt-get install -y -qq --no-install-recommends imagemagick >/dev/null
       - run: node build.mjs
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
-      # GitHub disables scheduled workflows after 60 days without repo activity;
-      # re-enabling resets that timer, so the table keeps updating over the summer break.
-      - run: gh workflow enable update.yml --repo "$GITHUB_REPOSITORY"
-        env:
-          GH_TOKEN: ${{ github.token }}
 
   deploy:
     needs: build
@@ -47,3 +42,14 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  keepalive:
+    needs: deploy
+    runs-on: ubuntu-latest
+    # GitHub disables scheduled workflows after 60 days without repo activity; re-enabling
+    # resets that timer. It runs after the deploy and may fail without affecting the widgets.
+    continue-on-error: true
+    steps:
+      - run: gh workflow enable update.yml --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}
