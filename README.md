@@ -10,6 +10,7 @@ a zveřejní widgety pro web klubu na GitHub Pages. Na webu jsou vložené přes
 | Rozpis utkání HC Lány | https://jeschkelukas.github.io/lany-bodovani/rozpis/ |
 
 - Soupiska (hráči, kteří se ukazují i s nulou): `ROSTER` v `src/scoring.js`.
+- Rozlosování (kola, volná kola, původní termíny): `FIXTURES` v `src/schedule.js`; termíny a výsledky se berou živě z GameStats.
 - Nový widget: vlastní složka v `dist/` přes `write("<nazev>", html)` v `build.mjs`.
 - Ruční aktualizace: Actions → Update stats → Run workflow.
 - Lokálně: `node build.mjs` → `dist/`.
