@@ -66,27 +66,22 @@ export const parseTeamScoring = (html, team) => {
 
 const byScoring = (x, y) => y.pts - x.pts || y.g - x.g || x.gp - y.gp || x.name.localeCompare(y.name, "cs");
 
+// Players tied on points, goals and games share a rank shown as a range ("10.–11."); every roster
+// player without a point forms one shared group at the bottom.
 export const buildTable = (scoring, roster) => {
   const scorers = scoring ? scoring.players : [];
   const known = new Set(scorers.map((p) => p.name));
   const zeros = roster
     .filter((name) => !known.has(name))
+    .sort((x, y) => x.localeCompare(y, "cs"))
     .map((name) => ({ name, url: null, leagueRank: null, gp: null, g: 0, a: 0, pts: 0 }));
-  const sorted = [...scorers].sort(byScoring);
-  const ranked = sorted.map((p, i) => {
-    const prev = sorted[i - 1];
-    const tie = prev && prev.pts === p.pts && prev.g === p.g && prev.gp === p.gp;
-    return { ...p, rank: tie ? null : i + 1 };
-  });
-  const zerosSorted = zeros.sort((x, y) => x.name.localeCompare(y.name, "cs"));
-  return [...ranked, ...zerosSorted.map((p, i) => ({ ...p, rank: i === 0 ? sorted.length + 1 : null }))];
-};
-
-const fillRanks = (rows) => {
-  let last = null;
-  return rows.map((r) => {
-    last = r.rank ?? last;
-    return { ...r, rank: last };
+  const rows = [...[...scorers].sort(byScoring), ...zeros];
+  const groupOf = (p) => (p.gp === null ? "zero" : `${p.pts}|${p.g}|${p.gp}`);
+  return rows.map((p, i) => {
+    const group = groupOf(p);
+    const first = rows.findIndex((q) => groupOf(q) === group) + 1;
+    const last = rows.findLastIndex((q) => groupOf(q) === group) + 1;
+    return { ...p, rankLabel: first === last ? `${first}.` : `${first}.–${last}.` };
   });
 };
 
@@ -95,8 +90,8 @@ export const renderPage = ({ league, rows, updatedAt, error }) => {
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
     : `<div class="box"><table data-sortable>
   <thead><tr><th class="n">#</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
-  <tbody>${fillRanks(rows).map((r) => `<tr${r.pts === 0 ? ' class="zero"' : ""}>
-    <td class="n rank">${r.rank}.</td>
+  <tbody>${rows.map((r) => `<tr${r.pts === 0 ? ' class="zero"' : ""}>
+    <td class="n rank">${r.rankLabel}</td>
     <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.name)}</a>` : escapeHtml(r.name)}</td>
     <td class="n" data-v="${r.gp ?? -1}">${r.gp ?? ""}</td><td class="n">${r.g}</td><td class="n">${r.a}</td>
     <td class="n pts">${r.pts}</td><td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : ""}</td></tr>`).join("")}
