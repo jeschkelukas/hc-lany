@@ -42,8 +42,8 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   tbody tr:nth-child(even) td { background: var(--zebra); }
   tbody tr.mark td { background: var(--mark); font-weight: bold; }
   tr.zero td { color: var(--muted); }
-  .club { display: inline-flex; align-items: center; gap: 8px; }
-  .club img, .club svg { width: 22px; height: 22px; object-fit: contain; flex: 0 0 22px; }
+  .club { display: flex; align-items: center; gap: 8px; }
+  .club img, .club svg { display: block; width: 20px; height: 20px; object-fit: contain; flex: 0 0 20px; }
   th[data-sort] { padding: 0; }
   th[data-sort] button { all: unset; box-sizing: border-box; display: block; width: 100%; padding: 5px 8px; cursor: pointer; }
   th[data-sort] button:hover { color: var(--accent); }
