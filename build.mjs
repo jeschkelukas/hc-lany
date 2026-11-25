@@ -5,7 +5,7 @@ import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standin
 import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseSchedule, renderSchedule } from "./src/schedule.js";
 import { fetchPlayerMatches, matchSlug, playerMatchesFromArchive, renderMatch, scorersByMatch } from "./src/matches.js";
 import { fetchReports } from "./src/reports.js";
-import { extrasFor, loadExtras } from "./src/extras.js";
+import { extrasFor } from "./src/extras.js";
 import { renderOverview } from "./src/overview.js";
 import { slug } from "./src/page.js";
 import { guardSchedule, guardScoring, guardStandings, loadSnapshot, mergeMatchScorers, saveSnapshot } from "./src/snapshot.js";
@@ -106,7 +106,8 @@ const playerMatches = [
   ...await fetchPlayerMatches(changed),
 ];
 const scorers = mergeMatchScorers(scorersByMatch(playerMatches), archive?.matchScorers, sameSeason);
-const extras = loadExtras();
+// Hand-entered periods and penalties are carried over from the previous snapshot unchanged (all seasons).
+const extras = archive?.matchExtras ?? {};
 saveSnapshot({ league: scoring.league, scoring, standings, schedule, matchScorers: Object.fromEntries([...scorers].sort()), matchExtras: extras }, updatedAt);
 const played = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff && r.score);
 for (const round of played) {
