@@ -58,7 +58,7 @@ const byeWeek = (index) => {
   return `${from}–${short(sunday)}${sunday.getUTCFullYear()}`;
 };
 
-const formatKickoff = (key) => {
+export const formatKickoff = (key) => {
   const [y, mo, d] = key.slice(0, 10).split("-").map(Number);
   const weekday = WEEKDAYS[new Date(Date.UTC(y, mo - 1, d)).getUTCDay()];
   return { day: `${weekday} ${d}.${mo}.${y}`, time: key.slice(11) };

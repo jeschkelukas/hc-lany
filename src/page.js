@@ -23,7 +23,7 @@ const PLACEHOLDER_COLORS = ["#1f4fa3", "#c8202f", "#2e7d4f", "#7a4fb3", "#b5651d
 const hash = (s) => [...s].reduce((h, ch) => (h * 31 + ch.codePointAt(0)) >>> 0, 7);
 
 // Shield with the team initial for teams that have no logo in GameStats.
-const placeholderLogo = (name) => {
+export const placeholderLogo = (name) => {
   const initials = name.split(/\s+/).filter((w) => /^\p{L}/u.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
   const color = PLACEHOLDER_COLORS[hash(name) % PLACEHOLDER_COLORS.length];
   return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 22 4v7c0 6-4.5 10.5-10 12C6.5 21.5 2 17 2 11V4z" fill="${color}"/><text x="12" y="15.5" text-anchor="middle" font-family="Verdana, Arial, sans-serif" font-size="${initials.length > 1 ? 8 : 10}" font-weight="bold" fill="#fff">${escapeHtml(initials || "?")}</text></svg>`;
@@ -39,7 +39,7 @@ export const teamBadge = (name, logos) => {
 export const cellsOf = (row) => [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1]);
 export const rowsOf = (table) => [...table.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map((m) => m[1]);
 
-const formatTime = (date) =>
+export const formatTime = (date) =>
   new Intl.DateTimeFormat("cs-CZ", {
     day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Prague",
   }).format(date);

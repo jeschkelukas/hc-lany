@@ -4,6 +4,7 @@ import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
 import { SCHEDULE_SOURCE, SEASON_START, parseSchedule, renderSchedule } from "./src/schedule.js";
 import { fetchReports } from "./src/reports.js";
+import { renderOverview } from "./src/overview.js";
 import { slug } from "./src/page.js";
 
 // Each widget gets its own folder so its iframe URL stays stable when more widgets are added.
@@ -63,7 +64,8 @@ const saveAll = async (items, save) => new Map((await Promise.all(items.map(save
 const logos = await saveAll(standings.teams.map((t) => ({ name: t.name, url: t.logoUrl })), saveImage("logos"));
 const photos = await saveAll(scoring.players.map((p) => ({ name: p.name, url: p.photoUrl })), saveImage("photos", "60x80^"));
 
-write("bodovani", renderPage({ league: scoring.league, rows: buildTable(scoring, ROSTER), photos, updatedAt }));
+const scoringRows = buildTable(scoring, ROSTER);
+write("bodovani", renderPage({ league: scoring.league, rows: scoringRows, photos, updatedAt }));
 write("tabulka", renderStandings({ ...standings, logos, updatedAt }));
 // Club match reports are optional: if the club site is down, the schedule is published without links.
 const reports = await fetchReports(SEASON_START).catch((error) => {
@@ -71,6 +73,7 @@ const reports = await fetchReports(SEASON_START).catch((error) => {
   return [];
 });
 write("rozpis", renderSchedule({ ...schedule, reports, logos, updatedAt }));
+write("prehled", renderOverview({ schedule, reports, standings, scoringRows, logos, photos, updatedAt }));
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
-<ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li></ul>`);
+<ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li></ul>`);
 console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);
