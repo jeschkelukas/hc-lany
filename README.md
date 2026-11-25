@@ -85,11 +85,33 @@ build itself keeps its downloads small:
 
 ## Backups and safeguards
 
-- Every build saves the downloaded data (player stats, standings, schedule and per-match
-  scorers) to `data/snapshot.json` plus a dated copy `data/archive/YYYY-MM-DD.json` (the
-  day's latest state). The archive folder keeps the last 30 days; older days are deleted
-  from it but stay in git history. The workflow commits the data whenever it changes, so
-  the git history holds every state.
+### What is backed up and where
+
+Everything lives in the repository under `data/`, committed by the workflow itself
+(commits named `data: snapshot <time>`), and only when something actually changed:
+
+| Path | Content | Kept |
+| --- | --- | --- |
+| `data/snapshot.json` | Current state: HC Lány player stats (`scoring`), league table (`standings`), schedule with results (`schedule`) and every HC Lány scorer's goals and assists per match (`matchScorers`, keyed by kick-off) | Always the latest |
+| `data/archive/YYYY-MM-DD.json` | The same content as the day's last snapshot (Prague time) | Last 30 days in the folder |
+| `data/images/logos/`, `data/images/photos/` | Team logos and player photos as small thumbnails, named after the GameStats upload | As long as GameStats uses them |
+
+Days older than 30 are deleted from `data/archive/` but nothing is ever lost: the git
+history of `data/snapshot.json` holds every state since the first build.
+
+### Browsing and restoring
+
+- Latest state: https://github.com/jeschkelukas/hc-lany/blob/main/data/snapshot.json
+- A given day: https://github.com/jeschkelukas/hc-lany/tree/main/data/archive
+- Anything older: the history of `data/snapshot.json`
+  (https://github.com/jeschkelukas/hc-lany/commits/main/data/snapshot.json), or locally
+  `git log -p -- data/snapshot.json`.
+- To publish an older state again (for example after GameStats lost data mid-season), copy
+  that version over `data/snapshot.json`, commit and push: the guards below then keep it
+  until GameStats catches up.
+
+### Safeguards
+
 - Within one season, points, played matches and recorded scorers never go down. If a fresh
   download comes back thinner than the snapshot (a GameStats glitch, an empty page), the
   build keeps the archived data for that part and logs a warning. Per match, the list with
@@ -97,6 +119,11 @@ build itself keeps its downloads small:
 - If GameStats cannot be read or parsed at all, the build fails and GitHub Pages keeps
   serving the previous version. If the club website is down, the schedule is published
   without report links.
+- The snapshot commit runs before the deploy and never blocks it; the keepalive job (which
+  stops GitHub from disabling the schedule after 60 quiet days) runs after the deploy and
+  may fail without affecting the widgets.
+- Match detail links carry a build stamp (`?v=…`), so browsers always open the current
+  detail instead of a copy GitHub Pages let them cache for 10 minutes.
 
 ## Manual data
 
