@@ -55,6 +55,9 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   th, td { padding: 5px 8px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--line); }
   th { font-size: 12px; color: var(--muted); font-weight: normal; border-bottom: 2px solid var(--accent); }
   .n { text-align: right; }
+  /* Stat tables: rank hugs its content, every number column gets the same width, the name takes the rest. */
+  table.stats th:first-child, table.stats td.rank { width: 1%; }
+  table.stats th.n:not(:first-child), table.stats td.n:not(.rank) { width: 2.6em; }
   .rank, .muted { color: var(--muted); }
   .pts { font-weight: bold; }
   tbody tr:nth-child(even) td { background: var(--zebra); }

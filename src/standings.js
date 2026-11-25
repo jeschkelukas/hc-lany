@@ -36,7 +36,7 @@ export const parseStandings = (html, team) => {
 };
 
 export const renderStandings = ({ league, teams, logos, updatedAt }) => {
-  const body = `<div class="box"><table data-sortable>
+  const body = `<div class="box"><table class="stats" data-sortable>
   <thead><tr><th class="n">#</th><th>Tým</th><th class="n" data-sort>Z</th><th class="n" data-sort>V</th><th class="n" data-sort>VP</th><th class="n" data-sort>R</th><th class="n" data-sort>PP</th><th class="n" data-sort>P</th><th class="n" data-sort title="Řadí se podle rozdílu skóre">Skóre</th><th class="n" data-sort>Body</th></tr></thead>
   <tbody>${teams.map((t) => `<tr${t.name === TEAM ? ' class="mark"' : ""}>
     <td class="n rank">${escapeHtml(t.rank)}.</td><td>${teamBadge(t.name, logos)}</td>

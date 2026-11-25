@@ -88,7 +88,7 @@ export const buildTable = (scoring, roster) => {
 export const renderPage = ({ league, rows, updatedAt, error }) => {
   const body = error
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
-    : `<div class="box"><table data-sortable>
+    : `<div class="box"><table class="stats" data-sortable>
   <thead><tr><th class="n">#</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
   <tbody>${rows.map((r) => `<tr${r.pts === 0 ? ' class="zero"' : ""}>
     <td class="n rank">${r.rankLabel}</td>
