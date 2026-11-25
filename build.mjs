@@ -5,6 +5,7 @@ import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standin
 import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseSchedule, renderSchedule } from "./src/schedule.js";
 import { fetchPlayerMatches, matchSlug, playerMatchesFromArchive, renderMatch, scorersByMatch } from "./src/matches.js";
 import { fetchReports } from "./src/reports.js";
+import { extrasFor, loadExtras } from "./src/extras.js";
 import { renderOverview } from "./src/overview.js";
 import { slug } from "./src/page.js";
 import { guardSchedule, guardScoring, guardStandings, loadSnapshot, mergeMatchScorers, saveSnapshot } from "./src/snapshot.js";
@@ -105,11 +106,13 @@ const playerMatches = [
   ...await fetchPlayerMatches(changed),
 ];
 const scorers = mergeMatchScorers(scorersByMatch(playerMatches), archive?.matchScorers, sameSeason);
-saveSnapshot({ league: scoring.league, scoring, standings, schedule, matchScorers: Object.fromEntries([...scorers].sort()) }, updatedAt);
+const extras = loadExtras();
+saveSnapshot({ league: scoring.league, scoring, standings, schedule, matchScorers: Object.fromEntries([...scorers].sort()), matchExtras: extras }, updatedAt);
 const played = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff && r.score);
 for (const round of played) {
   write(`zapas/${matchSlug(round)}`, renderMatch({
-    round, scorers: scorers.get(round.kickoff) ?? [], logos, photos, league: schedule.league, scheduleUrl: "../../rozpis/", updatedAt,
+    round, scorers: scorers.get(round.kickoff) ?? [], extras: extrasFor(round, extras[matchSlug(round)], matchSlug(round)),
+    logos, photos, league: schedule.league, scheduleUrl: "../../rozpis/", updatedAt,
   }));
 }
 const detailSlugs = new Set(played.map(matchSlug));

@@ -83,9 +83,17 @@ const logo = (name, logos) => {
   return file ? `<img class="logo" src="../../logos/${escapeHtml(file)}" alt="">` : `<span class="logo">${placeholderLogo(name)}</span>`;
 };
 
+// Period scores and penalties under the score, home:away like the score itself.
+const extrasLines = (extras) => {
+  if (!extras) return "";
+  const periods = extras.periods.length ? `<span class="periods" title="Třetiny">(${extras.periods.map(([h, a]) => `${h}:${a}`).join(", ")})</span>` : "";
+  const penalties = extras.penalties ? `<span class="pen">Vyloučení ${extras.penalties[0]}:${extras.penalties[1]}</span>` : "";
+  return periods + penalties;
+};
+
 const PHOTO_PLACEHOLDER = '<svg class="face" viewBox="0 0 24 32" aria-hidden="true"><rect width="24" height="32" rx="3" fill="var(--ph-bg)"/><circle cx="12" cy="12" r="5" fill="var(--ph-fg)"/><path d="M3 32c0-6 4-10 9-10s9 4 9 10z" fill="var(--ph-fg)"/></svg>';
 
-export const renderMatch = ({ round, scorers, logos, photos, league, scheduleUrl, updatedAt }) => {
+export const renderMatch = ({ round, scorers, extras, logos, photos, league, scheduleUrl, updatedAt }) => {
   const when = formatKickoff(round.kickoff);
   const res = resultOf(round);
   const ourGoals = round.home === TEAM ? round.score[0] : round.score[1];
@@ -129,6 +137,9 @@ export const renderMatch = ({ round, scorers, logos, photos, league, scheduleUrl
   .logo, .logo svg { width: 56px; height: 56px; object-fit: contain; display: block; }
   .score { display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .score b { font: 700 44px/1 var(--display); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+  .score { gap: 3px; }
+  .periods { font: 600 14px/1.1 var(--display); letter-spacing: .04em; color: var(--fg); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pen { font-size: 11px; color: var(--dim); white-space: nowrap; }
   .pill { display: inline-block; padding: 2px 8px; border-radius: 4px; color: #fff; font: 700 12px/1.3 var(--display); letter-spacing: .06em; text-transform: uppercase; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
   h2 { font: 600 13px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--hl); margin: 14px 0 6px; }
@@ -152,7 +163,7 @@ export const renderMatch = ({ round, scorers, logos, photos, league, scheduleUrl
 <div class="top"><a class="back" href="${escapeHtml(scheduleUrl)}" onclick="if (history.length > 1) { history.back(); return false; }">← Zpět</a><span class="meta">${escapeHtml(league)}</span></div>
 <section class="hero">
   <div class="label"><span>${round.round ? `${round.round}. kolo · ` : ""}${escapeHtml(when.day)} · ${escapeHtml(when.time)}</span><span class="pill ${res.cls}">${res.text}</span></div>
-  <div class="match">${side(round.home)}<div class="score"><b>${round.score[0]}:${round.score[1]}</b></div>${side(round.away)}</div>
+  <div class="match">${side(round.home)}<div class="score"><b>${round.score[0]}:${round.score[1]}</b>${extrasLines(extras)}</div>${side(round.away)}</div>
 </section>
 <h2>Body ${escapeHtml(TEAM)}</h2>
 ${scorers.length ? `<table><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}

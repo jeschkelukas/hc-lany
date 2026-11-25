@@ -94,6 +94,7 @@ Everything lives in the repository under `data/`, committed by the workflow itse
 | --- | --- | --- |
 | `data/snapshot.json` | Current state: HC Lány player stats (`scoring`), league table (`standings`), schedule with results (`schedule`) and every HC Lány scorer's goals and assists per match (`matchScorers`, keyed by kick-off) | Always the latest |
 | `data/archive/YYYY-MM-DD.json` | The same content as the day's last snapshot (Prague time) | Last 30 days in the folder |
+| `data/match-extras.json` | Hand-entered period scores and penalties (see below); never written by the build | Always |
 | `data/images/logos/`, `data/images/photos/` | Team logos and player photos as small thumbnails, named after the GameStats upload | As long as GameStats uses them |
 
 Days older than 30 are deleted from `data/archive/` but nothing is ever lost: the git
@@ -133,6 +134,25 @@ when they change:
 - `ROSTER` in `src/scoring.js` – players listed even with zero points.
 - `FIXTURES` in `src/schedule.js` – round numbers, bye weeks and originally planned
   kick-offs for the season. Actual dates and results still come from GameStats.
+
+## Hand-entered match extras
+
+GameStats has no period scores or penalties, so they are typed into
+`data/match-extras.json` (whenever they are known, also later for older matches). The build
+never overwrites this file; it copies it into the snapshot (`matchExtras`) and shows the
+values on the match detail under the score, e.g. `(1:1, 1:0, 3:1)` and `Vyloučení 2:4`.
+
+The key is the match detail slug (`<date>-<opponent>`, see the `zapas/` URLs) and the values
+use the club's own notation, **HC Lány first**, at home or away; the build turns them into
+home:away. It warns in the log when the periods do not add up to the final score.
+
+```json
+{
+  "2026-11-16-sykorice": { "periods": ["1:1", "0:1", "1:3"], "penalties": "4:2" }
+}
+```
+
+Either field may be left out when it is not known.
 
 ## Development
 
