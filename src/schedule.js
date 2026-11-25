@@ -41,6 +41,23 @@ const toKey = (text) => {
   return `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")} ${h.padStart(2, "0")}:${mi}`;
 };
 
+const DAY_MS = 86_400_000;
+const dayOf = (key) => Date.parse(`${key.slice(0, 10)}T00:00:00Z`);
+
+// A bye round has no date of its own: it is the Monday–Sunday week halfway between the
+// planned kick-offs of the neighbouring rounds.
+const byeWeek = (index) => {
+  const before = FIXTURES.slice(0, index).findLast((f) => f.planned);
+  const after = FIXTURES.slice(index + 1).find((f) => f.planned);
+  if (!before || !after) return null;
+  const mid = new Date((dayOf(before.planned) + dayOf(after.planned)) / 2);
+  const monday = new Date(Date.UTC(mid.getUTCFullYear(), mid.getUTCMonth(), mid.getUTCDate()) - ((mid.getUTCDay() + 6) % 7) * DAY_MS);
+  const sunday = new Date(monday.getTime() + 6 * DAY_MS);
+  const short = (d) => `${d.getUTCDate()}.${d.getUTCMonth() + 1}.`;
+  const from = monday.getUTCFullYear() === sunday.getUTCFullYear() ? short(monday) : `${short(monday)}${monday.getUTCFullYear()}`;
+  return `${from}–${short(sunday)}${sunday.getUTCFullYear()}`;
+};
+
 const formatKickoff = (key) => {
   const [y, mo, d] = key.slice(0, 10).split("-").map(Number);
   const weekday = WEEKDAYS[new Date(Date.UTC(y, mo - 1, d)).getUTCDay()];
@@ -93,8 +110,8 @@ export const parseSchedule = (html, team) => {
 export const buildRounds = (matches, reports = []) => {
   const pairKey = (m) => `${m.home}|${m.away}`;
   const live = new Map(matches.map((m) => [pairKey(m), m]));
-  const rounds = FIXTURES.map((f) => {
-    if (f.bye) return f;
+  const rounds = FIXTURES.map((f, index) => {
+    if (f.bye) return { ...f, week: byeWeek(index) };
     const m = live.get(pairKey(f));
     live.delete(pairKey(f));
     return { ...f, kickoff: m?.kickoff ?? f.planned, score: m?.score ?? null, note: m?.note ?? "", url: m?.url ?? null };
@@ -151,7 +168,7 @@ export const renderSchedule = ({ league, matches, reports, logos, updatedAt }) =
   <tbody>${rows.map((r) => {
     const cls = rowClass(r);
     const open = `<tr${cls ? ` class="${cls}"` : ""}><td class="n rank">${r.round ? `${r.round}.` : ""}</td>`;
-    if (r.bye) return `${open}<td colspan="4" class="muted">volno</td></tr>`;
+    if (r.bye) return `${open}<td class="muted">${escapeHtml(r.week ?? "")}</td><td colspan="3" class="muted">volno</td></tr>`;
     return `${open}<td>${kickoffCell(r)}</td><td>${side(r.home)}</td>
     <td class="c"><span class="pts">${resultCell(r, r === next)}</span>${r.note ? ` <span class="muted">${escapeHtml(r.note)}</span>` : ""} ${outcome(r)}</td>
     <td>${side(r.away)}</td></tr>`;
