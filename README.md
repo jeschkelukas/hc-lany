@@ -1,9 +1,13 @@
-# Kanadské bodování HC Lány
+# HC Lány – statistiky z GameStats
 
-Každou hodinu stáhne statistiky BNB Cupu z GameStats
-(https://mini.gamestats.cz/i/bnb-cup/stats), vybere hráče HC Lány a zveřejní
-tabulku na GitHub Pages. Na webu klubu je vložená přes `<iframe>`.
+Každou hodinu stáhne data BNB Cupu z GameStats (https://mini.gamestats.cz/i/bnb-cup)
+a zveřejní widgety pro web klubu na GitHub Pages. Na webu jsou vložené přes `<iframe>`.
+
+| Widget | Adresa |
+| --- | --- |
+| Kanadské bodování | https://jeschkelukas.github.io/lany-bodovani/bodovani/ |
 
 - Soupiska (hráči, kteří se ukazují i s nulou): `ROSTER` v `src/scoring.js`.
-- Ruční aktualizace: Actions → Update scoring → Run workflow.
-- Lokálně: `node build.mjs` → `dist/index.html`.
+- Nový widget: vlastní složka v `dist/` přes `write("<nazev>", html)` v `build.mjs`.
+- Ruční aktualizace: Actions → Update stats → Run workflow.
+- Lokálně: `node build.mjs` → `dist/`.
