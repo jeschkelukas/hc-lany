@@ -93,13 +93,13 @@ const fillRanks = (rows) => {
 export const renderPage = ({ league, rows, updatedAt, error }) => {
   const body = error
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
-    : `<div class="box"><table>
-  <thead><tr><th class="n">#</th><th>Jméno</th><th class="n">Z</th><th class="n">G</th><th class="n">A</th><th class="n">B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
+    : `<div class="box"><table data-sortable>
+  <thead><tr><th class="n" data-sort="num-asc">#</th><th data-sort="text">Jméno</th><th class="n" data-sort="num">Z</th><th class="n" data-sort="num">G</th><th class="n" data-sort="num">A</th><th class="n" data-sort="num">B</th><th class="n" data-sort="num-asc" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
   <tbody>${fillRanks(rows).map((r) => `<tr${r.pts === 0 ? ' class="zero"' : ""}>
     <td class="n rank">${r.rank}.</td>
-    <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.name)}</a>` : escapeHtml(r.name)}</td>
-    <td class="n">${r.gp ?? "–"}</td><td class="n">${r.g}</td><td class="n">${r.a}</td>
-    <td class="n pts">${r.pts}</td><td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : "–"}</td></tr>`).join("")}
+    <td data-v="${escapeHtml(r.name)}">${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.name)}</a>` : escapeHtml(r.name)}</td>
+    <td class="n" data-v="${r.gp ?? -1}">${r.gp ?? "–"}</td><td class="n">${r.g}</td><td class="n">${r.a}</td>
+    <td class="n pts">${r.pts}</td><td class="n muted" data-v="${r.leagueRank ? escapeHtml(r.leagueRank) : 9999}">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : "–"}</td></tr>`).join("")}
   </tbody></table></div>`;
 
   return renderShell({

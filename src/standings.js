@@ -13,6 +13,11 @@ export const placeholderLogo = (name) => {
 
 export const STANDINGS_SOURCE = GAMESTATS;
 
+const scoreDiff = (score) => {
+  const [scored, conceded] = score.split(":").map((n) => Number.parseInt(n, 10) || 0);
+  return scored - conceded;
+};
+
 // The overview page holds one card per league; the first table in each card is its standings.
 export const parseStandings = (html, team) => {
   const cards = html.split('<div class="card mb-4">').slice(1);
@@ -42,12 +47,12 @@ export const parseStandings = (html, team) => {
 };
 
 export const renderStandings = ({ league, teams, updatedAt }) => {
-  const body = `<div class="box"><table>
-  <thead><tr><th class="n">#</th><th>Tým</th><th class="n">Z</th><th class="n">V</th><th class="n">VP</th><th class="n">R</th><th class="n">PP</th><th class="n">P</th><th class="n">Skóre</th><th class="n">Body</th></tr></thead>
+  const body = `<div class="box"><table data-sortable>
+  <thead><tr><th class="n" data-sort="num-asc">#</th><th data-sort="text">Tým</th><th class="n" data-sort="num">Z</th><th class="n" data-sort="num">V</th><th class="n" data-sort="num">VP</th><th class="n" data-sort="num">R</th><th class="n" data-sort="num">PP</th><th class="n" data-sort="num">P</th><th class="n" data-sort="num" title="Řadí se podle rozdílu skóre">Skóre</th><th class="n" data-sort="num">Body</th></tr></thead>
   <tbody>${teams.map((t) => `<tr${t.name === TEAM ? ' class="mark"' : ""}>
-    <td class="n rank">${escapeHtml(t.rank)}.</td><td><span class="club">${t.logoFile ? `<img src="logos/${escapeHtml(t.logoFile)}" alt="">` : placeholderLogo(t.name)}${escapeHtml(t.name)}</span></td>
+    <td class="n rank">${escapeHtml(t.rank)}.</td><td data-v="${escapeHtml(t.name)}"><span class="club">${t.logoFile ? `<img src="logos/${escapeHtml(t.logoFile)}" alt="">` : placeholderLogo(t.name)}${escapeHtml(t.name)}</span></td>
     <td class="n">${t.gp}</td><td class="n">${t.w}</td><td class="n">${t.otw}</td><td class="n">${t.d}</td>
-    <td class="n">${t.otl}</td><td class="n">${t.l}</td><td class="n">${escapeHtml(t.score)}</td><td class="n pts">${t.pts}</td></tr>`).join("")}
+    <td class="n">${t.otl}</td><td class="n">${t.l}</td><td class="n" data-v="${scoreDiff(t.score)}">${escapeHtml(t.score)}</td><td class="n pts">${t.pts}</td></tr>`).join("")}
   </tbody></table></div>`;
   return renderShell({
     title: `Tabulka – ${league || "BNB Cup"}`,

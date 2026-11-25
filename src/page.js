@@ -44,6 +44,12 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   tr.zero td { color: var(--muted); }
   .club { display: inline-flex; align-items: center; gap: 8px; }
   .club img, .club svg { width: 22px; height: 22px; object-fit: contain; flex: 0 0 22px; }
+  th[data-sort] { padding: 0; }
+  th[data-sort] button { all: unset; box-sizing: border-box; display: block; width: 100%; padding: 5px 8px; cursor: pointer; }
+  th[data-sort] button:hover { color: var(--accent); }
+  th[data-sort] button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  th[aria-sort="ascending"] button::after { content: " ▲"; color: var(--accent); }
+  th[aria-sort="descending"] button::after { content: " ▼"; color: var(--accent); }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .foot { margin: 8px 0 0; font-size: 11px; color: var(--muted); }
@@ -51,4 +57,41 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
 </style></head><body>
 ${body}
 <p class="foot">${escapeHtml(legend)} · Zdroj: <a href="${sourceUrl}" target="_blank" rel="noopener">GameStats</a>, aktualizováno ${formatTime(updatedAt)}</p>
+<script>
+document.querySelectorAll("table[data-sortable]").forEach((table) => {
+  const tbody = table.tBodies[0];
+  const original = [...tbody.rows];
+  const headers = [...table.tHead.rows[0].cells];
+  let active = { index: -1, dir: 0 };
+  const valueOf = (row, index, isText) => {
+    const cell = row.cells[index];
+    const raw = cell.dataset.v ?? cell.textContent.trim();
+    return isText ? raw : Number.parseFloat(raw) || 0;
+  };
+  headers.forEach((th, index) => {
+    const kind = th.dataset.sort;
+    if (!kind) return;
+    const isText = kind === "text";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = th.textContent;
+    th.textContent = "";
+    th.append(button);
+    button.addEventListener("click", () => {
+      const firstDir = kind === "num" ? -1 : 1;
+      const dir = active.index === index ? -active.dir : firstDir;
+      active = { index, dir };
+      const rows = [...original].sort((a, b) => {
+        const x = valueOf(a, index, isText);
+        const y = valueOf(b, index, isText);
+        const diff = isText ? x.localeCompare(y, "cs") : x - y;
+        return diff * dir || original.indexOf(a) - original.indexOf(b);
+      });
+      tbody.append(...rows);
+      headers.forEach((h) => h.removeAttribute("aria-sort"));
+      th.setAttribute("aria-sort", dir > 0 ? "ascending" : "descending");
+    });
+  });
+});
+</script>
 </body></html>`;
