@@ -1,6 +1,6 @@
 import { decode, slug, stripTags } from "./page.js";
 
-// Match reports are articles in the club site's BNB Cup category, titled "HC Lány - <opponent> <x> : <y>".
+// Match reports are articles on the club site (homepage and BNB Cup category), titled "HC Lány - <opponent> <x> : <y>".
 export const REPORTS_SOURCE = "https://hclany.estranky.cz/clanky/bnb-cup/";
 const SITE = "https://hclany.estranky.cz";
 const MAX_PAGES = 5;
@@ -17,18 +17,21 @@ export const parseReportsPage = (html) =>
     return [{ url: new URL(decode(link[1]), SITE).href, title: stripTags(link[2]), published: toDay(date[1], date[2], date[3]) }];
   });
 
-// Category pages are newest first; stop once a page reaches articles older than the season.
+const fetchPage = async (url) => {
+  const res = await fetch(url);
+  return res.ok ? parseReportsPage(await res.text()) : [];
+};
+
+// The homepage lists the newest articles of every category, so it also catches a report published
+// outside BNB Cup. Category pages are newest first; stop once a page reaches articles older than the season.
 export const fetchReports = async (seasonStart) => {
-  const reports = [];
+  const reports = await fetchPage(`${SITE}/`).catch(() => []);
   for (let page = 1; page <= MAX_PAGES; page += 1) {
-    const url = page === 1 ? REPORTS_SOURCE : REPORTS_SOURCE.replace(/\/$/, `.${page}/`);
-    const res = await fetch(url);
-    if (!res.ok) break;
-    const found = parseReportsPage(await res.text());
+    const found = await fetchPage(page === 1 ? REPORTS_SOURCE : REPORTS_SOURCE.replace(/\/$/, `.${page}/`));
     reports.push(...found);
     if (found.length === 0 || found.some((r) => r.published < seasonStart)) break;
   }
-  return reports;
+  return [...new Map(reports.map((r) => [r.url, r])).values()];
 };
 
 const stems = (name) =>
