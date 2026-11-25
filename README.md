@@ -48,8 +48,9 @@ phones. So the phone layouts (iframe narrower than 600 px) drop detail instead o
 rows, and every widget fits its recommended iframe height from 340 px wide up:
 
 - **Schedule** – date and time merge into one compact column (`16.11. 21:45`), team logos
-  are hidden, long team names are shortened with an ellipsis and the "další" badge is left
-  out (the highlighted row still marks the next match).
+  are hidden, long team names are shortened with an ellipsis, the win/draw/loss badges are
+  smaller with a gap before the away team, and the "další" badge is left out (the
+  highlighted row still marks the next match).
 - **Standings** – the VP, R and PP columns are hidden.
 - **Scoring and standings** – tighter cell and header padding.
 - **Homepage overview** – keeps both columns; goals+assists, games played and the form
