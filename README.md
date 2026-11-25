@@ -40,6 +40,20 @@ The exact HTML pasted into each page of the club website is kept in `embeds/`
   win/draw/loss badge and the next match highlighted. Results link to the match report
   on the club website.
 
+## Phones
+
+The club website shows the widgets in fixed-height iframes, and the same height applies on
+phones. So the phone layouts (iframe narrower than 520 px) drop detail instead of stacking
+rows, and every widget fits its recommended iframe height from 340 px wide up:
+
+- **Schedule** – date and time merge into one compact column (`16.11. 21:45`), team logos
+  are hidden, long team names are shortened with an ellipsis and the "další" badge is left
+  out (the highlighted row still marks the next match).
+- **Standings** – the VP, R and PP columns are hidden.
+- **Scoring and standings** – tighter cell and header padding.
+- **Homepage overview** – keeps both columns; goals+assists, games played and the form
+  strip are hidden.
+
 ## Data sources
 
 - GameStats `/stats`, the overview page and `/schedule` – scoring, standings, kick-off
