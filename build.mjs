@@ -113,8 +113,10 @@ for (const round of played) {
   }));
 }
 const detailSlugs = new Set(played.map(matchSlug));
-// Links are relative to a widget folder one level deep (rozpis/, prehled/).
-const detailUrlOf = (r) => (detailSlugs.has(matchSlug(r)) ? `../zapas/${matchSlug(r)}/` : null);
+// Links are relative to a widget folder one level deep (rozpis/, prehled/). The build stamp in
+// the query makes browsers load the fresh detail instead of a copy cached by GitHub Pages (10 min).
+const buildStamp = updatedAt.getTime().toString(36);
+const detailUrlOf = (r) => (detailSlugs.has(matchSlug(r)) ? `../zapas/${matchSlug(r)}/?v=${buildStamp}` : null);
 
 write("rozpis", renderSchedule({ ...schedule, reports, logos, detailUrlOf, updatedAt }));
 write("prehled", renderOverview({ schedule, reports, standings, scoringRows, logos, photos, detailUrlOf, updatedAt }));

@@ -59,7 +59,7 @@ const lastResultRow = (played, detailUrlOf) => {
   const score = `${last.score[0]}:${last.score[1]}`;
   const detail = detailUrlOf(last);
   const scoreHtml = detail
-    ? `<a href="${escapeHtml(`${detail}?dark`)}" title="Detail zápasu">${score}</a>`
+    ? `<a href="${escapeHtml(`${detail}${detail.includes("?") ? "&" : "?"}dark`)}" title="Detail zápasu">${score}</a>`
     : last.reportUrl ? `<a href="${escapeHtml(last.reportUrl)}" target="_top" title="Článek o zápase">${score}</a>` : score;
   const form = played.slice(-FORM_MATCHES).map((r) => {
     const f = resultOf(r);
