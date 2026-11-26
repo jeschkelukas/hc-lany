@@ -93,9 +93,11 @@ const saveImage = (dir, geometry) => async ({ name, url }) => {
 const timelines = { ...(archive?.matchTimelines ?? {}) };
 const goalsIn = (m) => m.score[0] + m.score[1];
 const daysSince = (m) => (updatedAt - new Date(`${m.kickoff.replace(" ", "T")}:00+01:00`)) / 86_400_000;
+// "Run workflow" with refresh_admin re-reads the roster and every played game's timeline.
+const refreshAdmin = process.env.REFRESH_ADMIN === "true";
 const needTimeline = schedule.matches.filter((m) => m.kickoff && m.score).filter((m) => {
   const known = timelines[matchSlug(m)];
-  return !known || (goalsOf(known.events).length < goalsIn(m) && daysSince(m) < 14);
+  return refreshAdmin || !known || (goalsOf(known.events).length < goalsIn(m) && daysSince(m) < 14);
 });
 const admin = needTimeline.length || !archive?.rosterIds
   ? await fetchAdminData(needTimeline, TEAM_ID)

@@ -194,6 +194,9 @@ pages.
   once if the roster has never been read. A game lasts about an hour on the ice and the
   workflow runs every 30 minutes, so the timeline is usually read within the first run or two
   after the result appears.
+- **Forced refresh** – Actions → Update stats → Run workflow with *refresh_admin* ticked logs
+  in even when nothing is missing and re-reads the roster and every played game's timeline
+  (for example after a correction in GameStats).
 - **Ids** – HC Lány team `1a15d2bb2b08bc10a5e78`, league 2. liga 2026/27
   `1a18c37f49aff03a5cd4e` (`TEAM_ID` in `src/scoring.js`, `LEAGUE_ID` in `src/admin.js`; the
   league id changes with a new season).

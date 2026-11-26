@@ -5,6 +5,11 @@ on:
     # Every half hour (GitHub may start scheduled runs a few minutes late).
     - cron: "17,47 * * * *"
   workflow_dispatch:
+    inputs:
+      refresh_admin:
+        description: "Log in to the GameStats admin even if nothing is missing (re-reads roster and all timelines)"
+        type: boolean
+        default: false
   push:
     branches: [main]
 
@@ -35,6 +40,7 @@ jobs:
         env:
           GAMESTATS_EMAIL: ${{ secrets.GAMESTATS_EMAIL }}
           GAMESTATS_PASSWORD: ${{ secrets.GAMESTATS_PASSWORD }}
+          REFRESH_ADMIN: ${{ inputs.refresh_admin }}
       # Archive the data snapshot (only when it changed); git history is the backup of every state.
       # Pushes made with the workflow token do not trigger another run.
       - name: Save data snapshot
