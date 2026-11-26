@@ -94,7 +94,7 @@ const extrasLines = (extras) => {
 
 const PHOTO_PLACEHOLDER = '<svg class="face" viewBox="0 0 24 32" aria-hidden="true"><rect width="24" height="32" rx="3" fill="var(--ph-bg)"/><circle cx="12" cy="12" r="5" fill="var(--ph-fg)"/><path d="M3 32c0-6 4-10 9-10s9 4 9 10z" fill="var(--ph-fg)"/></svg>';
 
-export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, league, scheduleUrl, updatedAt }) => {
+export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, playerUrls = new Map(), league, scheduleUrl, updatedAt }) => {
   const when = formatKickoff(round.kickoff);
   const res = resultOf(round);
   const ourGoals = round.home === TEAM ? round.score[0] : round.score[1];
@@ -103,9 +103,11 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, l
   const rows = scorers.map((s) => {
     const file = photos.get(s.name);
     const face = file ? `<img class="face" src="../../photos/${escapeHtml(file)}" alt="">` : PHOTO_PLACEHOLDER;
-    return `<tr><td><span class="player">${face}${escapeHtml(s.name)}</span></td><td class="n">${s.g}</td><td class="n">${s.a}</td><td class="n pts">${s.pts}</td></tr>`;
+    const url = playerUrls.get(s.name);
+    const name = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(s.name)}</a>` : escapeHtml(s.name);
+    return `<tr><td><span class="player">${face}${name}</span></td><td class="n">${s.g}</td><td class="n">${s.a}</td><td class="n pts">${s.pts}</td></tr>`;
   }).join("");
-  const timelineHtml = timeline ? renderTimeline({ round, events: timeline, handPeriods: extras?.estimated ? null : extras?.periods, logos }) : "";
+  const timelineHtml = timeline ? renderTimeline({ round, events: timeline, handPeriods: extras?.estimated ? null : extras?.periods, logos, playerUrls }) : "";
   const missing = listedGoals < ourGoals
     ? `<p class="note">GameStats zatím nemá u ${ourGoals - listedGoals === 1 ? "1 gólu" : `${ourGoals - listedGoals} gólů`} HC Lány zapsaného střelce.</p>`
     : "";
@@ -130,6 +132,8 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, l
   html { height: 100%; overflow: hidden; }
   body { margin: 0; padding: 8px; height: 100%; overflow-y: auto; background: var(--bg); color: var(--fg); font: 14px/1.4 Verdana, Arial, sans-serif; }
   a { color: var(--accent); }
+  .player a, .tl-who a { color: inherit; text-decoration: none; }
+  .player a:hover, .tl-who a:hover { color: var(--accent); text-decoration: underline; }
   .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
   .back { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
   .back:hover { text-decoration: underline; }

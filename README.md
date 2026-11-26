@@ -56,7 +56,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
 - **Game detail** (box score) – the scoring summary by period (time, team logo, running
   score, scorer and assists, HC Lány goals highlighted) from the GameStats admin, goals by
   period under the score and penalties when known (see
-  [Hand-entered game extras](#hand-entered-game-extras)). Opened from the homepage overview
+  [Hand-entered game extras](#hand-entered-game-extras)). HC Lány players (in the points
+  table and in the timeline) link to their public GameStats page in a new tab. Opened from the homepage overview
   it uses the overview's dark colours (`?dark`). In a wide iframe (640 px and more) the
   timeline and the HC Lány points sit side by side, so even an 11-goal game fits the schedule
   (720 px) and overview (540 px) iframes; on phones they stack and the detail scrolls inside

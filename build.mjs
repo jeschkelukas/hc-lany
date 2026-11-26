@@ -169,6 +169,8 @@ saveSnapshot({
   matchScorers: Object.fromEntries([...scorers].sort()), matchExtras: extras,
   matchTimelines: Object.fromEntries(Object.entries(timelines).sort()),
 }, updatedAt);
+// Public GameStats player pages, linked from the game details.
+const playerUrls = new Map([...roster.map((r) => [r.name, playerUrl(r.id)]), ...scoring.players.map((p) => [p.name, p.url])]);
 for (const round of played) {
   const slugName = matchSlug(round);
   const hand = extrasFor(round, extras[slugName], slugName);
@@ -178,7 +180,7 @@ for (const round of played) {
   write(`zapas/${slugName}`, renderMatch({
     round, scorers: scorers.get(round.kickoff) ?? [],
     extras: estimated ? { periods: estimated, penalties: hand?.penalties ?? null, estimated: true } : hand,
-    timeline: events, logos, photos, league: schedule.league, scheduleUrl: "../../rozpis/", updatedAt,
+    timeline: events, logos, photos, playerUrls, league: schedule.league, scheduleUrl: "../../rozpis/", updatedAt,
   }));
 }
 const detailSlugs = new Set(played.map(matchSlug));

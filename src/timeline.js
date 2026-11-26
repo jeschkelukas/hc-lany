@@ -62,7 +62,16 @@ const smallLogo = (name, logos) => {
   return file ? `<img class="tl-logo" src="../../logos/${escapeHtml(file)}" alt="">` : `<span class="tl-logo">${placeholderLogo(name)}</span>`;
 };
 
-export const renderTimeline = ({ round, events, handPeriods, logos }) => {
+// "#18 Lukáš Jeschke" in the timeline vs "Jeschke Lukáš" in the roster: match on the set of words.
+const nameKey = (name) => name.replace(/^#\d+\s*/, "").toLowerCase().split(/\s+/).sort().join(" ");
+
+export const renderTimeline = ({ round, events, handPeriods, logos, playerUrls = new Map() }) => {
+  const urlByKey = new Map([...playerUrls].map(([name, url]) => [nameKey(name), url]));
+  // HC Lány players link to their public GameStats page (new tab, the detail sits in an iframe).
+  const who = (name, team) => {
+    const url = team === TEAM ? urlByKey.get(nameKey(name)) : null;
+    return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(name)}</a>` : escapeHtml(name);
+  };
   const goals = withPeriods(events, handPeriods);
   if (!goals.length) return "";
   const teamOf = (side) => (side === "home" ? round.home : round.away);
@@ -71,8 +80,8 @@ export const renderTimeline = ({ round, events, handPeriods, logos }) => {
     const body = inPeriod.length
       ? inPeriod.map((g) => {
         const team = teamOf(g.side);
-        const assists = g.assists.length ? `<span class="tl-ast">(${g.assists.map(escapeHtml).join(", ")})</span>` : "";
-        return `<li class="${team === TEAM ? "us" : ""}"><span class="tl-time">${escapeHtml(g.time)}</span>${smallLogo(team, logos)}<b class="tl-score">${g.score[0]}:${g.score[1]}</b><span class="tl-who">${escapeHtml(g.scorer ?? "")} ${assists}</span></li>`;
+        const assists = g.assists.length ? `<span class="tl-ast">(${g.assists.map((a) => who(a, team)).join(", ")})</span>` : "";
+        return `<li class="${team === TEAM ? "us" : ""}"><span class="tl-time">${escapeHtml(g.time)}</span>${smallLogo(team, logos)}<b class="tl-score">${g.score[0]}:${g.score[1]}</b><span class="tl-who">${g.scorer ? who(g.scorer, team) : ""} ${assists}</span></li>`;
       }).join("")
       : '<li class="tl-none">bez gólu</li>';
     return `<h3>${name}</h3><ul class="tl">${body}</ul>`;
