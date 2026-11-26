@@ -1,6 +1,6 @@
 # HC Lány – stats widgets from GameStats
 
-Every 30 minutes a GitHub Action pulls the BNB Cup data from GameStats
+Every 30 minutes (started by cron-job.org, see [Schedule](#schedule)) a GitHub Action pulls the BNB Cup data from GameStats
 (https://mini.gamestats.cz/i/bnb-cup), builds small HTML widgets for HC Lány and
 publishes them on GitHub Pages. The club website (https://hclany.estranky.cz/) embeds
 them with an `<iframe>`, so the pages there never need manual updates.
@@ -72,6 +72,26 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   11-goal game with 9 HC Lány scorers is about 910 px high, which is why the schedule
   iframe is 940 px (the schedule stretches its rows to fill it); in the overview iframe (670 px),
   on phones or for anything taller the detail scrolls inside its own page.
+
+## Schedule
+
+GitHub's own `schedule` trigger is best effort: in the first day and a half this repository
+got 3 scheduled runs instead of about 60. The builds are therefore started from outside: a
+cron-job.org job calls the GitHub API every 30 minutes (at :17 and :47, Europe/Prague) to run
+the workflow, like *Run workflow* in the Actions tab.
+
+- Request: `POST https://api.github.com/repos/jeschkelukas/hc-lany/actions/workflows/update.yml/dispatches`
+  with the body `{"ref":"main"}` and the headers `Accept: application/vnd.github+json`,
+  `X-GitHub-Api-Version: 2022-11-28` and `Authorization: Bearer <token>`; GitHub answers
+  `204 No Content`.
+- Token: a fine-grained personal access token limited to this repository with the single
+  permission *Actions: Read and write*. It can only start workflows and read their runs, no
+  code or secrets. It lives only in the cron-job.org job (failure e-mails after two failed
+  calls); it expires on 25 Nov 2027, then generate a new one and paste it there. GitHub
+  retires API version 2022-11-28 on 10 Mar 2028 (`Sunset` header), so when renewing the
+  token also set `X-GitHub-Api-Version` to the current version.
+- The workflow's own cron stays as a backup, hourly at :33, so it does not collide with the
+  external runs (a new run cancels one in progress, see `concurrency`).
 
 ## Phones
 
@@ -205,7 +225,7 @@ pages.
 - **When** – only when a played game has no complete timeline (its result is in, but not all
   goals are in the timeline yet), retried every run for up to two weeks after the game, and
   once if the roster has never been read. A game lasts about an hour on the ice and the
-  workflow runs every 30 minutes, so the timeline is usually read within the first run or two
+  workflow runs every 30 minutes (see [Schedule](#schedule)), so the timeline is usually read within the first run or two
   after the result appears.
 - **Forced refresh** – Actions → Update stats → Run workflow with *refresh_admin* ticked logs
   in even when nothing is missing and re-reads the roster and every played game's timeline

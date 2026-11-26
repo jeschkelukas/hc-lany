@@ -2,8 +2,10 @@ name: Update stats
 
 on:
   schedule:
-    # Every half hour (GitHub may start scheduled runs a few minutes late).
-    - cron: "17,47 * * * *"
+    # Backup only: GitHub runs schedules best effort (often hours late or not at all). The regular
+    # runs every 30 minutes (:17 and :47) are started by cron-job.org through workflow_dispatch,
+    # see README "Schedule"; :33 keeps the backup clear of them.
+    - cron: "33 * * * *"
   workflow_dispatch:
     inputs:
       refresh_admin:
