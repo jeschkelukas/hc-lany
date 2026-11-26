@@ -7,6 +7,7 @@ import { matchSlug, playerMatchesFromArchive, renderMatch, scorersByMatch } from
 import { fetchPlayerPages } from "./src/roster.js";
 import { fetchAdminData } from "./src/admin.js";
 import { goalsOf, periodsFromTimeline } from "./src/timeline.js";
+import { timelineDue } from "./src/plan.js";
 import { fetchReports } from "./src/reports.js";
 import { extrasFor } from "./src/extras.js";
 import { renderOverview } from "./src/overview.js";
@@ -87,25 +88,24 @@ const saveImage = (dir, geometry) => async ({ name, url }) => {
   }
 };
 // GameStats admin (login via repository secrets, read only, logged out right after): the team
-// roster with player ids and the game timelines. It logs in only when a played game has no
-// complete timeline yet (a new game once its result is in, an incomplete one again for up to two
-// weeks) or the roster has never been read. Timelines are kept in the snapshot for all seasons.
+// roster with player ids and the game timelines. It logs in only when a played game's timeline is
+// due (timelineDue in src/plan.js: a new game right away, an incomplete timeline hourly on the
+// game day, then daily for two weeks) or the roster has never been read. Timelines are kept in
+// the snapshot for all seasons, with the time of their last admin read (checkedAt).
 const timelines = { ...(archive?.matchTimelines ?? {}) };
-const goalsIn = (m) => m.score[0] + m.score[1];
-const daysSince = (m) => (updatedAt - new Date(`${m.kickoff.replace(" ", "T")}:00+01:00`)) / 86_400_000;
 // "Run workflow" with refresh_admin re-reads the roster and every played game's timeline.
 const refreshAdmin = process.env.REFRESH_ADMIN === "true";
-const needTimeline = schedule.matches.filter((m) => m.kickoff && m.score).filter((m) => {
-  const known = timelines[matchSlug(m)];
-  return refreshAdmin || !known || (goalsOf(known.events).length < goalsIn(m) && daysSince(m) < 14);
-});
+const needTimeline = schedule.matches.filter((m) => m.kickoff && m.score)
+  .filter((m) => refreshAdmin || timelineDue(m, timelines[matchSlug(m)], updatedAt));
 const admin = needTimeline.length || !archive?.rosterIds
   ? await fetchAdminData(needTimeline, TEAM_ID)
   : { roster: null, timelines: new Map() };
 for (const m of needTimeline) {
   const fresh = admin.timelines.get(m.kickoff);
+  if (!fresh) continue;
   const known = timelines[matchSlug(m)];
-  if (fresh && (!known || goalsOf(fresh.events).length >= goalsOf(known.events).length)) timelines[matchSlug(m)] = fresh;
+  const best = !known || goalsOf(fresh.events).length >= goalsOf(known.events).length ? fresh : known;
+  timelines[matchSlug(m)] = { ...best, checkedAt: updatedAt.toISOString() };
 }
 // Roster: the admin team page when it was just read, else the last one read, else the list in code.
 const roster = admin.roster ?? archive?.rosterIds ?? ROSTER;
@@ -200,6 +200,8 @@ write("vybor", `<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta
 <body style="margin:0;padding:8px;background:#fff">${readFileSync("embeds/vybor.html", "utf8").replace(/<!--[\s\S]*?-->\s*/, "")}</body></html>`);
 // Committee photos the club sent (not on GameStats) are served next to the page: vybor/<file>.
 for (const file of existsSync("embeds/photos") ? readdirSync("embeds/photos") : []) copyFileSync(`embeds/photos/${file}`, `dist/vybor/${file}`);
+// Time of this full build, read by gate.mjs to run the next one an hour later.
+writeFileSync("dist/build.json", `${JSON.stringify({ builtAt: updatedAt.toISOString() })}\n`);
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
 <ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li><li><a href="vybor/">Výbor HC Lány</a></li></ul>`);
 console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, image downloads: ${imageDownloads}, player pages fetched: ${pages.size}, game details: ${played.length}, admin: ${admin.roster ? `roster ${admin.roster.length}, ` : ""}timelines fetched: ${admin.timelines.size}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);

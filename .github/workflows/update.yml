@@ -3,13 +3,17 @@ name: Update stats
 on:
   schedule:
     # Backup only: GitHub runs schedules best effort (often hours late or not at all). The regular
-    # runs every 30 minutes (:17 and :47) are started by cron-job.org through workflow_dispatch,
-    # see README "Schedule"; :33 keeps the backup clear of them.
-    - cron: "33 * * * *"
+    # runs every 15 minutes (:02, :17, :32, :47) are started by cron-job.org through
+    # workflow_dispatch, see README "Schedule"; :40 keeps the backup clear of them.
+    - cron: "40 * * * *"
   workflow_dispatch:
     inputs:
       refresh_admin:
         description: "Log in to the GameStats admin even if nothing is missing (re-reads roster and all timelines)"
+        type: boolean
+        default: false
+      force:
+        description: "Run the full build even if nothing changed"
         type: boolean
         default: false
   push:
@@ -21,24 +25,36 @@ permissions:
   id-token: write
   actions: write
 
+# Runs queue instead of cancelling each other, so a quick check never kills a build in progress.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      full: ${{ steps.gate.outputs.full }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+      # Quick check (public schedule + time of the last deploy): the rest runs only when a result
+      # is new, a game timeline is due or the last full build is an hour old (src/plan.js).
+      - id: gate
+        run: node gate.mjs
+        env:
+          REFRESH_ADMIN: ${{ inputs.refresh_admin }}
+          FORCE: ${{ inputs.force }}
       # ImageMagick shrinks player photos to thumbnails; the build still works without it.
-      - run: sudo apt-get install -y -qq --no-install-recommends imagemagick >/dev/null
+      - if: steps.gate.outputs.full == 'true'
+        run: sudo apt-get install -y -qq --no-install-recommends imagemagick >/dev/null
       # The GameStats login (team manager account) reads the roster and game timelines from the
       # admin, read only, logging out right after. Repository secrets are masked in the logs and
       # never reach workflows started from forks; without them the build skips that step.
-      - run: node build.mjs
+      - if: steps.gate.outputs.full == 'true'
+        run: node build.mjs
         env:
           GAMESTATS_EMAIL: ${{ secrets.GAMESTATS_EMAIL }}
           GAMESTATS_PASSWORD: ${{ secrets.GAMESTATS_PASSWORD }}
@@ -46,6 +62,7 @@ jobs:
       # Archive the data snapshot (only when it changed); git history is the backup of every state.
       # Pushes made with the workflow token do not trigger another run.
       - name: Save data snapshot
+        if: steps.gate.outputs.full == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -54,12 +71,14 @@ jobs:
             git commit -m "data: snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
             git pull --rebase --quiet && git push --quiet || echo "::warning::snapshot push failed, will retry next run"
           fi
-      - uses: actions/upload-pages-artifact@v4
+      - if: steps.gate.outputs.full == 'true'
+        uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
   deploy:
     needs: build
+    if: needs.build.outputs.full == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
