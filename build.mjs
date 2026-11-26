@@ -191,7 +191,7 @@ write("prehled", renderOverview({ schedule, leagueMatches: parseLeagueMatches(sc
 write("vybor", `<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Výbor HC Lány</title></head>
 <body style="margin:0;padding:8px;background:#fff">${readFileSync("embeds/vybor.html", "utf8").replace(/<!--[\s\S]*?-->\s*/, "")}</body></html>`);
 // Committee photos the club sent (not on GameStats) are served next to the page: vybor/<file>.
-for (const file of readdirSync("embeds/photos")) copyFileSync(`embeds/photos/${file}`, `dist/vybor/${file}`);
+for (const file of existsSync("embeds/photos") ? readdirSync("embeds/photos") : []) copyFileSync(`embeds/photos/${file}`, `dist/vybor/${file}`);
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
 <ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li><li><a href="vybor/">Výbor HC Lány</a></li></ul>`);
 console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, image downloads: ${imageDownloads}, player pages fetched: ${pages.size}, game details: ${played.length}, admin: ${admin.roster ? `roster ${admin.roster.length}, ` : ""}timelines fetched: ${admin.timelines.size}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);

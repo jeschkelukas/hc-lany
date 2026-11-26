@@ -161,10 +161,10 @@ content), so it takes its natural height and wraps on phones.
 - **Markup** – inline styles only, because the estranky editor removes `<style>` blocks,
   and inline-block cards instead of flexbox, so they wrap even if the editor drops styles
   it does not know.
-- **Photos** – a member on the GameStats roster with a photo uses that image (Aleš
-  Lomberský). Others come from the club (`embeds/photos/`, cropped to the face only), and the
-  build publishes them at `https://jeschkelukas.github.io/hc-lany/vybor/<file>`. Members
-  without a photo show their initials.
+- **Photos** – members on the HC Lány roster use their GameStats photo (Aleš Lomberský,
+  Radek Jirkovský). A photo for anyone else goes to `embeds/photos/` (cropped to the face
+  only) and the build publishes it at `https://jeschkelukas.github.io/hc-lany/vybor/<file>`.
+  Members without a photo show their initials.
 - **Adding a photo** – crop it to a square around the face (no phone numbers or names from
   messenger screenshots), save it as `embeds/photos/<surname>-<name>.jpg`, replace that
   person's initials `<div>` in `vybor.html` with an `<img>` like the existing ones, push,
