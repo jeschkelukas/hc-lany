@@ -503,7 +503,8 @@
       "a": 0,
       "pts": 0,
       "pim": 0,
-      "photoUrl": "https://mini.gamestats.cz/uploads/players/acd9be92d7453709543bf064.jpg"
+      "photoUrl": "https://mini.gamestats.cz/uploads/players/acd9be92d7453709543bf064.jpg",
+      "games": []
     },
     "Cepák Tomáš": {
       "id": "1a18e23bc27c545dc010a",
@@ -514,7 +515,12 @@
       "a": 0,
       "pts": 0,
       "pim": 0,
-      "photoUrl": "https://mini.gamestats.cz/uploads/players/1eca65dd8bd15cdce542f5cc.jpg"
+      "photoUrl": "https://mini.gamestats.cz/uploads/players/1eca65dd8bd15cdce542f5cc.jpg",
+      "games": [
+        "2026-11-13 20:15",
+        "2026-11-16 21:45",
+        "2026-11-20 21:50"
+      ]
     },
     "Taraba Martin": {
       "id": "1a18e45b6d5a63e6f0d1b",
