@@ -107,6 +107,14 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
     const name = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(s.name)}</a>` : escapeHtml(s.name);
     return `<tr><td><span class="player">${face}${name}</span></td><td class="n">${s.g}</td><td class="n">${s.a}</td><td class="n pts">${s.pts}</td></tr>`;
   }).join("");
+  // Compact points line for narrower iframes, used instead of the table when there is a timeline.
+  const chips = scorers.map((s) => {
+    const file = photos.get(s.name);
+    const face = file ? `<img class="face" src="../../photos/${escapeHtml(file)}" alt="">` : PHOTO_PLACEHOLDER;
+    const url = playerUrls.get(s.name);
+    const name = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(s.name)}</a>` : escapeHtml(s.name);
+    return `<li>${face}<span class="chip-name">${name}</span><b>${s.pts}</b><span class="chip-ga">${s.g}+${s.a}</span></li>`;
+  }).join("");
   const timelineHtml = timeline ? renderTimeline({ round, events: timeline, handPeriods: extras?.estimated ? null : extras?.periods, logos, playerUrls }) : "";
   const missing = listedGoals < ourGoals
     ? `<p class="note">GameStats zatím nemá u ${ourGoals - listedGoals === 1 ? "1 gólu" : `${ourGoals - listedGoals} gólů`} HC Lány zapsaného střelce.</p>`
@@ -173,8 +181,17 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   .tl-none { color: var(--dim); font-size: 12px; }
   /* Wide iframes: timeline and the HC Lány points side by side, so the detail fits the fixed
      iframe height; narrow ones stack them (the body scrolls if needed). */
-  @media (min-width: 640px) {
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 6px; }
+  .chips li { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 3px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; font-size: 12px; white-space: nowrap; }
+  .chips .face { width: 15px; height: 20px; flex-basis: 15px; border-radius: 7px; }
+  .chips b { font: 700 14px/1 var(--display); color: var(--hl); }
+  .chips .chip-ga { color: var(--dim); font-size: 11px; }
+  .chips a { color: inherit; text-decoration: none; }
+  table.with-tl { display: none; }
+  @media (min-width: 760px) {
     .cols.two { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .cols.two .chips { display: none; }
+    .cols.two table.with-tl { display: table; }
   }
   .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: var(--dim); }
   .foot a { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
@@ -194,7 +211,7 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
 </section>
 <div class="cols${timelineHtml ? " two" : ""}">${timelineHtml ? `<section>${timelineHtml}</section>` : ""}<section>
 <h2>Body ${escapeHtml(TEAM)}</h2>
-${scorers.length ? `<table><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
+${scorers.length ? `${timelineHtml ? `<ul class="chips">${chips}</ul>` : ""}<table${timelineHtml ? ' class="with-tl"' : ""}><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
 ${missing}</section></div>
 <div class="foot"><span>Zdroj: GameStats · aktualizováno ${formatTime(updatedAt)}</span></div>
 </body></html>`;

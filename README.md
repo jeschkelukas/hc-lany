@@ -58,10 +58,11 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   period under the score and penalties when known (see
   [Hand-entered game extras](#hand-entered-game-extras)). HC Lány players (in the points
   table and in the timeline) link to their public GameStats page in a new tab. Opened from the homepage overview
-  it uses the overview's dark colours (`?dark`). In a wide iframe (640 px and more) the
-  timeline and the HC Lány points sit side by side, so even an 11-goal game fits the schedule
-  (720 px) and overview (540 px) iframes; on phones they stack and the detail scrolls inside
-  its own page.
+  it uses the overview's dark colours (`?dark`). In a wide iframe (760 px and more) the
+  timeline and the HC Lány points table sit side by side; in narrower ones (like the club
+  website's ~600 px column) the points become a compact line of chips under the timeline. An
+  11-goal game is about 610 px high at 600 px wide, so it fits the schedule iframe (720 px);
+  anything taller (the overview iframe is 540 px, or phones) scrolls inside the detail page.
 
 ## Phones
 
