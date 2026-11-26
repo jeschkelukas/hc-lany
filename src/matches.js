@@ -107,15 +107,7 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
     const name = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(s.name)}</a>` : escapeHtml(s.name);
     return `<tr><td><span class="player">${face}${name}</span></td><td class="n">${s.g}</td><td class="n">${s.a}</td><td class="n pts">${s.pts}</td></tr>`;
   }).join("");
-  // Compact points line for narrower iframes, used instead of the table when there is a timeline.
-  const chips = scorers.map((s) => {
-    const file = photos.get(s.name);
-    const face = file ? `<img class="face" src="../../photos/${escapeHtml(file)}" alt="">` : PHOTO_PLACEHOLDER;
-    const url = playerUrls.get(s.name);
-    const name = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(s.name)}</a>` : escapeHtml(s.name);
-    return `<li>${face}<span class="chip-name">${name}</span><b>${s.pts}</b><span class="chip-ga">${s.g}+${s.a}</span></li>`;
-  }).join("");
-  const timelineHtml = timeline ? renderTimeline({ round, events: timeline, handPeriods: extras?.estimated ? null : extras?.periods, logos, playerUrls }) : "";
+  const timelineHtml = timeline ? renderTimeline({ round, events: timeline, handPeriods: extras?.estimated ? null : extras?.periods, logos, playerUrls, photos }) : "";
   const missing = listedGoals < ourGoals
     ? `<p class="note">GameStats zatím nemá u ${ourGoals - listedGoals === 1 ? "1 gólu" : `${ourGoals - listedGoals} gólů`} HC Lány zapsaného střelce.</p>`
     : "";
@@ -151,9 +143,9 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   .match { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
   .side { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font: 600 16px/1.1 var(--display); letter-spacing: .02em; text-transform: uppercase; }
   .side.us span { color: var(--hl); }
-  .logo, .logo svg { width: 48px; height: 48px; object-fit: contain; display: block; }
+  .logo, .logo svg { width: 42px; height: 42px; object-fit: contain; display: block; }
   .score { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .score b { font: 700 40px/1 var(--display); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+  .score b { font: 700 36px/1 var(--display); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
   .score { gap: 3px; }
   .periods { font: 600 14px/1.1 var(--display); letter-spacing: .04em; color: var(--fg); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .pen { font-size: 11px; color: var(--dim); white-space: nowrap; }
@@ -166,32 +158,25 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   .n { text-align: right; width: 3em; }
   .pts { font: 700 15px/1 var(--display); color: var(--hl); }
   .player { display: flex; align-items: center; gap: 8px; }
-  .face { width: 18px; height: 24px; object-fit: cover; border-radius: 3px; display: block; flex: 0 0 18px; }
+  .face { width: 15px; height: 20px; object-fit: cover; border-radius: 2px; display: block; flex: 0 0 15px; }
+  .pts-table td { font-size: 13px; line-height: 1.3; }
   .empty, .note { color: var(--dim); margin: 6px 0; font-size: 12px; }
-  h3 { font: 600 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin: 6px 0 2px; }
+  h3 { font: 600 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin: 5px 0 1px; }
   .tl { list-style: none; margin: 0; padding: 0; }
-  .tl li { display: flex; align-items: center; gap: 8px; padding: 1px 6px; font-size: 13px; line-height: 1.35; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
+  .tl li { display: flex; align-items: center; gap: 8px; padding: 0 6px; min-height: 22px; font-size: 13px; line-height: 1.3; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
   .tl li.us { border-left-color: var(--hl); }
   .tl li.us .tl-score { color: var(--hl); }
   .tl-time { color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; width: 3.2em; flex: 0 0 auto; }
   .tl-logo, .tl-logo svg { width: 18px; height: 18px; object-fit: contain; display: block; flex: 0 0 18px; }
   .tl-score { font: 700 14px/1 var(--display); font-variant-numeric: tabular-nums; width: 2.6em; flex: 0 0 auto; text-align: center; }
   .tl-who { min-width: 0; }
+  .tl-face { width: 15px; height: 20px; object-fit: cover; border-radius: 2px; display: block; flex: 0 0 15px; margin-right: -3px; }
   .tl-ast { color: var(--dim); font-size: 11px; }
   .tl-none { color: var(--dim); font-size: 12px; }
   /* Wide iframes: timeline and the HC Lány points side by side, so the detail fits the fixed
      iframe height; narrow ones stack them (the body scrolls if needed). */
-  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 6px; }
-  .chips li { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 3px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; font-size: 12px; white-space: nowrap; }
-  .chips .face { width: 15px; height: 20px; flex-basis: 15px; border-radius: 7px; }
-  .chips b { font: 700 14px/1 var(--display); color: var(--hl); }
-  .chips .chip-ga { color: var(--dim); font-size: 11px; }
-  .chips a { color: inherit; text-decoration: none; }
-  table.with-tl { display: none; }
-  @media (min-width: 760px) {
+  @media (min-width: 640px) {
     .cols.two { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; align-items: start; }
-    .cols.two .chips { display: none; }
-    .cols.two table.with-tl { display: table; }
   }
   .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: var(--dim); }
   .foot a { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
@@ -211,7 +196,7 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
 </section>
 <div class="cols${timelineHtml ? " two" : ""}">${timelineHtml ? `<section>${timelineHtml}</section>` : ""}<section>
 <h2>Body ${escapeHtml(TEAM)}</h2>
-${scorers.length ? `${timelineHtml ? `<ul class="chips">${chips}</ul>` : ""}<table${timelineHtml ? ' class="with-tl"' : ""}><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
+${scorers.length ? `<table class="pts-table"><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
 ${missing}</section></div>
 <div class="foot"><span>Zdroj: GameStats · aktualizováno ${formatTime(updatedAt)}</span></div>
 </body></html>`;
