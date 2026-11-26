@@ -102,6 +102,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .search button { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; padding: 4px 8px; cursor: pointer; }
   .search input::-webkit-search-cancel-button { display: none; }
   .nomatch { padding: 14px 8px; color: var(--muted); }
+  h2.sub { margin: 14px 0 2px; font-size: 12px; font-weight: bold; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
   .narrow-only { display: none; }
   /* Phones: the iframe keeps its fixed height, so narrow layouts drop detail instead of stacking rows. */
   @media (max-width: 600px) {
@@ -149,18 +150,26 @@ const fold = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCa
 document.querySelectorAll("[data-filter]").forEach((box) => {
   const input = box.querySelector("input");
   const clear = box.querySelector("button");
-  const table = document.getElementById(box.dataset.filter);
-  const empty = document.getElementById(box.dataset.filter + "-empty");
+  // data-filter lists the tables to search (ids); the message for no match belongs to the first.
+  const ids = box.dataset.filter.split(" ");
+  const tables = ids.map((id) => document.getElementById(id)).filter(Boolean);
+  const empty = document.getElementById(ids[0] + "-empty");
   const apply = () => {
     const q = fold(input.value.trim());
-    let shown = 0;
-    [...table.tBodies[0].rows].forEach((row) => {
-      row.hidden = q !== "" && !fold(row.dataset.name || row.textContent).includes(q);
-      if (!row.hidden) shown += 1;
+    let total = 0;
+    tables.forEach((table) => {
+      let shown = 0;
+      [...table.tBodies[0].rows].forEach((row) => {
+        row.hidden = q !== "" && !fold(row.dataset.name || row.textContent).includes(q);
+        if (!row.hidden) shown += 1;
+      });
+      const wrap = table.closest("[data-hide-empty]");
+      if (wrap) wrap.hidden = shown === 0;
+      total += shown;
+      restripe(table.tBodies[0]);
     });
     clear.hidden = q === "";
-    empty.hidden = shown > 0;
-    restripe(table.tBodies[0]);
+    empty.hidden = total > 0;
   };
   input.addEventListener("input", apply);
   clear.addEventListener("click", () => { input.value = ""; apply(); input.focus(); });

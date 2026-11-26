@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { ROSTER, SOURCE, TEAM, TEAM_ID, buildTable, parseTeamScoring, playerUrl, renderPage } from "./src/scoring.js";
+import { GOALIE, ROSTER, SOURCE, TEAM, TEAM_ID, buildGoalies, buildTable, parseTeamScoring, playerUrl, renderPage } from "./src/scoring.js";
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
 import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseLeagueMatches, parseSchedule, renderSchedule } from "./src/schedule.js";
 import { matchSlug, playerMatchesFromArchive, renderMatch, scorersByMatch } from "./src/matches.js";
@@ -120,7 +120,8 @@ const scoredGames = (s) => s?.matches?.filter((m) => m.score).length ?? -1;
 const refreshPlayers = !sameSeason || !archive?.roster || admin.roster
   || scoring.players.some((p) => archivedLine.get(p.name) !== lineOf(p))
   || scoredGames(schedule) !== scoredGames(archive?.schedule)
-  || !existsSync(`data/archive/${pragueDate(updatedAt)}.json`);
+  || !existsSync(`data/archive/${pragueDate(updatedAt)}.json`)
+  || Object.values(archive?.roster ?? {}).some((s) => s.position === GOALIE && !s.games);
 const rosterNames = new Set(roster.map((r) => r.name));
 const playerTargets = [
   ...roster.map((r) => ({ name: r.name, url: playerUrl(r.id) })),
@@ -132,6 +133,8 @@ const rosterStats = Object.fromEntries(roster.map(({ name, id }) => {
   const page = pages.get(name);
   const old = sameSeason ? archive?.roster?.[name] : null;
   const fresh = page && { id, number: page.number, position: page.position, gp: page.gp, g: page.g, a: page.a, pts: page.pts, pim: page.pim, photoUrl: page.photoUrl };
+  // Goalies keep the games they were listed in, for their goals against (buildGoalies).
+  if (fresh && page.position === GOALIE) fresh.games = page.matches.map((m) => m.kickoff).sort();
   if (fresh && old && old.gp > fresh.gp) console.warn(`roster: ${name} lost games (${fresh.gp} < ${old.gp}), keeping the archived line`);
   return [name, (fresh && !(old && old.gp > fresh.gp) ? fresh : old) ?? { id }];
 }));
@@ -145,7 +148,8 @@ const photoUrls = new Map([
 const photos = await saveAll([...photoUrls].map(([name, url]) => ({ name, url })), saveImage("photos", "60x80^"));
 
 const scoringRows = buildTable(scoring, roster, rosterStats);
-write("bodovani", renderPage({ league: scoring.league, rows: scoringRows, photos, updatedAt }));
+const goalies = buildGoalies(roster, rosterStats, schedule);
+write("bodovani", renderPage({ league: scoring.league, rows: scoringRows, goalies, photos, updatedAt }));
 write("tabulka", renderStandings({ ...standings, logos, updatedAt }));
 // Club match reports are optional: if the club site is down, the schedule is published without links.
 const reports = await fetchReports(SEASON_START).catch((error) => {

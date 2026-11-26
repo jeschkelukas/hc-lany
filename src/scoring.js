@@ -40,6 +40,11 @@ export const ROSTER = [
 ].sort((x, y) => x.name.localeCompare(y.name, "cs"));
 export const playerUrl = (id) => `${GAMESTATS}/players/${id}`;
 
+// Position as the public player page states it; goalies get their own table instead of a row
+// in the scoring.
+export const GOALIE = "Brankář";
+const isGoalie = (name, rosterStats) => rosterStats[name]?.position === GOALIE;
+
 export const parseTeamScoring = (html, team) => {
   const sections = html.split('<section class="mb-5">').slice(1);
   for (const section of sections) {
@@ -78,16 +83,40 @@ const byScoring = (x, y) => y.pts - x.pts || y.g - x.g || x.gp - y.gp || x.name.
 // without a point forms one shared group at the bottom, most games played first. Their games
 // come from the public player pages (rosterStats: name -> { gp, ... }).
 export const buildTable = (scoring, roster, rosterStats = {}) => {
-  const scorers = scoring ? scoring.players : [];
+  const scorers = (scoring ? scoring.players : []).filter((p) => !isGoalie(p.name, rosterStats));
   const known = new Set(scorers.map((p) => p.name));
   const zeros = roster
-    .filter(({ name }) => !known.has(name))
+    .filter(({ name }) => !known.has(name) && !isGoalie(name, rosterStats))
     .map(({ name, id }) => ({ name, url: playerUrl(id), leagueRank: null, gp: rosterStats[name]?.gp ?? null, g: 0, a: 0, pts: 0, zero: true }))
     .sort((x, y) => (y.gp ?? -1) - (x.gp ?? -1) || x.name.localeCompare(y.name, "cs"));
   const rows = [...[...scorers].sort(byScoring), ...zeros].map((p) => ({ ...p, number: rosterStats[p.name]?.number ?? null }));
   const groupOf = (p) => (p.zero ? "zero" : `${p.pts}|${p.g}|${p.gp}`);
   const groups = [...new Set(rows.map(groupOf))];
   return rows.map((p) => ({ ...p, rankLabel: `${groups.indexOf(groupOf(p)) + 1}.` }));
+};
+
+// Goalie stats the way hockey keeps them (NHL, hokej.cz), as far as GameStats allows. It records
+// neither shots nor ice time, so there is no save percentage, and the goals-against average is per
+// game (GA / GP) instead of GA × 60 / minutes; for a goalie who plays whole games it is the same.
+// A goalie is credited with every game he was listed in (his public page, rosterStats.games) and
+// with the team's result and goals against in it; a shutout is a game without a goal against.
+export const buildGoalies = (roster, rosterStats, schedule) => {
+  const results = new Map(schedule.matches.filter((m) => m.kickoff && m.score).map((m) => {
+    const us = m.home === TEAM ? 0 : 1;
+    return [m.kickoff, { gf: m.score[us], ga: m.score[1 - us] }];
+  }));
+  return roster.filter(({ name }) => isGoalie(name, rosterStats)).map(({ name, id }) => {
+    const s = rosterStats[name];
+    const games = (s.games ?? []).map((k) => results.get(k)).filter(Boolean);
+    const count = (test) => games.filter(test).length;
+    const ga = games.reduce((total, r) => total + r.ga, 0);
+    return {
+      name, url: playerUrl(id), number: s.number ?? null, gp: games.length,
+      w: count((r) => r.gf > r.ga), t: count((r) => r.gf === r.ga), l: count((r) => r.gf < r.ga),
+      ga, gaa: games.length ? ga / games.length : null, so: count((r) => r.ga === 0),
+      g: s.g ?? 0, a: s.a ?? 0, pts: s.pts ?? 0,
+    };
+  }).sort((x, y) => y.gp - x.gp || (x.gaa ?? 99) - (y.gaa ?? 99) || x.name.localeCompare(y.name, "cs"));
 };
 
 // Grey head-and-shoulders silhouette for players without a GameStats photo.
@@ -114,22 +143,35 @@ const summary = (rows) => {
   return `<div class="summary">${tile("Hráčů s body", rows.filter((r) => r.pts > 0).length)}${tile("Góly", sum("g"))}${tile("Asistence", sum("a"))}${tile("Body", sum("pts"), "total")}</div>`;
 };
 
-export const renderPage = ({ league, rows, photos = new Map(), updatedAt, error }) => {
+const goalieCells = (r) => {
+  if (!r.gp) return '<td class="n">–</td><td class="n opt">–</td><td class="n opt">–</td><td class="n opt">–</td><td class="n">–</td><td class="n pts">–</td><td class="n">–</td>';
+  return `<td class="n">${r.gp}</td><td class="n opt">${r.w}</td><td class="n opt">${r.t}</td><td class="n opt">${r.l}</td><td class="n">${r.ga}</td><td class="n pts">${r.gaa.toFixed(2).replace(".", ",")}</td><td class="n">${r.so}</td>`;
+};
+
+const goalieTable = (goalies, photos) => (goalies.length ? `<section data-hide-empty><h2 class="sub">Brankáři</h2>
+  <div class="box"><table id="goalies" class="stats players goalies">
+  <thead><tr><th class="n">#</th><th class="n num" title="Číslo dresu">Č.</th><th>Jméno</th><th class="n" title="Zápasy">Z</th><th class="n opt" title="Výhry">V</th><th class="n opt" title="Remízy">R</th><th class="n opt" title="Prohry">P</th><th class="n" title="Obdržené góly">OG</th><th class="n" title="Průměr obdržených gólů na zápas">Ø</th><th class="n" title="Čistá konta (zápasy bez obdrženého gólu)">ČK</th></tr></thead>
+  <tbody>${goalies.map((r, i) => `<tr data-name="${escapeHtml(r.name)}"${r.gp ? "" : ' class="zero"'}>
+    <td class="n rank">${r.gp ? `${i + 1}.` : ""}</td><td class="n num">${r.number ?? ""}</td>
+    <td>${playerCell(r, photos)}</td>${goalieCells(r)}</tr>`).join("")}
+  </tbody></table></div></section>` : "");
+
+export const renderPage = ({ league, rows, goalies = [], photos = new Map(), updatedAt, error }) => {
   const body = error
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
-    : `${summary(rows)}<div class="search" data-filter="players"><input id="q" type="search" placeholder="Hledat hráče" aria-label="Hledat hráče" autocomplete="off"><button type="button" aria-label="Vymazat hledání" hidden>×</button></div>
+    : `${summary([...rows, ...goalies])}<div class="search" data-filter="players goalies"><input id="q" type="search" placeholder="Hledat hráče" aria-label="Hledat hráče" autocomplete="off"><button type="button" aria-label="Vymazat hledání" hidden>×</button></div>
   <div class="box"><table id="players" class="stats players" data-sortable>
   <thead><tr><th class="n">#</th><th class="n num" title="Číslo dresu">Č.</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
   <tbody>${rows.map((r) => `<tr data-name="${escapeHtml(r.name)}"${r.pts === 0 ? ' class="zero"' : ""}>
     <td class="n rank">${r.rankLabel}</td><td class="n num">${r.number ?? ""}</td>
     <td>${playerCell(r, photos)}</td>
     ${statCells(r)}<td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : DASH}</td></tr>`).join("")}
-  </tbody></table><div id="players-empty" class="nomatch" hidden>Žádný hráč neodpovídá hledání.</div></div>`;
+  </tbody></table></div>${goalieTable(goalies, photos)}<div id="players-empty" class="nomatch" hidden>Žádný hráč neodpovídá hledání.</div>`;
 
   return renderShell({
     title: `Kanadské bodování ${TEAM}`,
     body,
-    legend: `${league || "BNB Cup"} · Z = zápasy, G = góly, A = asistence, B = body, Liga = pořadí v celé lize`,
+    legend: `${league || "BNB Cup"} · Z = zápasy, G = góly, A = asistence, B = body, Liga = pořadí v celé lize${goalies.length ? " · Brankáři: V/R/P = výhry/remízy/prohry, OG = obdržené góly, Ø = průměr OG na zápas, ČK = čistá konta" : ""}`,
     sourceUrl: SOURCE,
     updatedAt,
   });

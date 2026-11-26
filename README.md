@@ -12,7 +12,7 @@ hand-written committee page with photos (see [Committee page](#committee-page)).
 
 | Widget | URL | Iframe height |
 | --- | --- | --- |
-| Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1240 |
+| Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1320 |
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
 | HC Lány schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 940 |
 | Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 670 |
@@ -42,7 +42,13 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   accent-insensitive player search, and the whole roster with jersey numbers and photo thumbnails: scorers first,
   then players without a point, most games played first. A player who has not played yet
   shows dashes instead of zeros. Tied players share a rank (dense ranking). Stat columns are
-  sortable by click.
+  sortable by click. Goalies (position "Brankář" on their GameStats page) are not ranked
+  with the skaters but get their own table below it, with the usual goalie line as far as
+  GameStats allows: games (Z), wins/ties/losses (V/R/P, hidden on phones), goals against
+  (OG), goals-against average (Ø) and shutouts (ČK). A goalie is credited with every game his
+  player page lists and with the team's result and goals against in it. GameStats records
+  neither shots nor ice time, so there is no save percentage, and the average is per game
+  (GA / GP) instead of the official GA × 60 / minutes, which is the same for whole games.
 - **League standings** – the league table with team logos (a coloured shield with the
   initial when a team has no logo) and the HC Lány row highlighted. Sortable by click.
 - **Homepage overview** – next game card with a countdown and both teams' recent form
@@ -122,7 +128,7 @@ Everything lives in the repository under `data/`, committed by the workflow itse
 
 | Path | Content | Kept |
 | --- | --- | --- |
-| `data/snapshot.json` | Current state: HC Lány player stats (`scoring`), league table (`standings`), schedule with results (`schedule`), the roster from the admin (`rosterIds`), each roster player's public season line and photo (`roster`), every HC Lány scorer's goals and assists per game (`matchScorers`, keyed by start time), the game timelines from the admin (`matchTimelines`, keyed by the game detail slug) and the hand-entered goals by period and penalties (`matchExtras`, carried over by every build) | Always the latest |
+| `data/snapshot.json` | Current state: HC Lány player stats (`scoring`), league table (`standings`), schedule with results (`schedule`), the roster from the admin (`rosterIds`), each roster player's public season line and photo (`roster`; goalies also the games they were listed in, `games`), every HC Lány scorer's goals and assists per game (`matchScorers`, keyed by start time), the game timelines from the admin (`matchTimelines`, keyed by the game detail slug) and the hand-entered goals by period and penalties (`matchExtras`, carried over by every build) | Always the latest |
 | `data/archive/YYYY-MM-DD.json` | The same content as the day's last snapshot (Prague time) | Last 30 days in the folder |
 | `data/images/logos/`, `data/images/photos/` | Team logos and player photos as small thumbnails, named after the GameStats upload | As long as GameStats uses them |
 
