@@ -7,21 +7,31 @@
         "name": "Hauf Ivan",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/b64842c7737b36df78c64930.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e2da1cda414b97eac",
-        "leagueRank": "5",
-        "gp": 2,
-        "g": 2,
+        "leagueRank": "8",
+        "gp": 3,
+        "g": 3,
         "a": 4,
+        "pts": 7
+      },
+      {
+        "name": "Ungrman Petr",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/c8b07125db3563c4d4798e0b.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e463366064b8b9938",
+        "leagueRank": "10",
+        "gp": 3,
+        "g": 4,
+        "a": 2,
         "pts": 6
       },
       {
         "name": "Jeschke Lukáš",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/2855ef0bd525311f936b72d2.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e329c0a2202977231",
-        "leagueRank": "8",
-        "gp": 2,
+        "leagueRank": "12",
+        "gp": 3,
         "g": 2,
-        "a": 3,
-        "pts": 5
+        "a": 4,
+        "pts": 6
       },
       {
         "name": "Hořejší Milan",
@@ -37,78 +47,68 @@
         "name": "Pokorný Radek",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/ab3a1207a00454050aa63511.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e3e611103f3e7de14",
-        "leagueRank": "18",
+        "leagueRank": "19",
         "gp": 2,
         "g": 2,
         "a": 2,
         "pts": 4
       },
       {
-        "name": "Ungrman Petr",
-        "photoUrl": "https://mini.gamestats.cz/uploads/players/c8b07125db3563c4d4798e0b.jpg",
-        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e463366064b8b9938",
-        "leagueRank": "24",
+        "name": "Švácha Jiří",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/6c6b332f3b13794126c80bb4.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e4530856333f3b87b",
+        "leagueRank": "19",
         "gp": 2,
         "g": 2,
-        "a": 1,
+        "a": 2,
+        "pts": 4
+      },
+      {
+        "name": "Štechmiler Jaroslav",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/48ca9a3aee75139a9b33dab7.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e44a97742ece74c5a",
+        "leagueRank": "27",
+        "gp": 4,
+        "g": 3,
+        "a": 0,
         "pts": 3
       },
       {
         "name": "Hoffmann Marek",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/2c0c50f638593c99f1b28818.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e2fbe066719930788",
-        "leagueRank": "30",
+        "leagueRank": "33",
         "gp": 2,
         "g": 1,
         "a": 2,
         "pts": 3
       },
       {
-        "name": "Švácha Jiří",
-        "photoUrl": "https://mini.gamestats.cz/uploads/players/6c6b332f3b13794126c80bb4.jpg",
-        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e4530856333f3b87b",
-        "leagueRank": "33",
-        "gp": 1,
-        "g": 2,
-        "a": 0,
-        "pts": 2
-      },
-      {
         "name": "Náprstek Martin",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/3484b20d4344a75a1172f5d6.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e3cbd21c9a6750517",
-        "leagueRank": "46",
+        "leagueRank": "51",
         "gp": 3,
         "g": 1,
         "a": 1,
         "pts": 2
-      },
-      {
-        "name": "Štechmiler Jaroslav",
-        "photoUrl": "https://mini.gamestats.cz/uploads/players/48ca9a3aee75139a9b33dab7.jpg",
-        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e44a97742ece74c5a",
-        "leagueRank": "63",
-        "gp": 3,
-        "g": 1,
-        "a": 0,
-        "pts": 1
       },
       {
         "name": "Lomberský Aleš",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/730040eaf3c025a1405a1b68.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18af6b0fa380219ae8e",
-        "leagueRank": "83",
-        "gp": 3,
+        "leagueRank": "57",
+        "gp": 4,
         "g": 0,
-        "a": 1,
-        "pts": 1
+        "a": 2,
+        "pts": 2
       },
       {
         "name": "Taraba Martin",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/c969dc5ece39f11d30eb873e.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e45b6d5a63e6f0d1b",
-        "leagueRank": "83",
-        "gp": 3,
+        "leagueRank": "90",
+        "gp": 4,
         "g": 0,
         "a": 1,
         "pts": 1
@@ -119,8 +119,21 @@
     "league": "2. liga 2026/27",
     "teams": [
       {
-        "logoUrl": "https://mini.gamestats.cz/uploads/teams/97713e9bc08ec8e44adf4c59.jpg",
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/88f3942d0efd42267a21157b.webp",
         "rank": "1",
+        "name": "Delfins Zátiší",
+        "gp": 3,
+        "w": 2,
+        "otw": 0,
+        "d": 1,
+        "otl": 0,
+        "l": 0,
+        "score": "17:8",
+        "pts": 5
+      },
+      {
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/97713e9bc08ec8e44adf4c59.jpg",
+        "rank": "2",
         "name": "Nové Strašecí",
         "gp": 3,
         "w": 2,
@@ -132,55 +145,42 @@
         "pts": 5
       },
       {
-        "logoUrl": "https://mini.gamestats.cz/uploads/teams/88f3942d0efd42267a21157b.webp",
-        "rank": "2",
-        "name": "Delfins Zátiší",
-        "gp": 2,
-        "w": 2,
-        "otw": 0,
-        "d": 0,
-        "otl": 0,
-        "l": 0,
-        "score": "13:4",
-        "pts": 4
-      },
-      {
         "logoUrl": null,
         "rank": "3",
         "name": "Kralovice 1944",
-        "gp": 3,
+        "gp": 4,
         "w": 2,
         "otw": 0,
-        "d": 0,
+        "d": 1,
         "otl": 0,
         "l": 1,
-        "score": "15:11",
-        "pts": 4
+        "score": "19:15",
+        "pts": 5
       },
       {
         "logoUrl": "https://mini.gamestats.cz/uploads/teams/2b6d980b59d6e8eee30fa02b.jpg",
         "rank": "4",
         "name": "HC Lány",
+        "gp": 4,
+        "w": 2,
+        "otw": 0,
+        "d": 0,
+        "otl": 0,
+        "l": 2,
+        "score": "21:16",
+        "pts": 4
+      },
+      {
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/fb4e866d32b1da70b3c31c0d.jpg",
+        "rank": "5",
+        "name": "Old Stars",
         "gp": 3,
         "w": 1,
         "otw": 0,
         "d": 0,
         "otl": 0,
         "l": 2,
-        "score": "16:12",
-        "pts": 2
-      },
-      {
-        "logoUrl": "https://mini.gamestats.cz/uploads/teams/fb4e866d32b1da70b3c31c0d.jpg",
-        "rank": "5",
-        "name": "Old Stars",
-        "gp": 2,
-        "w": 1,
-        "otw": 0,
-        "d": 0,
-        "otl": 0,
-        "l": 1,
-        "score": "17:13",
+        "score": "21:18",
         "pts": 2
       },
       {
@@ -277,7 +277,10 @@
         "kickoff": "2026-11-26 22:05",
         "home": "HC Lány",
         "away": "Old Stars",
-        "score": null,
+        "score": [
+          5,
+          4
+        ],
         "note": "",
         "url": null
       },
@@ -510,7 +513,7 @@
       "id": "1a18e23bc27c545dc010a",
       "number": 2,
       "position": "Brankář",
-      "gp": 3,
+      "gp": 4,
       "g": 0,
       "a": 0,
       "pts": 0,
@@ -519,14 +522,15 @@
       "games": [
         "2026-11-13 20:15",
         "2026-11-16 21:45",
-        "2026-11-20 21:50"
+        "2026-11-20 21:50",
+        "2026-11-26 22:05"
       ]
     },
     "Taraba Martin": {
       "id": "1a18e45b6d5a63e6f0d1b",
       "number": 3,
       "position": "Útočník",
-      "gp": 3,
+      "gp": 4,
       "g": 0,
       "a": 1,
       "pts": 1,
@@ -537,10 +541,10 @@
       "id": "1a18e2da1cda414b97eac",
       "number": 4,
       "position": "Obránce",
-      "gp": 2,
-      "g": 2,
+      "gp": 3,
+      "g": 3,
       "a": 4,
-      "pts": 6,
+      "pts": 7,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/b64842c7737b36df78c64930.jpg"
     },
@@ -559,10 +563,10 @@
       "id": "1a18e463366064b8b9938",
       "number": 6,
       "position": "Útočník",
-      "gp": 2,
-      "g": 2,
-      "a": 1,
-      "pts": 3,
+      "gp": 3,
+      "g": 4,
+      "a": 2,
+      "pts": 6,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/c8b07125db3563c4d4798e0b.jpg"
     },
@@ -581,10 +585,10 @@
       "id": "1a18af6b0fa380219ae8e",
       "number": 8,
       "position": "Obránce",
-      "gp": 3,
+      "gp": 4,
       "g": 0,
-      "a": 1,
-      "pts": 1,
+      "a": 2,
+      "pts": 2,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/730040eaf3c025a1405a1b68.jpg"
     },
@@ -669,10 +673,10 @@
       "id": "1a18e4530856333f3b87b",
       "number": 16,
       "position": "Útočník",
-      "gp": 1,
+      "gp": 2,
       "g": 2,
-      "a": 0,
-      "pts": 2,
+      "a": 2,
+      "pts": 4,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/6c6b332f3b13794126c80bb4.jpg"
     },
@@ -680,7 +684,7 @@
       "id": "1a18e296839c16e07188b",
       "number": 17,
       "position": "Útočník",
-      "gp": 2,
+      "gp": 3,
       "g": 0,
       "a": 0,
       "pts": 0,
@@ -691,10 +695,10 @@
       "id": "1a18e329c0a2202977231",
       "number": 18,
       "position": "Útočník",
-      "gp": 2,
+      "gp": 3,
       "g": 2,
-      "a": 3,
-      "pts": 5,
+      "a": 4,
+      "pts": 6,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/2855ef0bd525311f936b72d2.jpg"
     },
@@ -713,7 +717,7 @@
       "id": "1a18e28c22278ef5bbc58",
       "number": 20,
       "position": "Útočník",
-      "gp": 1,
+      "gp": 2,
       "g": 0,
       "a": 0,
       "pts": 0,
@@ -757,10 +761,10 @@
       "id": "1a18e44a97742ece74c5a",
       "number": 24,
       "position": "Útočník",
-      "gp": 3,
-      "g": 1,
+      "gp": 4,
+      "g": 3,
       "a": 0,
-      "pts": 1,
+      "pts": 3,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/48ca9a3aee75139a9b33dab7.jpg"
     },
@@ -901,6 +905,44 @@
       },
       {
         "name": "Taraba Martin",
+        "g": 0,
+        "a": 1,
+        "pts": 1
+      }
+    ],
+    "2026-11-26 22:05": [
+      {
+        "name": "Ungrman Petr",
+        "g": 2,
+        "a": 1,
+        "pts": 3
+      },
+      {
+        "name": "Štechmiler Jaroslav",
+        "g": 2,
+        "a": 0,
+        "pts": 2
+      },
+      {
+        "name": "Švácha Jiří",
+        "g": 0,
+        "a": 2,
+        "pts": 2
+      },
+      {
+        "name": "Hauf Ivan",
+        "g": 1,
+        "a": 0,
+        "pts": 1
+      },
+      {
+        "name": "Jeschke Lukáš",
+        "g": 0,
+        "a": 1,
+        "pts": 1
+      },
+      {
+        "name": "Lomberský Aleš",
         "g": 0,
         "a": 1,
         "pts": 1
@@ -1332,6 +1374,135 @@
           "scorer": "#55 Marek Hoffmann",
           "assists": [
             "#66 Petr Ungrman"
+          ],
+          "text": null
+        }
+      ]
+    },
+    "2026-11-26-old-stars": {
+      "id": "1a18cf2aeec8863652935",
+      "events": [
+        {
+          "time": "05:20",
+          "team": "LAN",
+          "type": "goal",
+          "score": [
+            1,
+            0
+          ],
+          "scorer": "#6 Petr Ungrman",
+          "assists": [
+            "#18 Lukáš Jeschke"
+          ],
+          "text": null
+        },
+        {
+          "time": "11:08",
+          "team": "OLD",
+          "type": "goal",
+          "score": [
+            1,
+            1
+          ],
+          "scorer": "#19 Dan Kellner",
+          "assists": [
+            "#7 Pavel Olšán"
+          ],
+          "text": null
+        },
+        {
+          "time": "21:22",
+          "team": "OLD",
+          "type": "goal",
+          "score": [
+            1,
+            2
+          ],
+          "scorer": "#12 Michal Bílek",
+          "assists": [
+            "#7 Pavel Olšán"
+          ],
+          "text": null
+        },
+        {
+          "time": "22:30",
+          "team": "LAN",
+          "type": "goal",
+          "score": [
+            2,
+            2
+          ],
+          "scorer": "#6 Petr Ungrman",
+          "assists": [
+            "#8 Aleš Lomberský"
+          ],
+          "text": null
+        },
+        {
+          "time": "27:13",
+          "team": "LAN",
+          "type": "goal",
+          "score": [
+            3,
+            2
+          ],
+          "scorer": "#4 Ivan Hauf",
+          "assists": [
+            "#6 Petr Ungrman"
+          ],
+          "text": null
+        },
+        {
+          "time": "31:34",
+          "team": "LAN",
+          "type": "goal",
+          "score": [
+            4,
+            2
+          ],
+          "scorer": "#24 Jaroslav Štechmiler",
+          "assists": [
+            "#16 Jiří Švácha"
+          ],
+          "text": null
+        },
+        {
+          "time": "37:41",
+          "team": "OLD",
+          "type": "goal",
+          "score": [
+            4,
+            3
+          ],
+          "scorer": "#7 Pavel Olšán",
+          "assists": [
+            "#12 Michal Bílek"
+          ],
+          "text": null
+        },
+        {
+          "time": "39:46",
+          "team": "OLD",
+          "type": "goal",
+          "score": [
+            4,
+            4
+          ],
+          "scorer": "#4 Zbyněk Elznic",
+          "assists": [],
+          "text": null
+        },
+        {
+          "time": "42:40",
+          "team": "LAN",
+          "type": "goal",
+          "score": [
+            5,
+            4
+          ],
+          "scorer": "#24 Jaroslav Štechmiler",
+          "assists": [
+            "#16 Jiří Švácha"
           ],
           "text": null
         }
