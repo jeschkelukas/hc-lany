@@ -84,7 +84,7 @@ export const buildTable = (scoring, roster, rosterStats = {}) => {
     .filter(({ name }) => !known.has(name))
     .map(({ name, id }) => ({ name, url: playerUrl(id), leagueRank: null, gp: rosterStats[name]?.gp ?? null, g: 0, a: 0, pts: 0, zero: true }))
     .sort((x, y) => (y.gp ?? -1) - (x.gp ?? -1) || x.name.localeCompare(y.name, "cs"));
-  const rows = [...[...scorers].sort(byScoring), ...zeros];
+  const rows = [...[...scorers].sort(byScoring), ...zeros].map((p) => ({ ...p, number: rosterStats[p.name]?.number ?? null }));
   const groupOf = (p) => (p.zero ? "zero" : `${p.pts}|${p.g}|${p.gp}`);
   const groups = [...new Set(rows.map(groupOf))];
   return rows.map((p) => ({ ...p, rankLabel: `${groups.indexOf(groupOf(p)) + 1}.` }));
@@ -119,9 +119,9 @@ export const renderPage = ({ league, rows, photos = new Map(), updatedAt, error 
     ? `<p class="msg">${escapeHtml(error)} <a href="${SOURCE}" target="_blank" rel="noopener">Statistiky na GameStats</a></p>`
     : `${summary(rows)}<div class="search" data-filter="players"><input id="q" type="search" placeholder="Hledat hráče" aria-label="Hledat hráče" autocomplete="off"><button type="button" aria-label="Vymazat hledání" hidden>×</button></div>
   <div class="box"><table id="players" class="stats players" data-sortable>
-  <thead><tr><th class="n">#</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
+  <thead><tr><th class="n">#</th><th class="n num" title="Číslo dresu">Č.</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
   <tbody>${rows.map((r) => `<tr data-name="${escapeHtml(r.name)}"${r.pts === 0 ? ' class="zero"' : ""}>
-    <td class="n rank">${r.rankLabel}</td>
+    <td class="n rank">${r.rankLabel}</td><td class="n num">${r.number ?? ""}</td>
     <td>${playerCell(r, photos)}</td>
     ${statCells(r)}<td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : DASH}</td></tr>`).join("")}
   </tbody></table><div id="players-empty" class="nomatch" hidden>Žádný hráč neodpovídá hledání.</div></div>`;

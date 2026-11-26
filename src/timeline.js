@@ -69,17 +69,17 @@ export const renderTimeline = ({ round, events, handPeriods, logos, playerUrls =
   const urlByKey = new Map([...playerUrls].map(([name, url]) => [nameKey(name), url]));
   const photoByKey = new Map([...photos].map(([name, file]) => [nameKey(name), file]));
 
-  // HC Lány players get a small photo right after the jersey number and link to their public
+  // Names without jersey numbers; HC Lány players get a small photo and link to their public
   // GameStats page (new tab, the detail sits in an iframe). Opponents have neither.
   const who = (label, team) => {
-    if (team !== TEAM) return escapeHtml(label);
-    const [, number = "", name = label] = label.match(/^(#\d+)\s+(.*)$/) ?? [];
+    const name = label.replace(/^#\d+\s*/, "");
+    if (team !== TEAM) return escapeHtml(name);
     const key = nameKey(name);
     const file = photoByKey.get(key);
     const url = urlByKey.get(key);
     const face = file ? `<img class="tl-face" src="../../photos/${escapeHtml(file)}" alt="">` : "";
     const text = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(name)}</a>` : escapeHtml(name);
-    return `${number ? `${escapeHtml(number)} ` : ""}${face}${text}`;
+    return `${face}${text}`;
   };
   const goals = withPeriods(events, handPeriods);
   if (!goals.length) return "";

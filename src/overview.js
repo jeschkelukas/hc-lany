@@ -83,6 +83,19 @@ const lastResultRow = (played, detailUrlOf) => {
 </section>`;
 };
 
+// The games after the next one: date, home or away and the opponent.
+const UPCOMING = 3;
+const upcomingCard = (upcoming, logos) => {
+  if (!upcoming.length) return "";
+  const rows = upcoming.map((r) => {
+    const home = r.home === TEAM;
+    const opponent = home ? r.away : r.home;
+    const when = formatKickoff(r.kickoff);
+    return `<tr><td class="dim">${escapeHtml(when.day)}</td><td class="dim">${escapeHtml(when.time)}</td><td class="dim">${home ? "doma" : "venku"}</td><td class="wide"><span class="team">${logo(opponent, logos, "mini")}<span>${escapeHtml(opponent)}</span></span></td></tr>`;
+  }).join("");
+  return `<section class="card upcoming"><div class="label">Další zápasy</div><table><tbody>${rows}</tbody></table></section>`;
+};
+
 const standingsCard = (standings, logos) => `<section class="card">
   <div class="label">Tabulka · ${escapeHtml(standings.league)}</div>
   <table><tbody>${standings.teams.map((t) => `<tr${t.name === TEAM ? ' class="us"' : ""}>
@@ -125,7 +138,17 @@ export const renderOverview = ({ schedule, leagueMatches = [], reports, standing
     --display: "Oswald", "Arial Narrow", Impact, sans-serif;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; padding: 4px; background: var(--bg); color: var(--fg); font: 13px/1.35 Verdana, Arial, sans-serif; }
+  /* The page fills the iframe (780 px, so a game detail opened from here fits too): the two
+     tables at the bottom stretch their rows over whatever height is left. */
+  html, body { height: 100%; }
+  body { margin: 0; padding: 4px; background: var(--bg); color: var(--fg); font: 13px/1.35 Verdana, Arial, sans-serif; display: flex; flex-direction: column; }
+  .grid { flex: 1 1 auto; }
+  .grid .card { display: flex; flex-direction: column; }
+  .grid .card table { flex: 1 1 auto; }
+  .upcoming { margin-bottom: 10px; padding-top: 8px; padding-bottom: 6px; }
+  .upcoming .label { margin-bottom: 4px; }
+  .upcoming td { height: 24px; }
+  .upcoming td.wide { width: 100%; }
   a { color: inherit; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; }
@@ -184,6 +207,7 @@ export const renderOverview = ({ schedule, leagueMatches = [], reports, standing
 </style></head><body>
 ${nextMatchCard(next, logos, updatedAt, leagueMatches)}
 ${lastResultRow(played, detailUrlOf)}
+${upcomingCard(rounds.filter((r) => !r.score).sort(byKickoff).slice(1, 1 + UPCOMING), logos)}
 <div class="grid">
 ${standingsCard(standings, logos)}
 ${scorersCard(scoringRows, photos)}

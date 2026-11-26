@@ -59,12 +59,13 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   table.stats th:first-child, table.stats td.rank { width: 1%; }
   table.stats th.n:not(:first-child), table.stats td.n:not(.rank) { width: 2.6em; }
   .rank, .muted { color: var(--muted); }
+  table.stats th.n.num, table.stats td.n.num { width: 1.9em; padding-left: 0; padding-right: 4px; color: var(--muted); font-size: .9em; }
   .pts { font-weight: bold; }
   tbody tr.alt td { background: var(--zebra); }
   tbody tr.mark td { background: var(--mark); font-weight: bold; }
   tr.zero td { color: var(--muted); }
   .player { display: flex; align-items: center; gap: 8px; }
-  .face { display: block; width: 21px; height: 28px; object-fit: cover; border-radius: 3px; flex: 0 0 21px; }
+  .face { display: block; width: 20px; height: 26px; object-fit: cover; border-radius: 3px; flex: 0 0 20px; }
   table.players td { padding-top: 3px; padding-bottom: 3px; }
   .club { display: flex; align-items: center; gap: 8px; }
   .club img, .club svg { display: block; width: 20px; height: 20px; object-fit: contain; flex: 0 0 20px; }
