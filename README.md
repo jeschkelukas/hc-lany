@@ -57,8 +57,10 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   score, scorer and assists, HC Lány goals highlighted) from the GameStats admin, goals by
   period under the score and penalties when known (see
   [Hand-entered game extras](#hand-entered-game-extras)). Opened from the homepage overview
-  it uses the overview's dark colours (`?dark`). It scrolls inside its own page, because the
-  schedule and overview iframes around it have a fixed height.
+  it uses the overview's dark colours (`?dark`). In a wide iframe (640 px and more) the
+  timeline and the HC Lány points sit side by side, so even an 11-goal game fits the schedule
+  (720 px) and overview (540 px) iframes; on phones they stack and the detail scrolls inside
+  its own page.
 
 ## Phones
 

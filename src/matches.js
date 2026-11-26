@@ -105,6 +105,7 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, l
     const face = file ? `<img class="face" src="../../photos/${escapeHtml(file)}" alt="">` : PHOTO_PLACEHOLDER;
     return `<tr><td><span class="player">${face}${escapeHtml(s.name)}</span></td><td class="n">${s.g}</td><td class="n">${s.a}</td><td class="n pts">${s.pts}</td></tr>`;
   }).join("");
+  const timelineHtml = timeline ? renderTimeline({ round, events: timeline, handPeriods: extras?.estimated ? null : extras?.periods, logos }) : "";
   const missing = listedGoals < ourGoals
     ? `<p class="note">GameStats zatím nemá u ${ourGoals - listedGoals === 1 ? "1 gólu" : `${ourGoals - listedGoals} gólů`} HC Lány zapsaného střelce.</p>`
     : "";
@@ -129,44 +130,49 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, l
   html { height: 100%; overflow: hidden; }
   body { margin: 0; padding: 8px; height: 100%; overflow-y: auto; background: var(--bg); color: var(--fg); font: 14px/1.4 Verdana, Arial, sans-serif; }
   a { color: var(--accent); }
-  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
   .back { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
   .back:hover { text-decoration: underline; }
   .meta { color: var(--dim); }
-  .hero { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--hl); border-radius: 8px; padding: 12px; }
-  .label { display: flex; justify-content: space-between; align-items: center; font: 600 12px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--hl); margin-bottom: 10px; }
+  .hero { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--hl); border-radius: 8px; padding: 8px 12px 10px; }
+  .label { display: flex; justify-content: space-between; align-items: center; font: 600 12px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--hl); margin-bottom: 6px; }
   .match { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
-  .side { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font: 600 16px/1.1 var(--display); letter-spacing: .02em; text-transform: uppercase; }
+  .side { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font: 600 16px/1.1 var(--display); letter-spacing: .02em; text-transform: uppercase; }
   .side.us span { color: var(--hl); }
-  .logo, .logo svg { width: 56px; height: 56px; object-fit: contain; display: block; }
+  .logo, .logo svg { width: 48px; height: 48px; object-fit: contain; display: block; }
   .score { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .score b { font: 700 44px/1 var(--display); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+  .score b { font: 700 40px/1 var(--display); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
   .score { gap: 3px; }
   .periods { font: 600 14px/1.1 var(--display); letter-spacing: .04em; color: var(--fg); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .pen { font-size: 11px; color: var(--dim); white-space: nowrap; }
   .pill { display: inline-block; padding: 2px 8px; border-radius: 4px; color: #fff; font: 700 12px/1.3 var(--display); letter-spacing: .06em; text-transform: uppercase; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
-  h2 { font: 600 13px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--hl); margin: 14px 0 6px; }
+  h2 { font: 600 13px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--hl); margin: 10px 0 4px; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  th { font-size: 11px; color: var(--dim); font-weight: normal; text-align: left; padding: 4px 6px; border-bottom: 2px solid var(--hl); }
-  td { padding: 2px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { font-size: 11px; color: var(--dim); font-weight: normal; text-align: left; padding: 2px 6px; border-bottom: 2px solid var(--hl); }
+  td { padding: 1px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
   .n { text-align: right; width: 3em; }
   .pts { font: 700 15px/1 var(--display); color: var(--hl); }
   .player { display: flex; align-items: center; gap: 8px; }
   .face { width: 18px; height: 24px; object-fit: cover; border-radius: 3px; display: block; flex: 0 0 18px; }
   .empty, .note { color: var(--dim); margin: 6px 0; font-size: 12px; }
-  h3 { font: 600 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin: 10px 0 4px; }
+  h3 { font: 600 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin: 6px 0 2px; }
   .tl { list-style: none; margin: 0; padding: 0; }
-  .tl li { display: flex; align-items: center; gap: 8px; padding: 3px 6px; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
+  .tl li { display: flex; align-items: center; gap: 8px; padding: 1px 6px; font-size: 13px; line-height: 1.35; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
   .tl li.us { border-left-color: var(--hl); }
   .tl li.us .tl-score { color: var(--hl); }
   .tl-time { color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; width: 3.2em; flex: 0 0 auto; }
   .tl-logo, .tl-logo svg { width: 18px; height: 18px; object-fit: contain; display: block; flex: 0 0 18px; }
-  .tl-score { font: 700 15px/1 var(--display); font-variant-numeric: tabular-nums; width: 2.6em; flex: 0 0 auto; text-align: center; }
+  .tl-score { font: 700 14px/1 var(--display); font-variant-numeric: tabular-nums; width: 2.6em; flex: 0 0 auto; text-align: center; }
   .tl-who { min-width: 0; }
-  .tl-ast { color: var(--dim); font-size: 12px; }
+  .tl-ast { color: var(--dim); font-size: 11px; }
   .tl-none { color: var(--dim); font-size: 12px; }
-  .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 10px; font-size: 11px; color: var(--dim); }
+  /* Wide iframes: timeline and the HC Lány points side by side, so the detail fits the fixed
+     iframe height; narrow ones stack them (the body scrolls if needed). */
+  @media (min-width: 640px) {
+    .cols.two { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  }
+  .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: var(--dim); }
   .foot a { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
   @media (max-width: 480px) {
     .side { font-size: 13px; }
@@ -182,10 +188,10 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, l
   <div class="label"><span>${round.round ? `${round.round}. kolo · ` : ""}${escapeHtml(when.day)} · ${escapeHtml(when.time)}</span><span class="pill ${res.cls}">${res.text}</span></div>
   <div class="match">${side(round.home)}<div class="score"><b>${round.score[0]}:${round.score[1]}</b>${extrasLines(extras)}</div>${side(round.away)}</div>
 </section>
-${timeline ? renderTimeline({ round, events: timeline, handPeriods: extras?.estimated ? null : extras?.periods, logos }) : ""}
+<div class="cols${timelineHtml ? " two" : ""}">${timelineHtml ? `<section>${timelineHtml}</section>` : ""}<section>
 <h2>Body ${escapeHtml(TEAM)}</h2>
 ${scorers.length ? `<table><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
-${missing}
+${missing}</section></div>
 <div class="foot"><span>Zdroj: GameStats · aktualizováno ${formatTime(updatedAt)}</span></div>
 </body></html>`;
 };
