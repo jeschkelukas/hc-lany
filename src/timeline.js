@@ -68,15 +68,18 @@ const nameKey = (name) => name.replace(/^#\d+\s*/, "").toLowerCase().split(/\s+/
 export const renderTimeline = ({ round, events, handPeriods, logos, playerUrls = new Map(), photos = new Map() }) => {
   const urlByKey = new Map([...playerUrls].map(([name, url]) => [nameKey(name), url]));
   const photoByKey = new Map([...photos].map(([name, file]) => [nameKey(name), file]));
-  // Small photo of an HC Lány scorer (opponents have none).
-  const face = (name, team) => {
-    const file = team === TEAM && name ? photoByKey.get(nameKey(name)) : null;
-    return file ? `<img class="tl-face" src="../../photos/${escapeHtml(file)}" alt="">` : '<span class="tl-face"></span>';
-  };
-  // HC Lány players link to their public GameStats page (new tab, the detail sits in an iframe).
-  const who = (name, team) => {
-    const url = team === TEAM ? urlByKey.get(nameKey(name)) : null;
-    return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(name)}</a>` : escapeHtml(name);
+
+  // HC Lány players get a small photo right after the jersey number and link to their public
+  // GameStats page (new tab, the detail sits in an iframe). Opponents have neither.
+  const who = (label, team) => {
+    if (team !== TEAM) return escapeHtml(label);
+    const [, number = "", name = label] = label.match(/^(#\d+)\s+(.*)$/) ?? [];
+    const key = nameKey(name);
+    const file = photoByKey.get(key);
+    const url = urlByKey.get(key);
+    const face = file ? `<img class="tl-face" src="../../photos/${escapeHtml(file)}" alt="">` : "";
+    const text = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(name)}</a>` : escapeHtml(name);
+    return `${number ? `${escapeHtml(number)} ` : ""}${face}${text}`;
   };
   const goals = withPeriods(events, handPeriods);
   if (!goals.length) return "";
@@ -87,7 +90,7 @@ export const renderTimeline = ({ round, events, handPeriods, logos, playerUrls =
       ? inPeriod.map((g) => {
         const team = teamOf(g.side);
         const assists = g.assists.length ? `<span class="tl-ast">(${g.assists.map((a) => who(a, team)).join(", ")})</span>` : "";
-        return `<li class="${team === TEAM ? "us" : ""}"><span class="tl-time">${escapeHtml(g.time)}</span>${smallLogo(team, logos)}<b class="tl-score">${g.score[0]}:${g.score[1]}</b>${face(g.scorer, team)}<span class="tl-who">${g.scorer ? who(g.scorer, team) : ""} ${assists}</span></li>`;
+        return `<li class="${team === TEAM ? "us" : ""}"><span class="tl-time">${escapeHtml(g.time)}</span>${smallLogo(team, logos)}<b class="tl-score">${g.score[0]}:${g.score[1]}</b><span class="tl-who">${g.scorer ? who(g.scorer, team) : ""} ${assists}</span></li>`;
       }).join("")
       : '<li class="tl-none">bez gólu</li>';
     return `<h3>${name}</h3><ul class="tl">${body}</ul>`;

@@ -170,14 +170,10 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   .tl-logo, .tl-logo svg { width: 18px; height: 18px; object-fit: contain; display: block; flex: 0 0 18px; }
   .tl-score { font: 700 14px/1 var(--display); font-variant-numeric: tabular-nums; width: 2.6em; flex: 0 0 auto; text-align: center; }
   .tl-who { min-width: 0; }
-  .tl-face { width: 15px; height: 20px; object-fit: cover; border-radius: 2px; display: block; flex: 0 0 15px; margin-right: -3px; }
+  .tl-face { display: inline-block; width: 13px; height: 17px; object-fit: cover; border-radius: 2px; vertical-align: -3px; margin-right: 4px; }
+  .tl-ast .tl-face { width: 11px; height: 15px; vertical-align: -3px; margin-right: 3px; }
   .tl-ast { color: var(--dim); font-size: 11px; }
   .tl-none { color: var(--dim); font-size: 12px; }
-  /* Wide iframes: timeline and the HC Lány points side by side, so the detail fits the fixed
-     iframe height; narrow ones stack them (the body scrolls if needed). */
-  @media (min-width: 640px) {
-    .cols.two { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; align-items: start; }
-  }
   .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: var(--dim); }
   .foot a { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
   @media (max-width: 480px) {
@@ -194,10 +190,10 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   <div class="label"><span>${round.round ? `${round.round}. kolo · ` : ""}${escapeHtml(when.day)} · ${escapeHtml(when.time)}</span><span class="pill ${res.cls}">${res.text}</span></div>
   <div class="match">${side(round.home)}<div class="score"><b>${round.score[0]}:${round.score[1]}</b>${extrasLines(extras)}</div>${side(round.away)}</div>
 </section>
-<div class="cols${timelineHtml ? " two" : ""}">${timelineHtml ? `<section>${timelineHtml}</section>` : ""}<section>
+${timelineHtml}<section>
 <h2>Body ${escapeHtml(TEAM)}</h2>
 ${scorers.length ? `<table class="pts-table"><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
-${missing}</section></div>
+${missing}</section>
 <div class="foot"><span>Zdroj: GameStats · aktualizováno ${formatTime(updatedAt)}</span></div>
 </body></html>`;
 };
