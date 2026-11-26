@@ -12,10 +12,10 @@ hand-written committee page with photos (see [Committee page](#committee-page)).
 
 | Widget | URL | Iframe height |
 | --- | --- | --- |
-| Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1180 |
+| Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1240 |
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
 | HC Lány schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 820 |
-| Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 540 |
+| Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 780 |
 
 Embed snippet (change `src` and `height` per widget):
 
@@ -39,14 +39,15 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
 
 - **Player scoring** (Czech *kanadské bodování*: points = goals + assists, as in the NHL
   scoring leaders) – team totals strip (scorers, goals, assists, points), an
-  accent-insensitive player search, and the whole roster with photo thumbnails: scorers first,
+  accent-insensitive player search, and the whole roster with jersey numbers and photo thumbnails: scorers first,
   then players without a point, most games played first. A player who has not played yet
   shows dashes instead of zeros. Tied players share a rank (dense ranking). Stat columns are
   sortable by click.
 - **League standings** – the league table with team logos (a coloured shield with the
   initial when a team has no logo) and the HC Lány row highlighted. Sortable by click.
 - **Homepage overview** – next game card with a countdown and both teams' recent form
-  across the whole league (newest game on the left), the last result, mini standings and the top scorers, styled to match the dark-blue intro
+  across the whole league (newest game on the left), the last result, the three games after
+  the next one, mini standings and the top scorers (their rows stretch to fill the iframe), styled to match the dark-blue intro
   box on the club homepage. Links lead to the full article pages.
 - **Schedule** – all rounds including bye weeks (shown with their Monday–Sunday
   week), moved games with the original date struck through, results with a
@@ -59,9 +60,9 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   [Hand-entered game extras](#hand-entered-game-extras)). HC Lány players (in the points
   table and in the timeline) link to their public GameStats page in a new tab. Opened from the homepage overview
   it uses the overview's dark colours (`?dark`). HC Lány players in the timeline (scorer and
-  assists) have a small photo after their jersey number. The timeline and the points table are
+  assists) have a small photo; names are shown without jersey numbers. The timeline and the points table are
   always stacked. An 11-goal game with 9 HC Lány scorers is about 755 px high, which is why the
-  schedule iframe is 820 px; anything taller (the overview iframe is 540 px, or phones) scrolls
+  schedule iframe is 820 px and the overview iframe 780 px; anything taller (or phones) scrolls
   inside the detail page.
 
 ## Phones

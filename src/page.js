@@ -65,7 +65,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   tbody tr.mark td { background: var(--mark); font-weight: bold; }
   tr.zero td { color: var(--muted); }
   .player { display: flex; align-items: center; gap: 8px; }
-  .face { display: block; width: 20px; height: 26px; object-fit: cover; border-radius: 3px; flex: 0 0 20px; }
+  .face { display: block; width: 21px; height: 28px; object-fit: cover; border-radius: 3px; flex: 0 0 21px; }
   table.players td { padding-top: 3px; padding-bottom: 3px; }
   .club { display: flex; align-items: center; gap: 8px; }
   .club img, .club svg { display: block; width: 20px; height: 20px; object-fit: contain; flex: 0 0 20px; }
@@ -124,8 +124,6 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
     .summary div { padding: 6px; }
     .summary span { font-size: 9px; letter-spacing: .02em; }
     .summary b { font-size: 19px; }
-    /* Smaller photo thumbnails keep the full roster within the iframe height on phones. */
-    .face { width: 18px; height: 24px; flex-basis: 18px; }
   }
   @media (max-width: 370px) {
     table.schedule .club { max-width: 64px; }

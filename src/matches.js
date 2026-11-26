@@ -170,8 +170,7 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   .tl-logo, .tl-logo svg { width: 18px; height: 18px; object-fit: contain; display: block; flex: 0 0 18px; }
   .tl-score { font: 700 14px/1 var(--display); font-variant-numeric: tabular-nums; width: 2.6em; flex: 0 0 auto; text-align: center; }
   .tl-who { min-width: 0; }
-  .tl-face { display: inline-block; width: 13px; height: 17px; object-fit: cover; border-radius: 2px; vertical-align: -3px; margin-right: 4px; }
-  .tl-ast .tl-face { width: 11px; height: 15px; vertical-align: -3px; margin-right: 3px; }
+  .tl-face { display: inline-block; width: 15px; height: 20px; object-fit: cover; border-radius: 2px; vertical-align: -5px; margin-right: 4px; }
   .tl-ast { color: var(--dim); font-size: 11px; }
   .tl-none { color: var(--dim); font-size: 12px; }
   .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: var(--dim); }
