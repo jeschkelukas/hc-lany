@@ -15,7 +15,7 @@ hand-written committee page with photos (see [Committee page](#committee-page)).
 | Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1240 |
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
 | HC Lány schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 940 |
-| Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 940 |
+| Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 670 |
 
 Embed snippet (change `src` and `height` per widget):
 
@@ -47,8 +47,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   initial when a team has no logo) and the HC Lány row highlighted. Sortable by click.
 - **Homepage overview** – next game card with a countdown and both teams' recent form
   across the whole league (newest game on the left), the last result, the three games after
-  the next one, mini standings and the top scorers (about 660 px; the iframe is 940 px so a
-  game detail opened from here fits, leaving free space below the overview itself), styled to match the dark-blue intro
+  the next one, mini standings and the top scorers (about 660 px, so the iframe is 670 px; a longer game detail
+  opened from here scrolls inside the iframe), styled to match the dark-blue intro
   box on the club homepage. Links lead to the full article pages.
 - **Schedule** – all rounds including bye weeks (shown with their Monday–Sunday
   week), moved games with the original date struck through, results with a
@@ -63,9 +63,9 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   it uses the overview's dark colours (`?dark`). HC Lány players in the timeline (scorer and
   assists) have small photos, the points table has photos the size of the scoring table's;
   names are shown without jersey numbers. The timeline and the points table are always stacked. An
-  11-goal game with 9 HC Lány scorers is about 910 px high, which is why the schedule and
-  overview iframes are 940 px (the schedule stretches its rows to fill it); anything taller
-  (or phones) scrolls inside the detail page.
+  11-goal game with 9 HC Lány scorers is about 910 px high, which is why the schedule
+  iframe is 940 px (the schedule stretches its rows to fill it); in the overview iframe (670 px),
+  on phones or for anything taller the detail scrolls inside its own page.
 
 ## Phones
 
