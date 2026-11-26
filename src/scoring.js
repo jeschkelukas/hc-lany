@@ -163,7 +163,7 @@ export const renderPage = ({ league, rows, goalies = [], photos = new Map(), upd
   <div class="box"><table id="players" class="stats players" data-sortable>
   <thead><tr><th class="n">#</th><th class="n num" title="Číslo dresu">Č.</th><th>Jméno</th><th class="n" data-sort>Z</th><th class="n" data-sort>G</th><th class="n" data-sort>A</th><th class="n" data-sort>B</th><th class="n" title="Pořadí v kanadském bodování celé ligy">Liga</th></tr></thead>
   <tbody>${rows.map((r) => `<tr data-name="${escapeHtml(r.name)}"${r.pts === 0 ? ' class="zero"' : ""}>
-    <td class="n rank">${r.rankLabel}</td><td class="n num">${r.number ?? ""}</td>
+    <td class="n rank">${r.gp ? r.rankLabel : ""}</td><td class="n num">${r.number ?? ""}</td>
     <td>${playerCell(r, photos)}</td>
     ${statCells(r)}<td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : DASH}</td></tr>`).join("")}
   </tbody></table></div>${goalieTable(goalies, photos)}<div id="players-empty" class="nomatch" hidden>Žádný hráč neodpovídá hledání.</div>`;
