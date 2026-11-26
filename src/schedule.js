@@ -197,7 +197,9 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff))[0];
   const side = (name) => (name === TEAM ? `<span class="me">${teamBadge(name, logos)}</span>` : teamBadge(name, logos));
   const rowClass = (r) => [r === next && "mark", r.halfBreak && "half"].filter(Boolean).join(" ");
-  const body = `<div class="box"><table class="compact schedule">
+  // The schedule iframe is tall enough for a game detail (1000 px); the rows stretch to fill it.
+  const body = `<style>html, body { height: 100%; } body { box-sizing: border-box; display: flex; flex-direction: column; } .box.fill { flex: 1 1 auto; } .box.fill table { height: 100%; }</style>
+<div class="box fill"><table class="compact schedule">
   <thead><tr><th class="n">Kolo</th><th class="wide-only">Termín</th><th class="wide-only">Čas</th><th class="narrow-only">Termín</th><th>Domácí</th><th class="c">Výsledek</th><th>Hosté</th></tr></thead>
   <tbody>${rows.map((r) => {
     const cls = rowClass(r);

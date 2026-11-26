@@ -156,22 +156,23 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   th { font-size: 11px; color: var(--dim); font-weight: normal; text-align: left; padding: 2px 6px; border-bottom: 2px solid var(--hl); }
   td { padding: 1px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
   .n { text-align: right; width: 3em; }
-  .pts { font: 700 15px/1 var(--display); color: var(--hl); }
+  .pts { font: 700 17px/1 var(--display); color: var(--hl); }
   .player { display: flex; align-items: center; gap: 8px; }
-  .face { width: 15px; height: 20px; object-fit: cover; border-radius: 2px; display: block; flex: 0 0 15px; }
-  .pts-table td { font-size: 13px; line-height: 1.3; }
+  .face { width: 21px; height: 28px; object-fit: cover; border-radius: 3px; display: block; flex: 0 0 21px; }
+  .pts-table td { font-size: 15px; line-height: 1.3; padding-top: 2px; padding-bottom: 2px; }
   .empty, .note { color: var(--dim); margin: 6px 0; font-size: 12px; }
   h3 { font: 600 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin: 5px 0 1px; }
   .tl { list-style: none; margin: 0; padding: 0; }
-  .tl li { display: flex; align-items: center; gap: 8px; padding: 0 6px; min-height: 22px; font-size: 13px; line-height: 1.3; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
+  .tl li { display: flex; align-items: center; gap: 8px; padding: 2px 6px; min-height: 32px; font-size: 15px; line-height: 1.3; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
   .tl li.us { border-left-color: var(--hl); }
   .tl li.us .tl-score { color: var(--hl); }
-  .tl-time { color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; width: 3.2em; flex: 0 0 auto; }
-  .tl-logo, .tl-logo svg { width: 18px; height: 18px; object-fit: contain; display: block; flex: 0 0 18px; }
-  .tl-score { font: 700 14px/1 var(--display); font-variant-numeric: tabular-nums; width: 2.6em; flex: 0 0 auto; text-align: center; }
+  .tl-time { color: var(--dim); font-size: 13px; font-variant-numeric: tabular-nums; width: 3.2em; flex: 0 0 auto; }
+  .tl-logo, .tl-logo svg { width: 22px; height: 22px; object-fit: contain; display: block; flex: 0 0 22px; }
+  .tl-score { font: 700 17px/1 var(--display); font-variant-numeric: tabular-nums; width: 2.6em; flex: 0 0 auto; text-align: center; }
   .tl-who { min-width: 0; }
-  .tl-face { display: inline-block; width: 15px; height: 20px; object-fit: cover; border-radius: 2px; vertical-align: -5px; margin-right: 4px; }
-  .tl-ast { color: var(--dim); font-size: 11px; }
+  .tl-face { display: inline-block; width: 21px; height: 28px; object-fit: cover; border-radius: 3px; vertical-align: middle; margin-right: 5px; }
+  .tl-ast .tl-face { width: 18px; height: 24px; }
+  .tl-ast { color: var(--dim); font-size: 13px; }
   .tl-none { color: var(--dim); font-size: 12px; }
   .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: var(--dim); }
   .foot a { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
