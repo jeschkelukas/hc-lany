@@ -1,14 +1,17 @@
 import { execFileSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { ROSTER, SOURCE, TEAM, buildTable, parseTeamScoring, renderPage } from "./src/scoring.js";
+import { ROSTER, SOURCE, TEAM, TEAM_ID, buildTable, parseTeamScoring, playerUrl, renderPage } from "./src/scoring.js";
 import { STANDINGS_SOURCE, parseStandings, renderStandings } from "./src/standings.js";
 import { SCHEDULE_SOURCE, SEASON_START, buildRounds, parseLeagueMatches, parseSchedule, renderSchedule } from "./src/schedule.js";
-import { fetchPlayerMatches, matchSlug, playerMatchesFromArchive, renderMatch, scorersByMatch } from "./src/matches.js";
+import { matchSlug, playerMatchesFromArchive, renderMatch, scorersByMatch } from "./src/matches.js";
+import { fetchPlayerPages } from "./src/roster.js";
+import { fetchAdminData } from "./src/admin.js";
+import { goalsOf, periodsFromTimeline } from "./src/timeline.js";
 import { fetchReports } from "./src/reports.js";
 import { extrasFor } from "./src/extras.js";
 import { renderOverview } from "./src/overview.js";
 import { slug } from "./src/page.js";
-import { guardSchedule, guardScoring, guardStandings, loadSnapshot, mergeMatchScorers, saveSnapshot } from "./src/snapshot.js";
+import { guardSchedule, guardScoring, guardStandings, loadSnapshot, mergeMatchScorers, pragueDate, saveSnapshot } from "./src/snapshot.js";
 
 // Each widget gets its own folder so its iframe URL stays stable when more widgets are added.
 const write = (path, html) => {
@@ -83,11 +86,63 @@ const saveImage = (dir, geometry) => async ({ name, url }) => {
     return [];
   }
 };
+// GameStats admin (login via repository secrets, read only, logged out right after): the team
+// roster with player ids and the game timelines. It logs in only when a played game has no
+// complete timeline yet (a new game once its result is in, an incomplete one again for up to two
+// weeks) or the roster has never been read. Timelines are kept in the snapshot for all seasons.
+const timelines = { ...(archive?.matchTimelines ?? {}) };
+const goalsIn = (m) => m.score[0] + m.score[1];
+const daysSince = (m) => (updatedAt - new Date(`${m.kickoff.replace(" ", "T")}:00+01:00`)) / 86_400_000;
+const needTimeline = schedule.matches.filter((m) => m.kickoff && m.score).filter((m) => {
+  const known = timelines[matchSlug(m)];
+  return !known || (goalsOf(known.events).length < goalsIn(m) && daysSince(m) < 14);
+});
+const admin = needTimeline.length || !archive?.rosterIds
+  ? await fetchAdminData(needTimeline, TEAM_ID)
+  : { roster: null, timelines: new Map() };
+for (const m of needTimeline) {
+  const fresh = admin.timelines.get(m.kickoff);
+  const known = timelines[matchSlug(m)];
+  if (fresh && (!known || goalsOf(fresh.events).length >= goalsOf(known.events).length)) timelines[matchSlug(m)] = fresh;
+}
+// Roster: the admin team page when it was just read, else the last one read, else the list in code.
+const roster = admin.roster ?? archive?.rosterIds ?? ROSTER;
+
+// Public player pages (photo, number, games played, per-game points) are read for the whole roster
+// plus any scorer missing from it, but only when something may have changed: a player's season
+// line, a new result, a new season, or the first build of the day (catches late lineup edits).
+// Otherwise everything comes from the snapshot.
+const lineOf = (p) => `${p.gp}|${p.g}|${p.a}|${p.pts}`;
+const archivedLine = new Map((sameSeason ? archive?.scoring?.players ?? [] : []).map((p) => [p.name, lineOf(p)]));
+const scoredGames = (s) => s?.matches?.filter((m) => m.score).length ?? -1;
+const refreshPlayers = !sameSeason || !archive?.roster || admin.roster
+  || scoring.players.some((p) => archivedLine.get(p.name) !== lineOf(p))
+  || scoredGames(schedule) !== scoredGames(archive?.schedule)
+  || !existsSync(`data/archive/${pragueDate(updatedAt)}.json`);
+const rosterNames = new Set(roster.map((r) => r.name));
+const playerTargets = [
+  ...roster.map((r) => ({ name: r.name, url: playerUrl(r.id) })),
+  ...scoring.players.filter((p) => !rosterNames.has(p.name)).map((p) => ({ name: p.name, url: p.url })),
+];
+const pages = refreshPlayers ? await fetchPlayerPages(playerTargets) : new Map();
+// Within a season games played never go down; a thinner page keeps the archived line.
+const rosterStats = Object.fromEntries(roster.map(({ name, id }) => {
+  const page = pages.get(name);
+  const old = sameSeason ? archive?.roster?.[name] : null;
+  const fresh = page && { id, number: page.number, position: page.position, gp: page.gp, g: page.g, a: page.a, pts: page.pts, pim: page.pim, photoUrl: page.photoUrl };
+  if (fresh && old && old.gp > fresh.gp) console.warn(`roster: ${name} lost games (${fresh.gp} < ${old.gp}), keeping the archived line`);
+  return [name, (fresh && !(old && old.gp > fresh.gp) ? fresh : old) ?? { id }];
+}));
+
 const saveAll = async (items, save) => new Map((await Promise.all(items.map(save))).flat());
 const logos = await saveAll(standings.teams.map((t) => ({ name: t.name, url: t.logoUrl })), saveImage("logos", "112x112>"));
-const photos = await saveAll(scoring.players.map((p) => ({ name: p.name, url: p.photoUrl })), saveImage("photos", "60x80^"));
+const photoUrls = new Map([
+  ...roster.map((r) => [r.name, rosterStats[r.name]?.photoUrl ?? null]),
+  ...scoring.players.map((p) => [p.name, p.photoUrl ?? rosterStats[p.name]?.photoUrl ?? null]),
+]);
+const photos = await saveAll([...photoUrls].map(([name, url]) => ({ name, url })), saveImage("photos", "60x80^"));
 
-const scoringRows = buildTable(scoring, ROSTER);
+const scoringRows = buildTable(scoring, roster, rosterStats);
 write("bodovani", renderPage({ league: scoring.league, rows: scoringRows, photos, updatedAt }));
 write("tabulka", renderStandings({ ...standings, logos, updatedAt }));
 // Club match reports are optional: if the club site is down, the schedule is published without links.
@@ -95,25 +150,33 @@ const reports = await fetchReports(SEASON_START).catch((error) => {
   console.warn(`Club reports unavailable (${error.message}), publishing schedule without links`);
   return [];
 });
-// Match details: per-match points of every HC Lány scorer, read from their GameStats player pages.
-// Player pages are only fetched for players whose season line changed since the snapshot;
-// everyone else's per-match points come from the archive.
-const archivedLine = new Map((sameSeason ? archive?.scoring?.players ?? [] : []).map((p) => [p.name, `${p.gp}|${p.g}|${p.a}|${p.pts}`]));
-const changed = scoring.players.filter((p) => archivedLine.get(p.name) !== `${p.gp}|${p.g}|${p.a}|${p.pts}`);
-const unchangedNames = new Set(scoring.players.filter((p) => !changed.includes(p)).map((p) => p.name));
+// Game details: per-game points of every HC Lány scorer from the player pages read above; players
+// whose page was not read this time keep their per-game points from the snapshot.
+const allNames = new Set([...rosterNames, ...scoring.players.map((p) => p.name)]);
 const playerMatches = [
-  ...playerMatchesFromArchive(sameSeason ? archive?.matchScorers : null, unchangedNames),
-  ...await fetchPlayerMatches(changed),
+  ...playerMatchesFromArchive(sameSeason ? archive?.matchScorers : null, new Set([...allNames].filter((n) => !pages.has(n)))),
+  ...[...pages].map(([name, page]) => ({ name, matches: page.matches })),
 ];
 const scorers = mergeMatchScorers(scorersByMatch(playerMatches), archive?.matchScorers, sameSeason);
 // Hand-entered periods and penalties are carried over from the previous snapshot unchanged (all seasons).
 const extras = archive?.matchExtras ?? {};
-saveSnapshot({ league: scoring.league, scoring, standings, schedule, matchScorers: Object.fromEntries([...scorers].sort()), matchExtras: extras }, updatedAt);
 const played = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff && r.score);
+
+saveSnapshot({
+  league: scoring.league, scoring, standings, schedule, rosterIds: roster, roster: rosterStats,
+  matchScorers: Object.fromEntries([...scorers].sort()), matchExtras: extras,
+  matchTimelines: Object.fromEntries(Object.entries(timelines).sort()),
+}, updatedAt);
 for (const round of played) {
-  write(`zapas/${matchSlug(round)}`, renderMatch({
-    round, scorers: scorers.get(round.kickoff) ?? [], extras: extrasFor(round, extras[matchSlug(round)], matchSlug(round)),
-    logos, photos, league: schedule.league, scheduleUrl: "../../rozpis/", updatedAt,
+  const slugName = matchSlug(round);
+  const hand = extrasFor(round, extras[slugName], slugName);
+  const events = timelines[slugName]?.events ?? null;
+  // Without hand-entered periods, estimate them from the goal times (complete timelines only).
+  const estimated = !hand?.periods?.length && events ? periodsFromTimeline(events, round.score) : null;
+  write(`zapas/${slugName}`, renderMatch({
+    round, scorers: scorers.get(round.kickoff) ?? [],
+    extras: estimated ? { periods: estimated, penalties: hand?.penalties ?? null, estimated: true } : hand,
+    timeline: events, logos, photos, league: schedule.league, scheduleUrl: "../../rozpis/", updatedAt,
   }));
 }
 const detailSlugs = new Set(played.map(matchSlug));
@@ -131,4 +194,4 @@ write("vybor", `<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta
 for (const file of readdirSync("embeds/photos")) copyFileSync(`embeds/photos/${file}`, `dist/vybor/${file}`);
 write(".", `<!doctype html><meta charset="utf-8"><title>HC Lány – statistiky</title>
 <ul><li><a href="bodovani/">Kanadské bodování</a></li><li><a href="tabulka/">Tabulka soutěže</a></li><li><a href="rozpis/">Rozpis utkání</a></li><li><a href="prehled/">Přehled (úvodní stránka)</a></li><li><a href="vybor/">Výbor HC Lány</a></li></ul>`);
-console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, image downloads: ${imageDownloads}, player pages fetched: ${changed.length}, match details: ${played.length}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);
+console.log(`bodovani: ${scoring.players.length} scorers, tabulka: ${standings.teams.length} teams, photos: ${photos.size}, image downloads: ${imageDownloads}, player pages fetched: ${pages.size}, game details: ${played.length}, admin: ${admin.roster ? `roster ${admin.roster.length}, ` : ""}timelines fetched: ${admin.timelines.size}, rozpis: ${schedule.matches.length} matches, ${reports.length} club articles (${standings.league})`);

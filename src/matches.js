@@ -1,5 +1,6 @@
 import { TEAM, cellsOf, escapeHtml, formatTime, placeholderLogo, rowsOf, slug, stripTags } from "./page.js";
 import { formatKickoff } from "./schedule.js";
+import { renderTimeline } from "./timeline.js";
 
 // GameStats has no public match pages, but every player page lists the matches the player
 // scored in ("Přehled zápasů"). Collecting those rows for all HC Lány scorers rebuilds who
@@ -86,14 +87,14 @@ const logo = (name, logos) => {
 // Period scores and penalties under the score, home:away like the score itself.
 const extrasLines = (extras) => {
   if (!extras) return "";
-  const periods = extras.periods.length ? `<span class="periods" title="Třetiny">(${extras.periods.map(([h, a]) => `${h}:${a}`).join(", ")})</span>` : "";
+  const periods = extras.periods.length ? `<span class="periods" title="${extras.estimated ? "Třetiny (odhad podle časů gólů)" : "Třetiny"}">(${extras.periods.map(([h, a]) => `${h}:${a}`).join(", ")})</span>` : "";
   const penalties = extras.penalties ? `<span class="pen">Vyloučení ${extras.penalties[0]}:${extras.penalties[1]}</span>` : "";
   return periods + penalties;
 };
 
 const PHOTO_PLACEHOLDER = '<svg class="face" viewBox="0 0 24 32" aria-hidden="true"><rect width="24" height="32" rx="3" fill="var(--ph-bg)"/><circle cx="12" cy="12" r="5" fill="var(--ph-fg)"/><path d="M3 32c0-6 4-10 9-10s9 4 9 10z" fill="var(--ph-fg)"/></svg>';
 
-export const renderMatch = ({ round, scorers, extras, logos, photos, league, scheduleUrl, updatedAt }) => {
+export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, league, scheduleUrl, updatedAt }) => {
   const when = formatKickoff(round.kickoff);
   const res = resultOf(round);
   const ourGoals = round.home === TEAM ? round.score[0] : round.score[1];
@@ -123,7 +124,10 @@ export const renderMatch = ({ round, scorers, extras, logos, photos, league, sch
   /* Opened from the dark homepage overview (?dark): match its dark-blue box. */
   html.dark { --bg: #1e3645; --card: #254252; --line: rgba(255,255,255,.09); --fg: #eef3f7; --dim: #9db2c1; --accent: #f5c518; --hl: #f5c518; --ph-bg: #36556a; --ph-fg: #6f8ba0; }
   * { box-sizing: border-box; }
-  body { margin: 0; padding: 8px; background: var(--bg); color: var(--fg); font: 14px/1.4 Verdana, Arial, sans-serif; }
+  /* The detail opens inside fixed-height iframes with scrolling="no" (schedule 720 px, overview
+     540 px); the body is its own scroll container, so a long timeline still scrolls. */
+  html { height: 100%; overflow: hidden; }
+  body { margin: 0; padding: 8px; height: 100%; overflow-y: auto; background: var(--bg); color: var(--fg); font: 14px/1.4 Verdana, Arial, sans-serif; }
   a { color: var(--accent); }
   .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
   .back { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
@@ -151,6 +155,17 @@ export const renderMatch = ({ round, scorers, extras, logos, photos, league, sch
   .player { display: flex; align-items: center; gap: 8px; }
   .face { width: 18px; height: 24px; object-fit: cover; border-radius: 3px; display: block; flex: 0 0 18px; }
   .empty, .note { color: var(--dim); margin: 6px 0; font-size: 12px; }
+  h3 { font: 600 11px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin: 10px 0 4px; }
+  .tl { list-style: none; margin: 0; padding: 0; }
+  .tl li { display: flex; align-items: center; gap: 8px; padding: 3px 6px; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
+  .tl li.us { border-left-color: var(--hl); }
+  .tl li.us .tl-score { color: var(--hl); }
+  .tl-time { color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; width: 3.2em; flex: 0 0 auto; }
+  .tl-logo, .tl-logo svg { width: 18px; height: 18px; object-fit: contain; display: block; flex: 0 0 18px; }
+  .tl-score { font: 700 15px/1 var(--display); font-variant-numeric: tabular-nums; width: 2.6em; flex: 0 0 auto; text-align: center; }
+  .tl-who { min-width: 0; }
+  .tl-ast { color: var(--dim); font-size: 12px; }
+  .tl-none { color: var(--dim); font-size: 12px; }
   .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 10px; font-size: 11px; color: var(--dim); }
   .foot a { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
   @media (max-width: 480px) {
@@ -158,6 +173,8 @@ export const renderMatch = ({ round, scorers, extras, logos, photos, league, sch
     .logo, .logo svg { width: 44px; height: 44px; }
     .score b { font-size: 36px; }
     .meta { display: none; }
+    .tl-who { font-size: 13px; }
+    .tl-ast { font-size: 11px; }
   }
 </style></head><body>
 <div class="top"><a class="back" href="${escapeHtml(scheduleUrl)}" onclick="if (history.length > 1) { history.back(); return false; }">← Zpět</a><span class="meta">${escapeHtml(league)}</span></div>
@@ -165,6 +182,7 @@ export const renderMatch = ({ round, scorers, extras, logos, photos, league, sch
   <div class="label"><span>${round.round ? `${round.round}. kolo · ` : ""}${escapeHtml(when.day)} · ${escapeHtml(when.time)}</span><span class="pill ${res.cls}">${res.text}</span></div>
   <div class="match">${side(round.home)}<div class="score"><b>${round.score[0]}:${round.score[1]}</b>${extrasLines(extras)}</div>${side(round.away)}</div>
 </section>
+${timeline ? renderTimeline({ round, events: timeline, handPeriods: extras?.estimated ? null : extras?.periods, logos }) : ""}
 <h2>Body ${escapeHtml(TEAM)}</h2>
 ${scorers.length ? `<table><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
 ${missing}

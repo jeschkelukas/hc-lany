@@ -3,37 +3,42 @@ import { GAMESTATS, TEAM, cellsOf, decode, escapeHtml, renderShell, rowsOf, stri
 export { TEAM };
 export const SOURCE = `${GAMESTATS}/stats`;
 
-// Club roster. Players listed here show up even with zero points; scorers missing
-// from this list are still added automatically from GameStats.
+// Club roster as listed on the HC Lány team page in GameStats admin (TEAM_ID). The ids open
+// the public player pages (playerUrl, no login needed), which show the photo,
+// jersey number and games played even for players without a point. Scorers missing from
+// this list are still added automatically from GameStats.
+export const TEAM_ID = "1a15d2bb2b08bc10a5e78";
 export const ROSTER = [
-  "Braun Jan",
-  "Brejník Petr",
-  "Cepák Tomáš",
-  "Černý Josef",
-  "Hauf Ivan",
-  "Hoffmann Marek",
-  "Hořejší Milan",
-  "Janský Martin",
-  "Jeschke Lukáš",
-  "Jirkovský Radek",
-  "Kestner Jan",
-  "Köhler Michael",
-  "Laga Martin",
-  "Lomberský Aleš",
-  "Lomberský Tomáš",
-  "Mairych Břetislav",
-  "Náprstek Martin",
-  "Nedvěd Martin",
-  "Nedvěd Zdeněk",
-  "Pokorný Radek",
-  "Prokop Michal",
-  "Prokop Miloslav",
-  "Soukup Radek",
-  "Štechmiler Jaroslav",
-  "Švácha Jiří",
-  "Taraba Martin",
-  "Ungrman Petr",
-];
+  { name: "Laga Martin", id: "1a18e26955ed4b8f9c044" },
+  { name: "Cepák Tomáš", id: "1a18e23bc27c545dc010a" },
+  { name: "Taraba Martin", id: "1a18e45b6d5a63e6f0d1b" },
+  { name: "Hauf Ivan", id: "1a18e2da1cda414b97eac" },
+  { name: "Braun Jan", id: "1a18e27fa238ac460294d" },
+  { name: "Ungrman Petr", id: "1a18e463366064b8b9938" },
+  { name: "Soukup Radek", id: "1a18e4317457acf8cc849" },
+  { name: "Lomberský Aleš", id: "1a18af6b0fa380219ae8e" },
+  { name: "Hořejší Milan", id: "1a18e308224bf7a2f7da3" },
+  { name: "Pokorný Radek", id: "1a18e3e611103f3e7de14" },
+  { name: "Náprstek Martin", id: "1a18e3cbd21c9a6750517" },
+  { name: "Jirkovský Radek", id: "1a18e370cf4335cbc3da5" },
+  { name: "Lomberský Tomáš", id: "1a18e3aadddaabce56f7d" },
+  { name: "Mairych Břetislav", id: "1a18e3b81e3488a88fa24" },
+  { name: "Jirásek Jan", id: "1a18e33a4eb844dd285f0" },
+  { name: "Švácha Jiří", id: "1a18e4530856333f3b87b" },
+  { name: "Černý Josef", id: "1a18e296839c16e07188b" },
+  { name: "Jeschke Lukáš", id: "1a18e329c0a2202977231" },
+  { name: "Hoffmann Marek", id: "1a18e2fbe066719930788" },
+  { name: "Brejník Petr", id: "1a18e28c22278ef5bbc58" },
+  { name: "Nedvěd Zdeněk", id: "1a18e3d9ec9c02947da1e" },
+  { name: "Prokop Miloslav", id: "1a18e41d61b4e12922d2b" },
+  { name: "Kestner Jan", id: "1a18e380430706c511dd4" },
+  { name: "Štechmiler Jaroslav", id: "1a18e44a97742ece74c5a" },
+  { name: "Köhler Michael", id: "1a18e38acc0caa306e056" },
+  { name: "Prokop Michal", id: "1a18e4152a89fe811e95f" },
+  { name: "Janský Martin", id: "1a18e3188f21645d1c48f" },
+  { name: "Nedvěd Martin", id: "1a18e3d1fefba62eb4fb0" },
+].sort((x, y) => x.name.localeCompare(y.name, "cs"));
+export const playerUrl = (id) => `${GAMESTATS}/players/${id}`;
 
 export const parseTeamScoring = (html, team) => {
   const sections = html.split('<section class="mb-5">').slice(1);
@@ -70,16 +75,17 @@ const byScoring = (x, y) => y.pts - x.pts || y.g - x.g || x.gp - y.gp || x.name.
 
 // Dense ranking, as the club prefers: players tied on points, goals and games share a number
 // (10., 10.) and the next group continues with the following one (11.); every roster player
-// without a point forms one shared group at the bottom.
-export const buildTable = (scoring, roster) => {
+// without a point forms one shared group at the bottom, most games played first. Their games
+// come from the public player pages (rosterStats: name -> { gp, ... }).
+export const buildTable = (scoring, roster, rosterStats = {}) => {
   const scorers = scoring ? scoring.players : [];
   const known = new Set(scorers.map((p) => p.name));
   const zeros = roster
-    .filter((name) => !known.has(name))
-    .sort((x, y) => x.localeCompare(y, "cs"))
-    .map((name) => ({ name, url: null, leagueRank: null, gp: null, g: 0, a: 0, pts: 0 }));
+    .filter(({ name }) => !known.has(name))
+    .map(({ name, id }) => ({ name, url: playerUrl(id), leagueRank: null, gp: rosterStats[name]?.gp ?? null, g: 0, a: 0, pts: 0, zero: true }))
+    .sort((x, y) => (y.gp ?? -1) - (x.gp ?? -1) || x.name.localeCompare(y.name, "cs"));
   const rows = [...[...scorers].sort(byScoring), ...zeros];
-  const groupOf = (p) => (p.gp === null ? "zero" : `${p.pts}|${p.g}|${p.gp}`);
+  const groupOf = (p) => (p.zero ? "zero" : `${p.pts}|${p.g}|${p.gp}`);
   const groups = [...new Set(rows.map(groupOf))];
   return rows.map((p) => ({ ...p, rankLabel: `${groups.indexOf(groupOf(p)) + 1}.` }));
 };
@@ -92,6 +98,13 @@ const playerCell = (r, photos) => {
   const face = file ? `<img class="face" src="../photos/${escapeHtml(file)}" alt="" loading="lazy">` : PHOTO_PLACEHOLDER;
   const name = r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.name)}</a>` : escapeHtml(r.name);
   return `<span class="player">${face}${name}</span>`;
+};
+
+// A player who has not played yet shows dashes instead of zeros.
+const DASH = "–";
+const statCells = (r) => {
+  if (!r.gp) return `<td class="n" data-v="${r.gp ?? -1}">${DASH}</td><td class="n" data-v="0">${DASH}</td><td class="n" data-v="0">${DASH}</td><td class="n pts" data-v="0">${DASH}</td>`;
+  return `<td class="n" data-v="${r.gp}">${r.gp}</td><td class="n">${r.g}</td><td class="n">${r.a}</td><td class="n pts">${r.pts}</td>`;
 };
 
 // Team totals strip above the table: how many players scored and the team's goals, assists and points.
@@ -110,8 +123,7 @@ export const renderPage = ({ league, rows, photos = new Map(), updatedAt, error 
   <tbody>${rows.map((r) => `<tr data-name="${escapeHtml(r.name)}"${r.pts === 0 ? ' class="zero"' : ""}>
     <td class="n rank">${r.rankLabel}</td>
     <td>${playerCell(r, photos)}</td>
-    <td class="n" data-v="${r.gp ?? -1}">${r.gp ?? ""}</td><td class="n">${r.g}</td><td class="n">${r.a}</td>
-    <td class="n pts">${r.pts}</td><td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : ""}</td></tr>`).join("")}
+    ${statCells(r)}<td class="n muted">${r.leagueRank ? `${escapeHtml(r.leagueRank)}.` : DASH}</td></tr>`).join("")}
   </tbody></table><div id="players-empty" class="nomatch" hidden>Žádný hráč neodpovídá hledání.</div></div>`;
 
   return renderShell({

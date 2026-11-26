@@ -21,7 +21,7 @@ export const loadSnapshot = () => {
 // Older days are deleted from the folder but stay in git history.
 const ARCHIVE_DAYS = 30;
 const DAY_MS = 86_400_000;
-const pragueDate = (date) =>
+export const pragueDate = (date) =>
   new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Prague", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
 
 export const saveSnapshot = (snapshot, date = new Date()) => {

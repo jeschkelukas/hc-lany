@@ -39,9 +39,10 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
 
 - **Player scoring** (Czech *kanadské bodování*: points = goals + assists, as in the NHL
   scoring leaders) – team totals strip (scorers, goals, assists, points), an
-  accent-insensitive player search, and every HC Lány scorer from GameStats with a photo thumbnail,
-  plus the rest of the roster with zero points (silhouette instead of a photo).
-  Tied players share a rank (dense ranking). Stat columns are sortable by click.
+  accent-insensitive player search, and the whole roster with photo thumbnails: scorers first,
+  then players without a point, most games played first. A player who has not played yet
+  shows dashes instead of zeros. Tied players share a rank (dense ranking). Stat columns are
+  sortable by click.
 - **League standings** – the league table with team logos (a coloured shield with the
   initial when a team has no logo) and the HC Lány row highlighted. Sortable by click.
 - **Homepage overview** – next game card with a countdown and both teams' recent form
@@ -52,9 +53,12 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   win/tie/loss badge and the next game highlighted. Clicking a result opens the game
   detail (score, logos, date and every HC Lány scorer's goals and assists) inside the same
   iframe; a game without a detail page falls back to the club's game recap.
-- **Game detail** (box score) – also shows the hand-entered goals by period and penalties when known
-  (see [Hand-entered game extras](#hand-entered-game-extras)). Opened from the homepage
-  overview it uses the overview's dark colours (`?dark`).
+- **Game detail** (box score) – the scoring summary by period (time, team logo, running
+  score, scorer and assists, HC Lány goals highlighted) from the GameStats admin, goals by
+  period under the score and penalties when known (see
+  [Hand-entered game extras](#hand-entered-game-extras)). Opened from the homepage overview
+  it uses the overview's dark colours (`?dark`). It scrolls inside its own page, because the
+  schedule and overview iframes around it have a fixed height.
 
 ## Phones
 
@@ -80,9 +84,12 @@ rows, and every widget fits its recommended iframe height from 340 px wide up:
 - Club website homepage and BNB Cup category – game recaps. A recap is paired with a
   game by the score in its title (`HC Lány - <opponent> x : y`, HC Lány goals first),
   the opponent name and a publish date within 30 days after the game.
-- GameStats player pages ("Přehled zápasů") – each HC Lány scorer's goals and assists
-  per game, combined into the game detail pages (`zapas/<date>-<opponent>/`) that the
-  schedule and the homepage overview link to.
+- Public GameStats player pages (`/players/<id>`, no login) – for the whole roster: photo,
+  jersey number, position, games played (also for players without a point) and each
+  player's goals and assists per game ("Přehled zápasů"), combined into the game detail
+  pages (`zapas/<date>-<opponent>/`) that the schedule and the homepage overview link to.
+- GameStats admin (login, see [GameStats login](#gamestats-login)) – only the HC Lány
+  roster with player ids and the game timelines.
 
 ## Network use
 
@@ -91,9 +98,11 @@ build itself keeps its downloads small:
 
 - Logos and player photos are cached as thumbnails in `data/images/` (GameStats upload names
   are content hashes), so only new or changed images are downloaded.
-- Player pages are fetched only for players whose season line (games, goals, assists,
-  points) changed since the snapshot; the rest of the per-game points come from
-  `data/snapshot.json`.
+- Player pages (about 30) are read only when something may have changed: a player's season
+  line, a new result, a new roster from the admin, or the first build of the day (catches
+  late lineup edits). Otherwise everything comes from `data/snapshot.json`.
+- The admin login happens only after a game (once its result is in, until its timeline is
+  complete), not on every run.
 - Each run still reads the three small GameStats pages (stats, overview, schedule) and the
   club website's article lists, which are needed to notice any change at all.
 
@@ -106,7 +115,7 @@ Everything lives in the repository under `data/`, committed by the workflow itse
 
 | Path | Content | Kept |
 | --- | --- | --- |
-| `data/snapshot.json` | Current state: HC Lány player stats (`scoring`), league table (`standings`), schedule with results (`schedule`), every HC Lány scorer's goals and assists per game (`matchScorers`, keyed by start time) and the hand-entered goals by period and penalties (`matchExtras`, carried over by every build) | Always the latest |
+| `data/snapshot.json` | Current state: HC Lány player stats (`scoring`), league table (`standings`), schedule with results (`schedule`), the roster from the admin (`rosterIds`), each roster player's public season line and photo (`roster`), every HC Lány scorer's goals and assists per game (`matchScorers`, keyed by start time), the game timelines from the admin (`matchTimelines`, keyed by the game detail slug) and the hand-entered goals by period and penalties (`matchExtras`, carried over by every build) | Always the latest |
 | `data/archive/YYYY-MM-DD.json` | The same content as the day's last snapshot (Prague time) | Last 30 days in the folder |
 | `data/images/logos/`, `data/images/photos/` | Team logos and player photos as small thumbnails, named after the GameStats upload | As long as GameStats uses them |
 
@@ -163,14 +172,46 @@ content), so it takes its natural height and wraps on phones.
 - The build also publishes the page itself at https://jeschkelukas.github.io/hc-lany/vybor/
   (useful as a preview, or as an iframe of about 470 px on desktop if ever needed).
 
+## GameStats login
+
+The game timelines and the team roster (player ids) are only in the GameStats admin, so the
+build logs in with the HC Lány team manager account. Everything else is read from public
+pages.
+
+- **Credentials** – repository secrets `GAMESTATS_EMAIL` and `GAMESTATS_PASSWORD`
+  (Settings → Secrets and variables → Actions). GitHub masks them in the logs and does not
+  pass them to workflows started from forks. Without them the build skips the admin step and
+  uses the last roster and timelines in the snapshot.
+- **Read only** – the session is used only for GET requests to three admin pages: the team
+  page (`/admin/teams/<team id>`), the team's games list and a game detail
+  (`/admin/matches/<id>`). `adminGet` in `src/admin.js` refuses any other path, and nothing is
+  ever submitted except the login and logout forms.
+- **Logged out every time** – the logout runs in `finally`, so the session ends even when a
+  page fails. Credentials, cookies and page contents are never logged; the log only says
+  whether the login, the pages and the logout worked.
+- **When** – only when a played game has no complete timeline (its result is in, but not all
+  goals are in the timeline yet), retried every run for up to two weeks after the game, and
+  once if the roster has never been read. A game lasts about an hour on the ice and the
+  workflow runs every 30 minutes, so the timeline is usually read within the first run or two
+  after the result appears.
+- **Ids** – HC Lány team `1a15d2bb2b08bc10a5e78`, league 2. liga 2026/27
+  `1a18c37f49aff03a5cd4e` (`TEAM_ID` in `src/scoring.js`, `LEAGUE_ID` in `src/admin.js`; the
+  league id changes with a new season).
+
+Goals by period: GameStats has no periods, its timeline clock runs through the whole game.
+Without hand-entered periods the build estimates them from the goal times: the 1st period
+ends at 17:00 and the 2nd at 30:00 (`PERIOD_ENDS` in `src/timeline.js`, fitted on the first
+three games, where the club's reports gave the period scores and all three matched). The
+estimate is used only when the timeline has every goal, and it is marked in the tooltip.
+
 ## Manual data
 
-GameStats does not know everything, so two lists live in the code and need an update
-when they change:
+GameStats does not know everything, so a few things live in the code:
 
-- `ROSTER` in `src/scoring.js` – players listed even with zero points.
 - `FIXTURES` in `src/schedule.js` – round numbers, bye weeks and originally planned
   start times for the season. Actual dates and results still come from GameStats.
+- `ROSTER` in `src/scoring.js` – names and GameStats ids of the roster, used only until the
+  build has read the roster from the admin (then `rosterIds` in the snapshot is used).
 
 ## Hand-entered game extras
 
@@ -190,7 +231,9 @@ home:away. It warns in the log when the periods do not add up to the final score
 }
 ```
 
-Either field may be left out when it is not known. Pull first (`git pull --rebase`): the
+Either field may be left out when it is not known. Hand-entered periods win over the
+estimate from the timeline (see [GameStats login](#gamestats-login)); with them, the timeline
+on the game detail is also split into periods by the club's numbers. Pull first (`git pull --rebase`): the
 workflow commits the snapshot regularly.
 
 ## Development
