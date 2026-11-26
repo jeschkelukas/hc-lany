@@ -123,6 +123,8 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
     .summary div { padding: 6px; }
     .summary span { font-size: 9px; letter-spacing: .02em; }
     .summary b { font-size: 19px; }
+    /* Smaller photo thumbnails keep the full roster within the iframe height on phones. */
+    .face { width: 18px; height: 24px; flex-basis: 18px; }
   }
   @media (max-width: 370px) {
     table.schedule .club { max-width: 64px; }
