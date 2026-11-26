@@ -138,13 +138,7 @@ export const renderOverview = ({ schedule, leagueMatches = [], reports, standing
     --display: "Oswald", "Arial Narrow", Impact, sans-serif;
   }
   * { box-sizing: border-box; }
-  /* The page fills the iframe (1000 px, so a game detail opened from here fits too): the two
-     tables at the bottom stretch their rows over whatever height is left. */
-  html, body { height: 100%; }
-  body { margin: 0; padding: 4px; background: var(--bg); color: var(--fg); font: 13px/1.35 Verdana, Arial, sans-serif; display: flex; flex-direction: column; }
-  .grid { flex: 1 1 auto; }
-  .grid .card { display: flex; flex-direction: column; }
-  .grid .card table { flex: 1 1 auto; }
+  body { margin: 0; padding: 4px; background: var(--bg); color: var(--fg); font: 13px/1.35 Verdana, Arial, sans-serif; }
   .upcoming { margin-bottom: 10px; padding-top: 8px; padding-bottom: 6px; }
   .upcoming .label { margin-bottom: 4px; }
   .upcoming td { height: 24px; }

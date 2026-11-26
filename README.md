@@ -47,7 +47,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   initial when a team has no logo) and the HC Lány row highlighted. Sortable by click.
 - **Homepage overview** – next game card with a countdown and both teams' recent form
   across the whole league (newest game on the left), the last result, the three games after
-  the next one, mini standings and the top scorers (their rows stretch to fill the iframe), styled to match the dark-blue intro
+  the next one, mini standings and the top scorers (about 660 px; the iframe is 1000 px so a
+  game detail opened from here fits, leaving free space below the overview itself), styled to match the dark-blue intro
   box on the club homepage. Links lead to the full article pages.
 - **Schedule** – all rounds including bye weeks (shown with their Monday–Sunday
   week), moved games with the original date struck through, results with a
@@ -63,7 +64,7 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   assists) and in the points table have photos the size of the scoring table's; names are
   shown without jersey numbers. The timeline and the points table are always stacked. An
   11-goal game with 9 HC Lány scorers is about 965 px high, which is why the schedule and
-  overview iframes are 1000 px (both pages stretch their rows to fill it); anything taller
+  overview iframes are 1000 px (the schedule stretches its rows to fill it); anything taller
   (or phones) scrolls inside the detail page.
 
 ## Phones
