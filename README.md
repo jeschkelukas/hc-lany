@@ -61,8 +61,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   [Hand-entered game extras](#hand-entered-game-extras)). HC Lány players (in the points
   table and in the timeline) link to their public GameStats page in a new tab. Opened from the homepage overview
   it uses the overview's dark colours (`?dark`). HC Lány players in the timeline (scorer and
-  assists) and in the points table have photos the size of the scoring table's; names are
-  shown without jersey numbers. The timeline and the points table are always stacked. An
+  assists) have small photos, the points table has photos the size of the scoring table's;
+  names are shown without jersey numbers. The timeline and the points table are always stacked. An
   11-goal game with 9 HC Lány scorers is about 965 px high, which is why the schedule and
   overview iframes are 1000 px (the schedule stretches its rows to fill it); anything taller
   (or phones) scrolls inside the detail page.
