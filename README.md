@@ -12,7 +12,7 @@ hand-written committee page with photos (see [Committee page](#committee-page)).
 
 | Widget | URL | Iframe height |
 | --- | --- | --- |
-| Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | 1320 |
+| Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | auto (fallback 1320, see `embeds/bodovani.html`) |
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
 | HC Lány schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 940 |
 | Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 670 |
@@ -22,6 +22,12 @@ Embed snippet (change `src` and `height` per widget):
 ```html
 <iframe src="https://jeschkelukas.github.io/hc-lany/rozpis/" width="100%" height="940" scrolling="no" style="border:0;overflow:hidden" loading="lazy" title="Rozpis utkání HC Lány"></iframe>
 ```
+
+The scoring widget grows and shrinks with the roster (players appear once they have played), so
+its embed in `embeds/bodovani.html` adds a small script: the widget posts its height
+(`{ hcLanyHeight }`, on load and when the iframe width changes) and the script sets the iframe
+to it, accepting messages only from `https://jeschkelukas.github.io`. Without the script the
+fixed 1320 px applies.
 
 The widget text is in Czech, because it is shown on the club's Czech website.
 

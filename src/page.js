@@ -44,7 +44,19 @@ export const formatTime = (date) =>
     day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Prague",
   }).format(date);
 
-export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<!doctype html>
+// Iframe auto-height: a widget rendered with autoHeight tells the embedding page its height
+// ({ hcLanyHeight }), and the snippet in embeds/ resizes the iframe to it. Sent on load and when
+// the iframe width changes, not while the search hides rows, so the page does not jump.
+const AUTO_HEIGHT = `
+const postHeight = () => parent.postMessage({ hcLanyHeight: Math.ceil(document.body.getBoundingClientRect().height) }, "*");
+if (parent !== window) {
+  postHeight();
+  addEventListener("load", postHeight);
+  let width = innerWidth;
+  addEventListener("resize", () => { if (innerWidth !== width) { width = innerWidth; postHeight(); } });
+}`;
+
+export const renderShell = ({ title, body, legend, sourceUrl, updatedAt, autoHeight = false }) => `<!doctype html>
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(title)}</title>
 <style>
@@ -147,7 +159,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
 </style></head><body>
 ${body}
 <p class="foot">${escapeHtml(legend)} · Zdroj: <a href="${sourceUrl}" target="_blank" rel="noopener">GameStats</a>, aktualizováno ${formatTime(updatedAt)}</p>
-<script>
+<script>${autoHeight ? AUTO_HEIGHT : ""}
 // Zebra stripes follow the visible order, so they stay even after sorting or filtering.
 const restripe = (tbody) => {
   [...tbody.rows].filter((row) => !row.hidden).forEach((row, i) => row.classList.toggle("alt", i % 2 === 1));
