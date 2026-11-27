@@ -260,8 +260,9 @@ GameStats does not know everything, so a few things live in the code:
 - `FIXTURES` in `src/schedule.js` – round numbers, bye weeks and originally planned
   start times for the season. Actual dates and results still come from GameStats.
 - `EXHIBITIONS` in `src/schedule.js` – friendlies outside the league (e.g. Winter Classic
-  in Dobříš), which GameStats does not have. They sit in the schedule by date, without a
-  round, on a light-blue row; a date without a time shows "čas upřesníme". Add the time and,
+  in Dobříš), which GameStats does not have. They sit in the schedule by date as one
+  light-blue line across the table (no round, so no column gets wider); a date without
+  a time shows "čas upřesníme". Add the time and,
   after the game, `score` by hand. They get no game detail and count in no statistics.
 - `ROSTER` in `src/scoring.js` – names and GameStats ids of the roster, used only until the
   build has read the roster from the admin (then `rosterIds` in the snapshot is used).

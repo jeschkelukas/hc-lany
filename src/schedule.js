@@ -32,7 +32,7 @@ const FIXTURES = [
 // round. `date` alone means the kick-off time is not known yet; add " HH:MM" once it is, and the
 // result as `score: [home, away]` after the game.
 const EXHIBITIONS = [
-  { label: "Winter Classic", short: "WC", venue: "zimní stadion Dobříš", home: TEAM, away: "Nové Strašecí", date: "2027-01-09" },
+  { label: "Winter Classic", venue: "zimní stadion Dobříš", place: "Dobříš", home: TEAM, away: "Nové Strašecí", date: "2027-01-09" },
 ];
 
 // First planned kick-off minus two weeks: older club articles belong to previous seasons.
@@ -177,8 +177,7 @@ const shortDate = (key) => `${Number(key.slice(8, 10))}.${Number(key.slice(5, 7)
 const kickoffCells = (r) => {
   if (!r.kickoff) return '<td class="wide-only"></td><td class="wide-only"></td><td class="narrow-only"></td>';
   const now = formatKickoff(r.kickoff);
-  // An unknown time goes under the date, so the date does not read as unconfirmed.
-  const nowShort = `${shortDate(r.kickoff)}${now.tbd ? "<br>" : " "}<span class="muted">${escapeHtml(now.time)}</span>`;
+  const nowShort = `${shortDate(r.kickoff)} <span class="muted">${escapeHtml(now.time)}</span>`;
   if (!r.planned || r.planned === r.kickoff) {
     return `<td class="wide-only">${escapeHtml(now.day)}</td><td class="wide-only muted">${escapeHtml(now.time)}</td><td class="narrow-only">${nowShort}</td>`;
   }
@@ -189,11 +188,7 @@ const kickoffCells = (r) => {
 };
 
 // Fixed slots (home goals | colon | away goals | outcome) keep every row aligned on the colon.
-const exhibitionPill = (r) =>
-  `<span class="pill ex" title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}"><span class="long">${escapeHtml(r.label)}</span><span class="short">${escapeHtml(r.short)}</span></span>`;
-
 const resultCell = (r, isNext, detailUrl) => {
-  if (!r.score && r.exhibition) return exhibitionPill(r);
   if (!r.score) {
     const nextTag = isNext ? '<span class="pill next">další</span>' : "";
     return `<span class="score"><span class="wide">–</span></span><span class="tag">${nextTag}</span>`;
@@ -223,6 +218,14 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
   <tbody>${rows.map((r) => {
     const cls = rowClass(r);
     const open = `<tr${cls ? ` class="${cls}"` : ""}><td class="n rank">${r.round ? `${r.round}.` : ""}</td>`;
+    // A friendly is one free-text line across the whole table: no round, and it never widens a column.
+    if (r.exhibition) {
+      const when = formatKickoff(r.kickoff);
+      const score = r.score ? ` <b>${r.score[0]}:${r.score[1]}</b> ` : " – ";
+      return `<tr class="${cls}"><td colspan="7" class="exrow"><span class="pill ex" title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}">${escapeHtml(r.label)}</span> `
+        + `<b>${escapeHtml(when.day)}</b> <span class="muted">${escapeHtml(when.time)}</span> · `
+        + `${escapeHtml(r.home)}${score}${escapeHtml(r.away)} <span class="muted">· ${escapeHtml(r.place)}</span></td></tr>`;
+    }
     if (r.bye) {
       return `${open}<td class="muted wide-only" colspan="2">${escapeHtml(r.week?.full ?? "")}</td><td class="muted narrow-only">${escapeHtml(r.week?.compact ?? "")}</td>`
         + `<td colspan="3" class="c"><span class="pill d bye">volno</span></td></tr>`;
@@ -235,7 +238,7 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
   return renderShell({
     title: `Rozpis utkání ${TEAM}`,
     body,
-    legend: `${league || "BNB Cup"}${EXHIBITIONS.map((e) => ` · ${e.short} = ${e.label}, mimosoutěžní utkání (${e.venue})`).join("")} · přeložený termín je přeškrtnutý · klik na výsledek otevře detail zápasu · V = výhra, R = remíza, P = prohra`,
+    legend: `${league || "BNB Cup"}${EXHIBITIONS.map((e) => ` · ${e.label} = mimosoutěžní utkání (${e.venue})`).join("")} · přeložený termín je přeškrtnutý · klik na výsledek otevře detail zápasu · V = výhra, R = remíza, P = prohra`,
     sourceUrl: SCHEDULE_SOURCE,
     updatedAt,
   });
