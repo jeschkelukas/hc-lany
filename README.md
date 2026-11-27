@@ -84,7 +84,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   names are shown without jersey numbers. The timeline and the points table are always stacked. An
   11-goal game with 9 HC Lány scorers is about 910 px high, which is why the schedule
   iframe is 940 px (the schedule stretches its rows to fill it); in the overview iframe (670 px),
-  on phones or for anything taller the detail scrolls inside its own page.
+  on phones or for anything taller the detail scrolls inside its own page, unless the embed has
+  the auto-height script (then the iframe takes the whole detail, see Auto-height above).
 
 ## Schedule
 
