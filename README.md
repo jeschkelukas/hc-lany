@@ -45,6 +45,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
 | `tabulka.html` | Tabulka soutěže 2026/2027 |
 | `rozpis.html` | Rozpis utkání 2026/2027 |
 | `vybor.html` | Výbor HC Lány (pasted directly, no iframe) |
+| `auto-height.html` | The iframe auto-height script alone (already part of the three embeds above) |
+| `mobilni-hlavicka.html` | Site-wide CSS in the "Vlastní kód" module: header photo keeps its ratio on phones |
 
 ## What each widget shows
 
