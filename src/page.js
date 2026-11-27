@@ -97,11 +97,10 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .ex-tag, .ex-when { display: flex; flex-direction: column; line-height: 1.25; }
   .ex-tag span { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
   .ex-tag small, .ex-when small { color: var(--muted); font-size: 11px; }
-  .ex-teams { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .ex-teams { margin-left: auto; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
   .ex-vs { font-weight: bold; }
   .ex-score { font-size: 15px; }
   .ex-when { white-space: nowrap; }
-  .ex-tag { text-align: right; }
   .ex-when a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
   .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 2px solid var(--accent); margin-bottom: 10px; }
   .summary div { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
@@ -133,8 +132,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
     table.schedule .exbox .club { display: flex; max-width: none; }
     table.schedule .exbox .club img, table.schedule .exbox .club svg { display: block; width: 16px; height: 16px; flex-basis: 16px; }
     .exbox { gap: 4px 8px; } .ex-tag span { font-size: 11px; }
-    .ex-tag { margin-left: auto; }
-    .ex-teams { order: 3; flex-basis: 100%; justify-content: flex-start; gap: 6px; }
+    .ex-teams { flex-basis: 100%; justify-content: flex-start; gap: 6px; }
     table.schedule .tag { width: 1.6em; margin-left: 4px; }
     table.stats td { padding-left: 3px; padding-right: 3px; }
     table.stats th { padding-left: 3px; padding-right: 3px; }

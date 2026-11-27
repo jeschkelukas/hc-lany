@@ -226,8 +226,8 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
       const middle = r.score ? `<b class="ex-score">${r.score[0]}:${r.score[1]}</b>` : '<span class="ex-vs">–</span>';
       return `<tr class="${cls}"><td colspan="7" class="exrow"><div class="exbox">
       <div class="ex-when"><b>${escapeHtml(when.day)}</b><small>${escapeHtml(when.time)} · <a href="${escapeHtml(r.map)}" target="_blank" rel="noopener" title="${escapeHtml(`${r.venue} na mapě`)}">${escapeHtml(r.place)}</a></small></div>
-      <div class="ex-teams">${side(r.home)}${middle}${side(r.away)}</div>
       <div class="ex-tag"><span>❄ ${escapeHtml(r.label)}</span><small>mimosoutěžní utkání</small></div>
+      <div class="ex-teams">${side(r.home)}${middle}${side(r.away)}</div>
     </div></td></tr>`;
     }
     if (r.bye) {
