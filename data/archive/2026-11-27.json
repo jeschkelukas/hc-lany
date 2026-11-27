@@ -4,10 +4,20 @@
     "league": "2. liga 2026/27",
     "players": [
       {
+        "name": "Jeschke Lukáš",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/2855ef0bd525311f936b72d2.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e329c0a2202977231",
+        "leagueRank": "6",
+        "gp": 3,
+        "g": 2,
+        "a": 6,
+        "pts": 8
+      },
+      {
         "name": "Hauf Ivan",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/b64842c7737b36df78c64930.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e2da1cda414b97eac",
-        "leagueRank": "8",
+        "leagueRank": "9",
         "gp": 3,
         "g": 3,
         "a": 4,
@@ -17,21 +27,11 @@
         "name": "Ungrman Petr",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/c8b07125db3563c4d4798e0b.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e463366064b8b9938",
-        "leagueRank": "10",
-        "gp": 3,
-        "g": 4,
-        "a": 2,
-        "pts": 6
-      },
-      {
-        "name": "Jeschke Lukáš",
-        "photoUrl": "https://mini.gamestats.cz/uploads/players/2855ef0bd525311f936b72d2.jpg",
-        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e329c0a2202977231",
         "leagueRank": "12",
         "gp": 3,
-        "g": 2,
-        "a": 4,
-        "pts": 6
+        "g": 4,
+        "a": 1,
+        "pts": 5
       },
       {
         "name": "Hořejší Milan",
@@ -54,23 +54,23 @@
         "pts": 4
       },
       {
-        "name": "Švácha Jiří",
-        "photoUrl": "https://mini.gamestats.cz/uploads/players/6c6b332f3b13794126c80bb4.jpg",
-        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e4530856333f3b87b",
-        "leagueRank": "19",
-        "gp": 2,
-        "g": 2,
-        "a": 2,
-        "pts": 4
-      },
-      {
         "name": "Štechmiler Jaroslav",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/48ca9a3aee75139a9b33dab7.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e44a97742ece74c5a",
-        "leagueRank": "27",
+        "leagueRank": "26",
         "gp": 4,
         "g": 3,
         "a": 0,
+        "pts": 3
+      },
+      {
+        "name": "Švácha Jiří",
+        "photoUrl": "https://mini.gamestats.cz/uploads/players/6c6b332f3b13794126c80bb4.jpg",
+        "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e4530856333f3b87b",
+        "leagueRank": "27",
+        "gp": 2,
+        "g": 2,
+        "a": 1,
         "pts": 3
       },
       {
@@ -565,8 +565,8 @@
       "position": "Útočník",
       "gp": 3,
       "g": 4,
-      "a": 2,
-      "pts": 6,
+      "a": 1,
+      "pts": 5,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/c8b07125db3563c4d4798e0b.jpg"
     },
@@ -675,8 +675,8 @@
       "position": "Útočník",
       "gp": 2,
       "g": 2,
-      "a": 2,
-      "pts": 4,
+      "a": 1,
+      "pts": 3,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/6c6b332f3b13794126c80bb4.jpg"
     },
@@ -697,8 +697,8 @@
       "position": "Útočník",
       "gp": 3,
       "g": 2,
-      "a": 4,
-      "pts": 6,
+      "a": 6,
+      "pts": 8,
       "pim": 0,
       "photoUrl": "https://mini.gamestats.cz/uploads/players/2855ef0bd525311f936b72d2.jpg"
     },
@@ -912,9 +912,9 @@
     ],
     "2026-11-26 22:05": [
       {
-        "name": "Ungrman Petr",
-        "g": 2,
-        "a": 1,
+        "name": "Jeschke Lukáš",
+        "g": 0,
+        "a": 3,
         "pts": 3
       },
       {
@@ -924,9 +924,9 @@
         "pts": 2
       },
       {
-        "name": "Švácha Jiří",
-        "g": 0,
-        "a": 2,
+        "name": "Ungrman Petr",
+        "g": 2,
+        "a": 0,
         "pts": 2
       },
       {
@@ -936,13 +936,13 @@
         "pts": 1
       },
       {
-        "name": "Jeschke Lukáš",
+        "name": "Lomberský Aleš",
         "g": 0,
         "a": 1,
         "pts": 1
       },
       {
-        "name": "Lomberský Aleš",
+        "name": "Švácha Jiří",
         "g": 0,
         "a": 1,
         "pts": 1
