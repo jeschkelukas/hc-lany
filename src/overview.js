@@ -63,8 +63,8 @@ const nextMatchCard = (next, logos, now, leagueMatches) => {
     return `<div class="side${name === TEAM ? " us" : ""}">${logo(name, logos, "big")}<span>${escapeHtml(name)}</span>${form ? `<div class="mform" title="Forma, nejnovější vlevo">${form}</div>` : ""}</div>`;
   };
   return `<section class="card next">
-  <div class="label"><span>Další zápas${next.round ? ` · ${next.round}. kolo` : ""}</span><span class="soon">${countdown(next.kickoff, now)}</span></div>
-  <div class="match">${side(next.home)}<div class="when"><b>${escapeHtml(when.time)}</b><span>${escapeHtml(when.day)}</span></div>${side(next.away)}</div>
+  <div class="label"><span>Další zápas${next.round ? ` · ${next.round}. kolo` : ""}${next.exhibition ? ` · ${escapeHtml(next.label)}` : ""}</span><span class="soon">${countdown(next.kickoff, now)}</span></div>
+  <div class="match">${side(next.home)}<div class="when"><b${when.tbd ? ' class="tbd" title="Čas výkopu upřesníme"' : ""}>${escapeHtml(when.tbd ? "čas upřesníme" : when.time)}</b><span>${escapeHtml(when.day)}</span></div>${side(next.away)}</div>${next.exhibition ? `<div class="venue">Mimosoutěžní utkání · ${escapeHtml(next.venue)}</div>` : ""}
 </section>`;
 };
 
@@ -91,7 +91,7 @@ const upcomingCard = (upcoming, logos) => {
     const home = r.home === TEAM;
     const opponent = home ? r.away : r.home;
     const when = formatKickoff(r.kickoff);
-    return `<tr><td class="dim">${escapeHtml(when.day)}</td><td class="dim">${escapeHtml(when.time)}</td><td class="dim">${home ? "doma" : "venku"}</td><td class="wide"><span class="team">${logo(opponent, logos, "mini")}<span>${escapeHtml(opponent)}</span></span></td></tr>`;
+    return `<tr><td class="dim">${escapeHtml(when.day)}</td><td class="dim">${when.tbd ? '<span title="Čas upřesníme">?</span>' : escapeHtml(when.time)}</td><td class="dim">${r.exhibition ? `<span class="opt" title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}">${escapeHtml(r.label)}</span><span class="short">${escapeHtml(r.short)}</span>` : home ? "doma" : "venku"}</td><td class="wide"><span class="team">${logo(opponent, logos, "mini")}<span>${escapeHtml(opponent)}</span></span></td></tr>`;
   }).join("");
   return `<section class="card upcoming"><div class="label">Další zápasy</div><table><tbody>${rows}</tbody></table></section>`;
 };
@@ -157,6 +157,8 @@ export const renderOverview = ({ schedule, leagueMatches = [], reports, standing
   .when { display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .when b { font: 700 30px/1 var(--display); letter-spacing: .02em; }
   .when span { color: var(--dim); font-size: 12px; white-space: nowrap; }
+  .when b.tbd { font-size: 16px; color: var(--dim); text-transform: uppercase; }
+  .venue { margin-top: 8px; text-align: center; color: var(--dim); font-size: 12px; }
   .last { margin-bottom: 10px; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; }
   .last .label { margin: 0; }
   .lastrow { display: flex; align-items: center; gap: 8px; justify-content: center; min-width: 0; }
@@ -185,10 +187,12 @@ export const renderOverview = ({ schedule, leagueMatches = [], reports, standing
   .foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; padding: 0 2px; color: var(--dim); font-size: 10px; }
   .foot a { color: var(--gold); text-decoration: none; font: 600 11px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; }
   .empty { margin: 0; color: var(--dim); }
+  .short { display: none; }
   /* Phones: keep the two columns (the iframe height is fixed) and drop secondary details. */
   @media (max-width: 480px) {
     body { font-size: 12px; }
     .opt { display: none; }
+    .short { display: inline; }
     .last { grid-template-columns: auto 1fr; gap: 8px; }
     .side { font-size: 14px; }
     .big, .big svg { width: 44px; height: 44px; }

@@ -28,6 +28,13 @@ const FIXTURES = [
   { round: 18, home: "Lokomotiva", away: TEAM, planned: "2027-03-26 21:50" },
 ];
 
+// Friendlies outside the league (not on GameStats), shown in the schedule in date order without a
+// round. `date` alone means the kick-off time is not known yet; add " HH:MM" once it is, and the
+// result as `score: [home, away]` after the game.
+const EXHIBITIONS = [
+  { label: "Winter Classic", short: "WC", venue: "zimní stadion Dobříš", home: TEAM, away: "Nové Strašecí", date: "2027-01-09" },
+];
+
 // First planned kick-off minus two weeks: older club articles belong to previous seasons.
 export const SEASON_START = Date.parse(`${FIXTURES.find((f) => f.planned).planned.slice(0, 10)}T00:00:00Z`) - 14 * 86_400_000;
 
@@ -65,7 +72,7 @@ const byeWeek = (index) => {
 export const formatKickoff = (key) => {
   const [y, mo, d] = key.slice(0, 10).split("-").map(Number);
   const weekday = WEEKDAYS[new Date(Date.UTC(y, mo - 1, d)).getUTCDay()];
-  return { day: `${weekday} ${d}.${mo}.${y}`, time: key.slice(11) };
+  return { day: `${weekday} ${d}.${mo}.${y}`, time: key.slice(11) || "upřesníme", tbd: !key.slice(11) };
 };
 
 const parseScore = (text) => {
@@ -144,7 +151,14 @@ export const buildRounds = (matches, reports = []) => {
     const opponent = r.home === TEAM ? r.away : r.home;
     return { ...r, reportUrl: findReport(reports, { opponent, ours, theirs, kickoff: r.kickoff }) };
   };
-  return [...rounds, ...extra].map(withReport);
+  // Each friendly goes before the first dated game after it.
+  const placed = [...rounds, ...extra];
+  for (const e of EXHIBITIONS) {
+    const at = placed.findIndex((r) => r.kickoff && r.kickoff > e.date);
+    const row = { ...e, exhibition: true, round: null, kickoff: e.date, planned: e.date, score: e.score ?? null, note: "", url: null };
+    placed.splice(at < 0 ? placed.length : at, 0, row);
+  }
+  return placed.map(withReport);
 };
 
 const outcome = (match) => {
@@ -174,7 +188,11 @@ const kickoffCells = (r) => {
 };
 
 // Fixed slots (home goals | colon | away goals | outcome) keep every row aligned on the colon.
+const exhibitionPill = (r) =>
+  `<span class="pill ex" title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}"><span class="long">${escapeHtml(r.label)}</span><span class="short">${escapeHtml(r.short)}</span></span>`;
+
 const resultCell = (r, isNext, detailUrl) => {
+  if (!r.score && r.exhibition) return exhibitionPill(r);
   if (!r.score) {
     const nextTag = isNext ? '<span class="pill next">další</span>' : "";
     return `<span class="score"><span class="wide">–</span></span><span class="tag">${nextTag}</span>`;
@@ -196,7 +214,7 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
     .filter((r) => !r.bye && r.kickoff && !r.score)
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff))[0];
   const side = (name) => (name === TEAM ? `<span class="me">${teamBadge(name, logos)}</span>` : teamBadge(name, logos));
-  const rowClass = (r) => [r === next && "mark", r.halfBreak && "half"].filter(Boolean).join(" ");
+  const rowClass = (r) => [r === next && "mark", r.exhibition && "ex", r.halfBreak && "half"].filter(Boolean).join(" ");
   // The schedule iframe is tall enough for a game detail (940 px); the rows stretch to fill it.
   const body = `<style>html, body { height: 100%; } body { box-sizing: border-box; display: flex; flex-direction: column; } .box.fill { flex: 1 1 auto; } .box.fill table { height: 100%; }</style>
 <div class="box fill"><table class="compact schedule">
@@ -216,7 +234,7 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
   return renderShell({
     title: `Rozpis utkání ${TEAM}`,
     body,
-    legend: `${league || "BNB Cup"} · přeložený termín je přeškrtnutý · klik na výsledek otevře detail zápasu · V = výhra, R = remíza, P = prohra`,
+    legend: `${league || "BNB Cup"}${EXHIBITIONS.map((e) => ` · ${e.short} = ${e.label}, mimosoutěžní utkání (${e.venue})`).join("")} · přeložený termín je přeškrtnutý · klik na výsledek otevře detail zápasu · V = výhra, R = remíza, P = prohra`,
     sourceUrl: SCHEDULE_SOURCE,
     updatedAt,
   });

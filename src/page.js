@@ -48,7 +48,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(title)}</title>
 <style>
-  :root { --fg: #1b2430; --muted: #6b7684; --line: #dfe4ea; --accent: #1f4fa3; --zebra: #f6f8fa; --mark: #fff4cc; --win: #2e7d4f; --draw: #6b7684; --loss: #c8202f; }
+  :root { --fg: #1b2430; --muted: #6b7684; --line: #dfe4ea; --accent: #1f4fa3; --zebra: #f6f8fa; --mark: #fff4cc; --ex: #e3eefc; --win: #2e7d4f; --draw: #6b7684; --loss: #c8202f; }
   body { margin: 0; padding: 8px; font: 14px/1.4 Verdana, Arial, sans-serif; color: var(--fg); background: #fff; }
   .box { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
@@ -63,6 +63,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .pts { font-weight: bold; }
   tbody tr.alt td { background: var(--zebra); }
   tbody tr.mark td { background: var(--mark); font-weight: bold; }
+  tbody tr.ex td { background: var(--ex); }
   tr.zero td { color: var(--muted); }
   .player { display: flex; align-items: center; gap: 8px; }
   .face { display: block; width: 21px; height: 28px; object-fit: cover; border-radius: 3px; flex: 0 0 21px; }
@@ -90,6 +91,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .pill.bye { padding: 2px 12px; text-transform: uppercase; letter-spacing: .08em; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
   .pill.next { background: var(--accent); font-size: 10px; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0; }
+  .pill.ex { background: var(--accent); padding: 2px 10px; } .pill.ex .short { display: none; }
   .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 2px solid var(--accent); margin-bottom: 10px; }
   .summary div { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
   .summary div + div { border-left: 1px solid var(--line); }
@@ -117,6 +119,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
     table.schedule td.team:last-child { padding-left: 6px; }
     table.compact th, table.compact td { padding-left: 2px; padding-right: 2px; }
     table.schedule .pill.next { display: none; }
+    .pill.ex .long { display: none; } .pill.ex .short { display: inline; }
     table.schedule .tag { width: 1.6em; margin-left: 4px; }
     table.stats td { padding-left: 3px; padding-right: 3px; }
     table.stats th { padding-left: 3px; padding-right: 3px; }

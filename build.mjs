@@ -166,7 +166,8 @@ const playerMatches = [
 const scorers = mergeMatchScorers(scorersByMatch(playerMatches), archive?.matchScorers, sameSeason);
 // Hand-entered periods and penalties are carried over from the previous snapshot unchanged (all seasons).
 const extras = archive?.matchExtras ?? {};
-const played = buildRounds(schedule.matches, reports).filter((r) => !r.bye && r.kickoff && r.score);
+// Friendlies have no GameStats data, so no game detail.
+const played = buildRounds(schedule.matches, reports).filter((r) => !r.bye && !r.exhibition && r.kickoff && r.score);
 
 saveSnapshot({
   league: scoring.league, scoring, standings, schedule, rosterIds: roster, roster: rosterStats,
