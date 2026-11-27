@@ -89,14 +89,14 @@ const saveImage = (dir, geometry) => async ({ name, url }) => {
 };
 // GameStats admin (login via repository secrets, read only, logged out right after): the team
 // roster with player ids and the game timelines. It logs in only when a played game's timeline is
-// due (timelineDue in src/plan.js: a new game right away, an incomplete timeline hourly on the
-// game day, then daily for two weeks) or the roster has never been read. Timelines are kept in
+// due (timelineDue in src/plan.js: a new game right away, an incomplete timeline or one that
+// disagrees with the public per-game points hourly on the game day, then daily for two weeks) or the roster has never been read. Timelines are kept in
 // the snapshot for all seasons, with the time of their last admin read (checkedAt).
 const timelines = { ...(archive?.matchTimelines ?? {}) };
 // "Run workflow" with refresh_admin re-reads the roster and every played game's timeline.
 const refreshAdmin = process.env.REFRESH_ADMIN === "true";
 const needTimeline = schedule.matches.filter((m) => m.kickoff && m.score)
-  .filter((m) => refreshAdmin || timelineDue(m, timelines[matchSlug(m)], updatedAt));
+  .filter((m) => refreshAdmin || timelineDue(m, timelines[matchSlug(m)], updatedAt, archive?.matchScorers?.[m.kickoff]));
 const admin = needTimeline.length || !archive?.rosterIds
   ? await fetchAdminData(needTimeline, TEAM_ID)
   : { roster: null, timelines: new Map() };

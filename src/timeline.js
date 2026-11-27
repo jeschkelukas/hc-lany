@@ -63,7 +63,7 @@ const smallLogo = (name, logos) => {
 };
 
 // "#18 Lukáš Jeschke" in the timeline vs "Jeschke Lukáš" in the roster: match on the set of words.
-const nameKey = (name) => name.replace(/^#\d+\s*/, "").toLowerCase().split(/\s+/).sort().join(" ");
+export const nameKey = (name) => name.replace(/^#\d+\s*/, "").toLowerCase().split(/\s+/).sort().join(" ");
 
 export const renderTimeline = ({ round, events, handPeriods, logos, playerUrls = new Map(), photos = new Map() }) => {
   const urlByKey = new Map([...playerUrls].map(([name, url]) => [nameKey(name), url]));

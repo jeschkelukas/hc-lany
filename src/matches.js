@@ -1,5 +1,5 @@
 import { TEAM, cellsOf, escapeHtml, formatTime, placeholderLogo, rowsOf, slug, stripTags } from "./page.js";
-import { formatKickoff } from "./schedule.js";
+import { SCHEDULE_SOURCE, formatKickoff } from "./schedule.js";
 import { renderTimeline } from "./timeline.js";
 
 // GameStats has no public match pages, but every player page lists the matches the player
@@ -175,6 +175,7 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   .tl-none { color: var(--dim); font-size: 12px; }
   .foot { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: var(--dim); }
   .foot a { font: 600 12px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
+  .foot a.src { font: inherit; letter-spacing: 0; text-transform: none; text-decoration: underline; text-underline-offset: 2px; }
   @media (max-width: 480px) {
     .side { font-size: 13px; }
     .logo, .logo svg { width: 44px; height: 44px; }
@@ -193,6 +194,6 @@ ${timelineHtml}<section>
 <h2>Body ${escapeHtml(TEAM)}</h2>
 ${scorers.length ? `<table class="pts-table"><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
 ${missing}</section>
-<div class="foot"><span>Zdroj: GameStats · aktualizováno ${formatTime(updatedAt)}</span></div>
+<div class="foot"><span>Zdroj: <a class="src" href="${SCHEDULE_SOURCE}" target="_blank" rel="noopener">GameStats</a> · aktualizováno ${formatTime(updatedAt)}</span></div>
 </body></html>`;
 };

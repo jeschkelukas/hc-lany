@@ -27,7 +27,7 @@ const decide = async () => {
   const changed = fresh.matches.find((m) => m.score && JSON.stringify(m.score) !== JSON.stringify(known.get(key(m))?.score ?? null));
   if (changed) return `result ${changed.home} – ${changed.away} ${changed.score.join(":")}`;
   const timelines = archive.matchTimelines ?? {};
-  const due = fresh.matches.find((m) => m.kickoff && m.score && timelineDue(m, timelines[matchSlug(m)], now));
+  const due = fresh.matches.find((m) => m.kickoff && m.score && timelineDue(m, timelines[matchSlug(m)], now, archive.matchScorers?.[m.kickoff]));
   if (due) return `timeline due for ${matchSlug(due)}`;
 
   const stamp = await fetch(`${PAGES_URL}/build.json?t=${now.getTime()}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);

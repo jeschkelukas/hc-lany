@@ -65,7 +65,8 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
   score, scorer and assists, HC Lány goals highlighted) from the GameStats admin, goals by
   period under the score and penalties when known (see
   [Hand-entered game extras](#hand-entered-game-extras)). HC Lány players (in the points
-  table and in the timeline) link to their public GameStats page in a new tab. Opened from the homepage overview
+  table and in the timeline) link to their public GameStats page in a new tab; "GameStats" in
+  the footer links to the league schedule there. Opened from the homepage overview
   it uses the overview's dark colours (`?dark`). HC Lány players in the timeline (scorer and
   assists) have small photos, the points table has photos the size of the scoring table's;
   names are shown without jersey numbers. The timeline and the points table are always stacked. An
@@ -146,7 +147,8 @@ build itself keeps its downloads small:
   line, a new result, a new roster from the admin, or the first build of the day (catches
   late lineup edits). Otherwise everything comes from `data/snapshot.json`.
 - The admin login happens only after a game (once its result is in, then at most hourly on
-  the game day and daily for two weeks while its timeline is incomplete), not on every run.
+  the game day and daily for two weeks while its timeline is incomplete or disagrees with the
+  public per-game points), not on every run.
 - A run without news reads just the GameStats schedule page and stops (see
   [Schedule](#schedule)). The full build, at most hourly unless a result changes, reads the
   three small GameStats pages (stats, overview, schedule) and the club website's article lists.
@@ -237,7 +239,11 @@ pages.
 - **When** – right after a game's result appears (the quick check notices it within 15 minutes
   and starts the build). If the timeline is not complete yet (fewer goals than the score), it
   is read again at most once an hour on the game day, then once a day, and given up two weeks
-  after the game; `checkedAt` in the snapshot is the time of the last read. Also once if the
+  after the game; `checkedAt` in the snapshot is the time of the last read. The same applies
+  when the HC Lány goals and assists in a complete timeline differ from the public per-game
+  points (`matchScorers`), e.g. after GameStats corrected an assist: in Nov 2026 two assists of
+  the Old Stars game were moved afterwards, the public points changed but the stored timeline
+  did not. Also once if the
   roster has never been read. After Old Stars (26 Nov 2026) the timeline was complete in the
   admin as soon as the result was public.
 - **Forced refresh** – Actions → Update stats → Run workflow with *refresh_admin* ticked logs
