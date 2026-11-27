@@ -221,14 +221,15 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
     const cls = rowClass(r);
     const open = `<tr${cls ? ` class="${cls}"` : ""}><td class="n rank">${r.round ? `${r.round}.` : ""}</td>`;
     // A friendly is one free-text line across the whole table: no round, and it never widens a column.
+    // A friendly has no round: the date block takes the round, date and time columns, the teams
+    // stay in their columns and the label sits in the result column until there is a score.
     if (r.exhibition) {
       const when = formatKickoff(r.kickoff);
-      const middle = r.score ? `<b class="ex-score">${r.score[0]}:${r.score[1]}</b>` : '<span class="ex-vs">–</span>';
-      return `<tr class="${cls}"><td colspan="7" class="exrow"><div class="exbox">
-      <div class="ex-when"><b>${escapeHtml(when.day)}</b><small>${escapeHtml(when.time)} · <a href="${escapeHtml(r.map)}" target="_blank" rel="noopener" title="${escapeHtml(`${r.venue} na mapě`)}">${escapeHtml(r.place)}</a></small></div>
-      <div class="ex-tag"><span>❄ ${escapeHtml(r.label)}</span><small>mimosoutěžní utkání</small></div>
-      <div class="ex-teams">${side(r.home)}${middle}${side(r.away)}</div>
-    </div></td></tr>`;
+      const place = `<a href="${escapeHtml(r.map)}" target="_blank" rel="noopener" title="${escapeHtml(`${r.venue} na mapě`)}">${escapeHtml(r.place)}</a>`;
+      const label = `<span class="pill ex" title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}">❄ ${escapeHtml(r.label)}</span>`;
+      return `<tr class="${cls}"><td class="exwhen wide-only" colspan="3"><b>${escapeHtml(when.day)}</b><small>${escapeHtml(when.time)} · ${place}</small></td>`
+        + `<td class="exwhen narrow-only" colspan="2"><b>${shortDate(r.kickoff)}</b> ${place}<small>${escapeHtml(when.time)}</small></td>`
+        + `<td class="team">${side(r.home)}</td><td class="res">${r.score ? resultCell(r, false, null) : label}</td><td class="team">${side(r.away)}</td></tr>`;
     }
     if (r.bye) {
       return `${open}<td class="muted wide-only" colspan="2">${escapeHtml(r.week?.full ?? "")}</td><td class="muted narrow-only">${escapeHtml(r.week?.compact ?? "")}</td>`
