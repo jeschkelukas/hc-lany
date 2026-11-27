@@ -1,5 +1,7 @@
 <!-- Design → Moduly → Vlastní kód, code "Mobilní hlavička (CSS)" (the module must be on; the old
-     "Toplist" code there is switched off). The Valentino template stretches the header photo to
-     100% × 265 px below 1280 px, which squashes it on phones; this keeps its 535:200 ratio. The
+     "Toplist" code there is switched off). The header photo is uploaded at 2× (1070 × 400,
+     embeds/header/, "Automaticky změnit velikost" unticked) and shown at 535 × 200 on desktop, so
+     it is sharp on retina screens. Below 1280 px the Valentino template stretches it to
+     100% × 265 px, which squashes it on phones; the media query keeps its 535:200 ratio. The
      first rule hides the module's otherwise empty box in the left menu. -->
-<style id="hc-mobile-header">#nav-column .own-code-nav{display:none !important}@media only screen and (max-width:1280px){#header{height:auto !important}#header .inner_frame{position:relative !important;height:auto !important;aspect-ratio:535/200;background-size:100% auto !important;background-position:center top !important}}</style>
+<style id="hc-mobile-header">#nav-column .own-code-nav{display:none !important}#header .inner_frame{background-size:535px 200px !important}@media only screen and (max-width:1280px){#header{height:auto !important}#header .inner_frame{position:relative !important;height:auto !important;aspect-ratio:535/200;background-size:100% auto !important;background-position:center top !important}}</style>

@@ -47,6 +47,7 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
 | `vybor.html` | Výbor HC Lány (pasted directly, no iframe) |
 | `auto-height.html` | The iframe auto-height script alone (already part of the three embeds above) |
 | `mobilni-hlavicka.html` | Site-wide CSS in the "Vlastní kód" module: header photo keeps its ratio on phones |
+| `header/` | Header photos: the current one (Winter Classic 2026 team, cropped from Rajče, 1070 × 400) and a backup of the previous one (`ulogo.966861`, 535 × 200) |
 
 ## What each widget shows
 
