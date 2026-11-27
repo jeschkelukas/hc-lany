@@ -64,7 +64,7 @@ const nextMatchCard = (next, logos, now, leagueMatches) => {
   };
   return `<section class="card next">
   <div class="label"><span>Další zápas${next.round ? ` · ${next.round}. kolo` : ""}${next.exhibition ? ` · ${escapeHtml(next.label)}` : ""}</span><span class="soon">${countdown(next.kickoff, now)}</span></div>
-  <div class="match">${side(next.home)}<div class="when"><b${when.tbd ? ' class="tbd" title="Čas výkopu upřesníme"' : ""}>${escapeHtml(when.tbd ? "čas upřesníme" : when.time)}</b><span>${escapeHtml(when.day)}</span></div>${side(next.away)}</div>${next.exhibition ? `<div class="venue">Mimosoutěžní utkání · ${escapeHtml(next.venue)}</div>` : ""}
+  <div class="match">${side(next.home)}<div class="when">${when.tbd && next.ice ? `<b class="tbd" title="Led je zamluvený">led ${escapeHtml(next.ice)}</b>` : `<b${when.tbd ? ' class="tbd" title="Čas výkopu upřesníme"' : ""}>${escapeHtml(when.tbd ? "čas upřesníme" : when.time)}</b>`}<span>${escapeHtml(when.day)}</span></div>${side(next.away)}</div>${next.exhibition ? `<div class="venue">Mimosoutěžní utkání · ${escapeHtml(next.venue)}</div>` : ""}
 </section>`;
 };
 
@@ -91,7 +91,7 @@ const upcomingCard = (upcoming, logos) => {
     const home = r.home === TEAM;
     const opponent = home ? r.away : r.home;
     const when = formatKickoff(r.kickoff);
-    return `<tr><td class="dim">${escapeHtml(when.day)}</td><td class="dim">${when.tbd ? '<span class="opt">čas upřesníme</span><span class="short" title="Čas upřesníme">čas ?</span>' : escapeHtml(when.time)}</td><td class="dim">${r.exhibition ? `<span title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}">${escapeHtml(r.label)}</span>` : home ? "doma" : "venku"}</td><td class="wide"><span class="team">${logo(opponent, logos, "mini")}<span>${escapeHtml(opponent)}</span></span></td></tr>`;
+    return `<tr><td class="dim">${escapeHtml(when.day)}</td><td class="dim">${when.tbd && r.ice ? `<span title="Led je zamluvený">${escapeHtml(r.ice.replace(/:00/g, ""))}</span>` : when.tbd ? '<span class="opt">čas upřesníme</span><span class="short" title="Čas upřesníme">čas ?</span>' : escapeHtml(when.time)}</td><td class="dim">${r.exhibition ? `<span title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}">${escapeHtml(r.label)}</span>` : home ? "doma" : "venku"}</td><td class="wide"><span class="team">${logo(opponent, logos, "mini")}<span>${escapeHtml(opponent)}</span></span></td></tr>`;
   }).join("");
   return `<section class="card upcoming"><div class="label">Další zápasy</div><table><tbody>${rows}</tbody></table></section>`;
 };

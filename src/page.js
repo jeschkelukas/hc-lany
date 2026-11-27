@@ -96,6 +96,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   td.exwhen small { display: block; color: var(--muted); font-size: 11px; }
   td.exwhen a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; font-weight: normal; }
   .pill.ex { background: var(--accent); white-space: normal; max-width: 6.5em; line-height: 1.15; padding: 2px 6px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+  a.pill.ex { color: #fff; text-decoration: none; } a.pill.ex:hover { background: #163a7a; text-decoration: underline; }
   .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 2px solid var(--accent); margin-bottom: 10px; }
   .summary div { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
   .summary div + div { border-left: 1px solid var(--line); }
