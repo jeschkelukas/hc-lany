@@ -27,7 +27,7 @@
         "name": "Ungrman Petr",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/c8b07125db3563c4d4798e0b.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e463366064b8b9938",
-        "leagueRank": "12",
+        "leagueRank": "13",
         "gp": 3,
         "g": 4,
         "a": 1,
@@ -37,7 +37,7 @@
         "name": "Hořejší Milan",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/17381d6d1cc270670bf4be98.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e308224bf7a2f7da3",
-        "leagueRank": "16",
+        "leagueRank": "19",
         "gp": 3,
         "g": 3,
         "a": 1,
@@ -47,7 +47,7 @@
         "name": "Pokorný Radek",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/ab3a1207a00454050aa63511.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e3e611103f3e7de14",
-        "leagueRank": "19",
+        "leagueRank": "21",
         "gp": 2,
         "g": 2,
         "a": 2,
@@ -57,7 +57,7 @@
         "name": "Štechmiler Jaroslav",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/48ca9a3aee75139a9b33dab7.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e44a97742ece74c5a",
-        "leagueRank": "26",
+        "leagueRank": "29",
         "gp": 4,
         "g": 3,
         "a": 0,
@@ -67,7 +67,7 @@
         "name": "Švácha Jiří",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/6c6b332f3b13794126c80bb4.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e4530856333f3b87b",
-        "leagueRank": "27",
+        "leagueRank": "30",
         "gp": 2,
         "g": 2,
         "a": 1,
@@ -77,7 +77,7 @@
         "name": "Hoffmann Marek",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/2c0c50f638593c99f1b28818.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e2fbe066719930788",
-        "leagueRank": "33",
+        "leagueRank": "35",
         "gp": 2,
         "g": 1,
         "a": 2,
@@ -87,7 +87,7 @@
         "name": "Náprstek Martin",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/3484b20d4344a75a1172f5d6.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e3cbd21c9a6750517",
-        "leagueRank": "51",
+        "leagueRank": "52",
         "gp": 3,
         "g": 1,
         "a": 1,
@@ -97,7 +97,7 @@
         "name": "Lomberský Aleš",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/730040eaf3c025a1405a1b68.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18af6b0fa380219ae8e",
-        "leagueRank": "57",
+        "leagueRank": "58",
         "gp": 4,
         "g": 0,
         "a": 2,
@@ -107,7 +107,7 @@
         "name": "Taraba Martin",
         "photoUrl": "https://mini.gamestats.cz/uploads/players/c969dc5ece39f11d30eb873e.jpg",
         "url": "https://mini.gamestats.cz/i/bnb-cup/players/1a18e45b6d5a63e6f0d1b",
-        "leagueRank": "90",
+        "leagueRank": "91",
         "gp": 4,
         "g": 0,
         "a": 1,
@@ -119,8 +119,21 @@
     "league": "2. liga 2026/27",
     "teams": [
       {
-        "logoUrl": "https://mini.gamestats.cz/uploads/teams/88f3942d0efd42267a21157b.webp",
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/97713e9bc08ec8e44adf4c59.jpg",
         "rank": "1",
+        "name": "Nové Strašecí",
+        "gp": 4,
+        "w": 3,
+        "otw": 0,
+        "d": 1,
+        "otl": 0,
+        "l": 0,
+        "score": "23:16",
+        "pts": 7
+      },
+      {
+        "logoUrl": "https://mini.gamestats.cz/uploads/teams/88f3942d0efd42267a21157b.webp",
+        "rank": "2",
         "name": "Delfins Zátiší",
         "gp": 3,
         "w": 2,
@@ -129,19 +142,6 @@
         "otl": 0,
         "l": 0,
         "score": "17:8",
-        "pts": 5
-      },
-      {
-        "logoUrl": "https://mini.gamestats.cz/uploads/teams/97713e9bc08ec8e44adf4c59.jpg",
-        "rank": "2",
-        "name": "Nové Strašecí",
-        "gp": 3,
-        "w": 2,
-        "otw": 0,
-        "d": 1,
-        "otl": 0,
-        "l": 0,
-        "score": "18:13",
         "pts": 5
       },
       {
@@ -213,13 +213,13 @@
         "logoUrl": "https://mini.gamestats.cz/uploads/teams/37a4e02825ba79fdca1c8954.png",
         "rank": "8",
         "name": "Mladotice",
-        "gp": 3,
+        "gp": 4,
         "w": 1,
         "otw": 0,
         "d": 0,
         "otl": 0,
-        "l": 2,
-        "score": "8:27",
+        "l": 3,
+        "score": "11:32",
         "pts": 2
       },
       {
@@ -1448,7 +1448,7 @@
           ],
           "scorer": "#4 Ivan Hauf",
           "assists": [
-            "#6 Petr Ungrman"
+            "#18 Lukáš Jeschke"
           ],
           "text": null
         },
@@ -1462,7 +1462,7 @@
           ],
           "scorer": "#24 Jaroslav Štechmiler",
           "assists": [
-            "#16 Jiří Švácha"
+            "#18 Lukáš Jeschke"
           ],
           "text": null
         },
@@ -1506,7 +1506,8 @@
           ],
           "text": null
         }
-      ]
+      ],
+      "checkedAt": "2026-11-27T20:41:43.881Z"
     }
   }
 }
