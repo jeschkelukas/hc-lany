@@ -1,4 +1,4 @@
-import { TEAM, cellsOf, escapeHtml, formatTime, placeholderLogo, rowsOf, slug, stripTags } from "./page.js";
+import { AUTO_HEIGHT, TEAM, cellsOf, escapeHtml, formatTime, placeholderLogo, rowsOf, slug, stripTags } from "./page.js";
 import { SCHEDULE_SOURCE, formatKickoff } from "./schedule.js";
 import { renderTimeline } from "./timeline.js";
 
@@ -127,10 +127,12 @@ export const renderMatch = ({ round, scorers, extras, timeline, logos, photos, p
   /* Opened from the dark homepage overview (?dark): match its dark-blue box. */
   html.dark { --bg: #1e3645; --card: #254252; --line: rgba(255,255,255,.09); --fg: #eef3f7; --dim: #9db2c1; --accent: #f5c518; --hl: #f5c518; --ph-bg: #36556a; --ph-fg: #6f8ba0; }
   * { box-sizing: border-box; }
-  /* The detail opens inside fixed-height iframes with scrolling="no" (schedule 720 px, overview
-     540 px); the body is its own scroll container, so a long timeline still scrolls. */
+  /* The detail opens inside fixed-height iframes with scrolling="no" (schedule 940 px, overview
+     670 px); the body is its own scroll container, so a long timeline still scrolls. With the
+     auto-height embed (html.auto, see AUTO_HEIGHT in page.js) the iframe takes the whole detail. */
   html { height: 100%; overflow: hidden; }
   body { margin: 0; padding: 8px; height: 100%; overflow-y: auto; background: var(--bg); color: var(--fg); font: 14px/1.4 Verdana, Arial, sans-serif; }
+  html.auto, html.auto body { height: auto; overflow: visible; }
   a { color: var(--accent); }
   .player a, .tl-who a { color: inherit; text-decoration: none; }
   .player a:hover, .tl-who a:hover { color: var(--accent); text-decoration: underline; }
@@ -195,5 +197,6 @@ ${timelineHtml}<section>
 ${scorers.length ? `<table class="pts-table"><thead><tr><th>Hráč</th><th class="n">G</th><th class="n">A</th><th class="n">B</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="empty">V tomto zápase nemá žádný hráč HC Lány zapsaný bod.</p>'}
 ${missing}</section>
 <div class="foot"><span>Zdroj: <a class="src" href="${SCHEDULE_SOURCE}" target="_blank" rel="noopener">GameStats</a> · aktualizováno ${formatTime(updatedAt)}</span></div>
+${AUTO_HEIGHT}
 </body></html>`;
 };

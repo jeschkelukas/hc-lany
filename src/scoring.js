@@ -176,6 +176,5 @@ export const renderPage = ({ league, rows, goalies = [], photos = new Map(), upd
     legend: `${league || "BNB Cup"} · Z = zápasy, G = góly, A = asistence, B = body, Liga = pořadí v celé lize${goalies.length ? " · Brankáři: V/R/P = výhry/remízy/prohry, OG = obdržené góly, Ø = průměr OG na zápas, ČK = čistá konta" : ""}`,
     sourceUrl: SOURCE,
     updatedAt,
-    autoHeight: true,
   });
 };

@@ -215,8 +215,9 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff))[0];
   const side = (name) => (name === TEAM ? `<span class="me">${teamBadge(name, logos)}</span>` : teamBadge(name, logos));
   const rowClass = (r) => [r === next && "mark", r.exhibition && "ex", r.halfBreak && "half"].filter(Boolean).join(" ");
-  // The schedule iframe is tall enough for a game detail (940 px); the rows stretch to fill it.
-  const body = `<style>html, body { height: 100%; } body { box-sizing: border-box; display: flex; flex-direction: column; } .box.fill { flex: 1 1 auto; } .box.fill table { height: 100%; }</style>
+  // A fixed iframe is tall enough for a game detail (940 px) and the rows stretch to fill it; with
+  // the auto-height embed (html.auto, see AUTO_HEIGHT in page.js) the schedule takes its natural height.
+  const body = `<style>html, body { height: 100%; } body { box-sizing: border-box; display: flex; flex-direction: column; } .box.fill { flex: 1 1 auto; } .box.fill table { height: 100%; } html.auto, html.auto body, html.auto .box.fill table { height: auto; }</style>
 <div class="box fill"><table class="compact schedule">
   <thead><tr><th class="n">Kolo</th><th class="wide-only">Termín</th><th class="wide-only">Čas</th><th class="narrow-only">Termín</th><th>Domácí</th><th class="c">Výsledek</th><th>Hosté</th></tr></thead>
   <tbody>${rows.map((r) => {

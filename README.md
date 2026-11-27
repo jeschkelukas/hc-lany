@@ -12,10 +12,10 @@ hand-written committee page with photos (see [Committee page](#committee-page)).
 
 | Widget | URL | Iframe height |
 | --- | --- | --- |
-| Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | auto (fallback 1320, see `embeds/bodovani.html`) |
+| Player scoring (HC Lány points leaders) | https://jeschkelukas.github.io/hc-lany/bodovani/ | auto (fallback 1320) |
 | League standings (HC Lány's league) | https://jeschkelukas.github.io/hc-lany/tabulka/ | 400 |
-| HC Lány schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | 940 |
-| Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | 670 |
+| HC Lány schedule | https://jeschkelukas.github.io/hc-lany/rozpis/ | auto (fallback 940) |
+| Homepage overview | https://jeschkelukas.github.io/hc-lany/prehled/ | auto (fallback 670) |
 
 Embed snippet (change `src` and `height` per widget):
 
@@ -23,11 +23,16 @@ Embed snippet (change `src` and `height` per widget):
 <iframe src="https://jeschkelukas.github.io/hc-lany/rozpis/" width="100%" height="940" scrolling="no" style="border:0;overflow:hidden" loading="lazy" title="Rozpis utkání HC Lány"></iframe>
 ```
 
-The scoring widget grows and shrinks with the roster (players appear once they have played), so
-its embed in `embeds/bodovani.html` adds a small script: the widget posts its height
-(`{ hcLanyHeight }`, on load and when the iframe width changes) and the script sets the iframe
-to it, accepting messages only from `https://jeschkelukas.github.io`. Without the script the
-fixed 1320 px applies.
+**Auto-height.** The embeds in `embeds/` add a small script below the iframe
+(`embeds/auto-height.html`): every widget page, including a game detail opened inside the same
+iframe, posts its height (`{ hcLanyHeight, nav }`, on load and when the iframe width changes),
+the script sets the iframe to it and answers `{ hcLanyAuto: true }`, accepting messages only from
+`https://jeschkelukas.github.io`. Only after that answer do the schedule (otherwise stretching
+its rows to the fixed height) and the game detail (otherwise scrolling inside itself) switch to
+their natural height (`html.auto`), so a game detail of any length shows without scrolling, the
+scoring table follows the number of players, and a page without the script keeps the fixed
+heights above. When a result is clicked low in the schedule, the script scrolls the iframe back
+into view for the detail (`nav`).
 
 The widget text is in Czech, because it is shown on the club's Czech website.
 

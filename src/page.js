@@ -44,19 +44,36 @@ export const formatTime = (date) =>
     day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Prague",
   }).format(date);
 
-// Iframe auto-height: a widget rendered with autoHeight tells the embedding page its height
-// ({ hcLanyHeight }), and the snippet in embeds/ resizes the iframe to it. Sent on load and when
-// the iframe width changes, not while the search hides rows, so the page does not jump.
-const AUTO_HEIGHT = `
-const postHeight = () => parent.postMessage({ hcLanyHeight: Math.ceil(document.body.getBoundingClientRect().height) }, "*");
-if (parent !== window) {
-  postHeight();
-  addEventListener("load", postHeight);
+// Iframe auto-height. Every widget page (also the game detail opened inside the same iframe)
+// posts its height to the embedding page ({ hcLanyHeight, nav }); the snippet in embeds/
+// resizes the iframe and answers { hcLanyAuto: true }. Only after that answer do the pages that
+// otherwise fit a fixed iframe (the schedule stretches its rows, the game detail scrolls inside
+// itself) switch to their natural height (html.auto), so an old embed without the script keeps
+// working as before. Sent on load and when the iframe width changes, not while the search hides
+// rows, so the page does not jump. `nav` marks a freshly loaded page: the snippet scrolls the
+// iframe back into view if its top is above the screen (a result clicked low in the schedule).
+export const AUTO_HEIGHT = `<script>
+(() => {
+  if (parent === window) return;
+  const root = document.documentElement;
+  let nav = true;
+  const post = () => {
+    parent.postMessage({ hcLanyHeight: Math.ceil(root.getBoundingClientRect().height), nav }, "*");
+    nav = false;
+  };
+  addEventListener("message", (e) => {
+    if (e.source !== parent || !e.data || e.data.hcLanyAuto !== true || root.classList.contains("auto")) return;
+    root.classList.add("auto");
+    post();
+  });
   let width = innerWidth;
-  addEventListener("resize", () => { if (innerWidth !== width) { width = innerWidth; postHeight(); } });
-}`;
+  addEventListener("resize", () => { if (innerWidth !== width) { width = innerWidth; post(); } });
+  addEventListener("load", post);
+  post();
+})();
+</script>`;
 
-export const renderShell = ({ title, body, legend, sourceUrl, updatedAt, autoHeight = false }) => `<!doctype html>
+export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<!doctype html>
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(title)}</title>
 <style>
@@ -159,7 +176,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt, autoHei
 </style></head><body>
 ${body}
 <p class="foot">${escapeHtml(legend)} · Zdroj: <a href="${sourceUrl}" target="_blank" rel="noopener">GameStats</a>, aktualizováno ${formatTime(updatedAt)}</p>
-<script>${autoHeight ? AUTO_HEIGHT : ""}
+<script>
 // Zebra stripes follow the visible order, so they stay even after sorting or filtering.
 const restripe = (tbody) => {
   [...tbody.rows].filter((row) => !row.hidden).forEach((row, i) => row.classList.toggle("alt", i % 2 === 1));
@@ -228,4 +245,5 @@ document.querySelectorAll("table[data-sortable]").forEach((table) => {
   });
 });
 </script>
+${AUTO_HEIGHT}
 </body></html>`;

@@ -1,4 +1,4 @@
-import { TEAM, escapeHtml, formatTime, placeholderLogo } from "./page.js";
+import { AUTO_HEIGHT, TEAM, escapeHtml, formatTime, placeholderLogo } from "./page.js";
 import { buildRounds, formatKickoff } from "./schedule.js";
 
 // Compact homepage widget: next match, last result with form, mini standings and top scorers.
@@ -211,5 +211,6 @@ ${standingsCard(standings, logos)}
 ${scorersCard(scoringRows, photos)}
 </div>
 <div class="foot"><span><span class="upd">Zdroj: </span><a class="src" href="https://mini.gamestats.cz/i/bnb-cup" target="_blank" rel="noopener">GameStats</a><span class="upd"> · aktualizováno ${formatTime(updatedAt)}</span></span><a href="${CLUB_PAGES.schedule}" target="_top">Celý rozpis →</a></div>
+${AUTO_HEIGHT}
 </body></html>`;
 };

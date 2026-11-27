@@ -1,13 +1,17 @@
 <!-- Article "Kanadské bodování 2026/2027": replace the whole article body in HTML mode.
-     The script sets the iframe to the widget's real height (it posts { hcLanyHeight }); without
-     it the fixed height below applies (fits the whole 28-player roster). -->
+     The script is the iframe auto-height (embeds/auto-height.html); without it the fixed height
+     below applies (fits the whole 28-player roster). -->
 <iframe src="https://jeschkelukas.github.io/hc-lany/bodovani/" width="100%" height="1320" scrolling="no" style="border:0;overflow:hidden" title="Kanadské bodování HC Lány"></iframe>
 <script>
 window.addEventListener("message", function (e) {
   if (e.origin !== "https://jeschkelukas.github.io" || !e.data || typeof e.data.hcLanyHeight !== "number") return;
   var frames = document.querySelectorAll('iframe[src^="https://jeschkelukas.github.io/hc-lany/"]');
   for (var i = 0; i < frames.length; i++) {
-    if (frames[i].contentWindow === e.source) frames[i].style.height = Math.max(200, Math.min(4000, e.data.hcLanyHeight)) + "px";
+    var f = frames[i];
+    if (f.contentWindow !== e.source) continue;
+    f.style.height = Math.max(200, Math.min(6000, e.data.hcLanyHeight)) + "px";
+    e.source.postMessage({ hcLanyAuto: true }, e.origin);
+    if (e.data.nav && f.getBoundingClientRect().top < 0) f.scrollIntoView();
   }
 });
 </script>

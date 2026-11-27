@@ -1,0 +1,18 @@
+<!-- Iframe auto-height: paste once below the iframe(s) on every club page with a widget
+     (already part of bodovani.html, rozpis.html and uvod.html). The widget page posts its height
+     ({ hcLanyHeight, nav }), this sets the iframe to it and answers { hcLanyAuto: true }, after
+     which the schedule and the game detail drop their fixed-height layout (no inner scrolling).
+     Only messages from jeschkelukas.github.io are accepted. -->
+<script>
+window.addEventListener("message", function (e) {
+  if (e.origin !== "https://jeschkelukas.github.io" || !e.data || typeof e.data.hcLanyHeight !== "number") return;
+  var frames = document.querySelectorAll('iframe[src^="https://jeschkelukas.github.io/hc-lany/"]');
+  for (var i = 0; i < frames.length; i++) {
+    var f = frames[i];
+    if (f.contentWindow !== e.source) continue;
+    f.style.height = Math.max(200, Math.min(6000, e.data.hcLanyHeight)) + "px";
+    e.source.postMessage({ hcLanyAuto: true }, e.origin);
+    if (e.data.nav && f.getBoundingClientRect().top < 0) f.scrollIntoView();
+  }
+});
+</script>
