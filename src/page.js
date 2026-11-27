@@ -98,7 +98,7 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .ex-tag span { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
   .ex-tag small, .ex-when small { color: var(--muted); font-size: 11px; }
   .ex-teams { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .ex-vs { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+  .ex-vs { font-weight: bold; }
   .ex-score { font-size: 15px; }
   .ex-when { white-space: nowrap; }
   .ex-tag { text-align: right; }

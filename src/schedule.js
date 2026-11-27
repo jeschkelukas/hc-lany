@@ -223,7 +223,7 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
     // A friendly is one free-text line across the whole table: no round, and it never widens a column.
     if (r.exhibition) {
       const when = formatKickoff(r.kickoff);
-      const middle = r.score ? `<b class="ex-score">${r.score[0]}:${r.score[1]}</b>` : '<span class="ex-vs">vs</span>';
+      const middle = r.score ? `<b class="ex-score">${r.score[0]}:${r.score[1]}</b>` : '<span class="ex-vs">–</span>';
       return `<tr class="${cls}"><td colspan="7" class="exrow"><div class="exbox">
       <div class="ex-when"><b>${escapeHtml(when.day)}</b><small>${escapeHtml(when.time)} · <a href="${escapeHtml(r.map)}" target="_blank" rel="noopener" title="${escapeHtml(`${r.venue} na mapě`)}">${escapeHtml(r.place)}</a></small></div>
       <div class="ex-teams">${side(r.home)}${middle}${side(r.away)}</div>
