@@ -32,7 +32,9 @@ const FIXTURES = [
 // round. `date` alone means the kick-off time is not known yet; add " HH:MM" once it is, and the
 // result as `score: [home, away]` after the game.
 const EXHIBITIONS = [
-  { label: "Winter Classic", venue: "zimní stadion Dobříš", place: "Dobříš", home: TEAM, away: "Nové Strašecí", date: "2027-01-09" },
+  { label: "Winter Classic", venue: "zimní stadion Dobříš", place: "Dobříš",
+    map: "https://maps.app.goo.gl/dA5oLW4G2pE94ee38",
+    home: TEAM, away: "Nové Strašecí", date: "2027-01-09" },
 ];
 
 // First planned kick-off minus two weeks: older club articles belong to previous seasons.
@@ -221,10 +223,12 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
     // A friendly is one free-text line across the whole table: no round, and it never widens a column.
     if (r.exhibition) {
       const when = formatKickoff(r.kickoff);
-      const score = r.score ? ` <b>${r.score[0]}:${r.score[1]}</b> ` : " – ";
-      return `<tr class="${cls}"><td colspan="7" class="exrow"><span class="pill ex" title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}">${escapeHtml(r.label)}</span> `
-        + `<b>${escapeHtml(when.day)}</b> <span class="muted">${escapeHtml(when.time)}</span> · `
-        + `${escapeHtml(r.home)}${score}${escapeHtml(r.away)} <span class="muted">· ${escapeHtml(r.place)}</span></td></tr>`;
+      const middle = r.score ? `<b class="ex-score">${r.score[0]}:${r.score[1]}</b>` : '<span class="ex-vs">vs</span>';
+      return `<tr class="${cls}"><td colspan="7" class="exrow"><div class="exbox">
+      <div class="ex-tag"><span>❄ ${escapeHtml(r.label)}</span><small>mimosoutěžní utkání</small></div>
+      <div class="ex-teams">${side(r.home)}${middle}${side(r.away)}</div>
+      <div class="ex-when"><b>${escapeHtml(when.day)}</b><small>${escapeHtml(when.time)} · <a href="${escapeHtml(r.map)}" target="_blank" rel="noopener" title="${escapeHtml(`${r.venue} na mapě`)}">${escapeHtml(r.place)}</a></small></div>
+    </div></td></tr>`;
     }
     if (r.bye) {
       return `${open}<td class="muted wide-only" colspan="2">${escapeHtml(r.week?.full ?? "")}</td><td class="muted narrow-only">${escapeHtml(r.week?.compact ?? "")}</td>`

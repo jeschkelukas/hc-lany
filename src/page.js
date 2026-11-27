@@ -91,8 +91,17 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
   .pill.bye { padding: 2px 12px; text-transform: uppercase; letter-spacing: .08em; }
   .pill.w { background: var(--win); } .pill.d { background: var(--draw); } .pill.l { background: var(--loss); }
   .pill.next { background: var(--accent); font-size: 10px; padding: 1px 4px; text-transform: uppercase; letter-spacing: 0; }
-  .pill.ex { background: var(--accent); }
-  td.exrow { white-space: normal; padding-left: 8px; }
+  /* A friendly outside the league: one card-like line across the schedule. */
+  td.exrow { white-space: normal; padding: 6px 8px; border-left: 4px solid var(--accent); background: linear-gradient(90deg, #d6e6fb, var(--ex) 45%, #f2f7fe) !important; }
+  .exbox { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+  .ex-tag, .ex-when { display: flex; flex-direction: column; line-height: 1.25; }
+  .ex-tag span { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+  .ex-tag small, .ex-when small { color: var(--muted); font-size: 11px; }
+  .ex-teams { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .ex-vs { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+  .ex-score { font-size: 15px; }
+  .ex-when { text-align: right; white-space: nowrap; }
+  .ex-when a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
   .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 2px solid var(--accent); margin-bottom: 10px; }
   .summary div { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
   .summary div + div { border-left: 1px solid var(--line); }
@@ -120,6 +129,11 @@ export const renderShell = ({ title, body, legend, sourceUrl, updatedAt }) => `<
     table.schedule td.team:last-child { padding-left: 6px; }
     table.compact th, table.compact td { padding-left: 2px; padding-right: 2px; }
     table.schedule .pill.next { display: none; }
+    table.schedule .exbox .club { display: flex; max-width: none; }
+    table.schedule .exbox .club img, table.schedule .exbox .club svg { display: block; width: 16px; height: 16px; flex-basis: 16px; }
+    .exbox { gap: 4px 8px; } .ex-tag span { font-size: 11px; }
+    .ex-when { margin-left: auto; }
+    .ex-teams { order: 3; flex-basis: 100%; justify-content: flex-start; gap: 6px; }
     table.schedule .tag { width: 1.6em; margin-left: 4px; }
     table.stats td { padding-left: 3px; padding-right: 3px; }
     table.stats th { padding-left: 3px; padding-right: 3px; }
