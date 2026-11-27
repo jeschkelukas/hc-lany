@@ -31,7 +31,7 @@ const FIXTURES = [
 // Friendlies outside the league (not on GameStats), shown in the schedule in date order without a
 // round. `date` alone means the kick-off time is not known yet; add " HH:MM" once it is, and the
 // result as `score: [home, away]` after the game. `ice` is the booked ice time, shown instead of
-// "čas upřesníme" while the exact start is not known; `article` links the label to the club's article.
+// "čas upřesníme" while the exact start is not known; `article` adds a text link to the club's article.
 const EXHIBITIONS = [
   { label: "Winter Classic", venue: "zimní stadion Dobříš", place: "Dobříš",
     map: "https://maps.app.goo.gl/dA5oLW4G2pE94ee38",
@@ -228,14 +228,14 @@ export const renderSchedule = ({ league, matches, reports, logos, detailUrlOf = 
     if (r.exhibition) {
       const when = formatKickoff(r.kickoff);
       const place = `<a href="${escapeHtml(r.map)}" target="_blank" rel="noopener" title="${escapeHtml(`${r.venue} na mapě`)}">${escapeHtml(r.place)}</a>`;
-      // The label opens the club's article about the game in the club page itself (outside the iframe).
-      const labelTitle = escapeHtml(`Mimosoutěžní utkání · ${r.venue}${r.article ? " · článek o akci" : ""}`);
-      const label = r.article
-        ? `<a class="pill ex" href="${escapeHtml(r.article)}" target="_top" title="${labelTitle}">❄ ${escapeHtml(r.label)}</a>`
-        : `<span class="pill ex" title="${labelTitle}">❄ ${escapeHtml(r.label)}</span>`;
+      const label = `<span class="pill ex" title="${escapeHtml(`Mimosoutěžní utkání · ${r.venue}`)}">❄ ${escapeHtml(r.label)}</span>`;
       const time = when.tbd && r.ice ? `led ${r.ice}` : when.time;
-      return `<tr class="${cls}"><td class="exwhen wide-only" colspan="3"><b>${escapeHtml(when.day)}</b><small>${escapeHtml(time)} · ${place}</small></td>`
-        + `<td class="exwhen narrow-only" colspan="2"><b>${shortDate(r.kickoff)}</b> ${place}<small>${escapeHtml(time)}</small></td>`
+      const links = r.article
+        ? `${place} · <a href="${escapeHtml(r.article)}" target="_top" title="Článek o akci na webu klubu">článek</a>`
+        : place;
+      const info = `<small>${escapeHtml(time)}</small><small>${links}</small>`;
+      return `<tr class="${cls}"><td class="exwhen wide-only" colspan="3"><b>${escapeHtml(when.day)}</b>${info}</td>`
+        + `<td class="exwhen narrow-only" colspan="2"><b>${shortDate(r.kickoff)}</b>${info}</td>`
         + `<td class="team">${side(r.home)}</td><td class="res">${r.score ? resultCell(r, false, null) : label}</td><td class="team">${side(r.away)}</td></tr>`;
     }
     if (r.bye) {

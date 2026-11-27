@@ -263,7 +263,7 @@ GameStats does not know everything, so a few things live in the code:
   in Dobříš), which GameStats does not have. They sit in the schedule by date on a light-blue
   row without a round: the date (with a map link to the venue) takes the round, date and
   time columns, the teams stay in their columns and the label sits in the result column
-  until there is a score (linked to the club's article when `article` is set); a date
+  until there is a score (with a text link to the club's article next to the venue when `article` is set); a date
   without a time shows the booked ice time (`ice`) or "čas upřesníme". Add the time and,
   after the game, `score` by hand. They get no game detail and count in no statistics.
 - `ROSTER` in `src/scoring.js` – names and GameStats ids of the roster, used only until the
