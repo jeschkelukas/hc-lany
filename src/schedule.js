@@ -72,7 +72,7 @@ const byeWeek = (index) => {
 export const formatKickoff = (key) => {
   const [y, mo, d] = key.slice(0, 10).split("-").map(Number);
   const weekday = WEEKDAYS[new Date(Date.UTC(y, mo - 1, d)).getUTCDay()];
-  return { day: `${weekday} ${d}.${mo}.${y}`, time: key.slice(11) || "upřesníme", tbd: !key.slice(11) };
+  return { day: `${weekday} ${d}.${mo}.${y}`, time: key.slice(11) || "čas upřesníme", tbd: !key.slice(11) };
 };
 
 const parseScore = (text) => {
@@ -177,7 +177,8 @@ const shortDate = (key) => `${Number(key.slice(8, 10))}.${Number(key.slice(5, 7)
 const kickoffCells = (r) => {
   if (!r.kickoff) return '<td class="wide-only"></td><td class="wide-only"></td><td class="narrow-only"></td>';
   const now = formatKickoff(r.kickoff);
-  const nowShort = `${shortDate(r.kickoff)} <span class="muted">${escapeHtml(now.time)}</span>`;
+  // An unknown time goes under the date, so the date does not read as unconfirmed.
+  const nowShort = `${shortDate(r.kickoff)}${now.tbd ? "<br>" : " "}<span class="muted">${escapeHtml(now.time)}</span>`;
   if (!r.planned || r.planned === r.kickoff) {
     return `<td class="wide-only">${escapeHtml(now.day)}</td><td class="wide-only muted">${escapeHtml(now.time)}</td><td class="narrow-only">${nowShort}</td>`;
   }
