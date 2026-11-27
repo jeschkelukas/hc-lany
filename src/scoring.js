@@ -85,8 +85,10 @@ const byScoring = (x, y) => y.pts - x.pts || y.g - x.g || x.gp - y.gp || x.name.
 export const buildTable = (scoring, roster, rosterStats = {}) => {
   const scorers = (scoring ? scoring.players : []).filter((p) => !isGoalie(p.name, rosterStats));
   const known = new Set(scorers.map((p) => p.name));
+  // Players whose GameStats page says they have not played a game yet are left out; an unknown
+  // count (page not read) keeps the row, with dashes.
   const zeros = roster
-    .filter(({ name }) => !known.has(name) && !isGoalie(name, rosterStats))
+    .filter(({ name }) => !known.has(name) && !isGoalie(name, rosterStats) && rosterStats[name]?.gp !== 0)
     .map(({ name, id }) => ({ name, url: playerUrl(id), leagueRank: null, gp: rosterStats[name]?.gp ?? null, g: 0, a: 0, pts: 0, zero: true }))
     .sort((x, y) => (y.gp ?? -1) - (x.gp ?? -1) || x.name.localeCompare(y.name, "cs"));
   const rows = [...[...scorers].sort(byScoring), ...zeros].map((p) => ({ ...p, number: rosterStats[p.name]?.number ?? null }));
@@ -105,7 +107,7 @@ export const buildGoalies = (roster, rosterStats, schedule) => {
     const us = m.home === TEAM ? 0 : 1;
     return [m.kickoff, { gf: m.score[us], ga: m.score[1 - us] }];
   }));
-  return roster.filter(({ name }) => isGoalie(name, rosterStats)).map(({ name, id }) => {
+  return roster.filter(({ name }) => isGoalie(name, rosterStats) && rosterStats[name].gp !== 0).map(({ name, id }) => {
     const s = rosterStats[name];
     const games = (s.games ?? []).map((k) => results.get(k)).filter(Boolean);
     const count = (test) => games.filter(test).length;

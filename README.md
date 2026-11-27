@@ -40,8 +40,9 @@ The exact HTML pasted into each page of the club website is kept in `embeds/` as
 - **Player scoring** (Czech *kanadské bodování*: points = goals + assists, as in the NHL
   scoring leaders) – team totals strip (scorers, goals, assists, points), an
   accent-insensitive player search, and the whole roster with jersey numbers and photo thumbnails: scorers first,
-  then players without a point, most games played first. A player who has not played yet
-  shows dashes instead of zeros and no rank. Tied players share a rank (dense ranking). Stat columns are
+  then players without a point, most games played first. Players (and goalies) whose GameStats
+  page shows no game played are left out; one whose page could not be read yet shows dashes
+  instead of zeros and no rank. Tied players share a rank (dense ranking). Stat columns are
   sortable by click. Goalies (position "Brankář" on their GameStats page) are not ranked
   with the skaters but get their own table below it, with the usual goalie line as far as
   GameStats allows: games (Z), wins/ties/losses (V/R/P, hidden on phones), goals against
